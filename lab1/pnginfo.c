@@ -25,26 +25,28 @@ int is_png(U8 *buf, size_t n){
 }
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    unsigned char header[8];
-    fread(header, sizeof(header), 1, fp);
-    out->width = header[4];
-    out->height = header[5];
+    unsigned char chunk[13];
+    fread(chunk, sizeof(chunk), 1, fp);
+    out->width = chunk[0];
+    out->height = chunk[1];
     return 1;
 }
 
 int main(int argc, char *argv[]){
-   FILE *f = fopen(argv[1], "rb");
-   if(f == NULL){
+    FILE *f = fopen(argv[1], "rb");
+    if(f == NULL){
        printf("Failed");
        return -1;
-   }
-   unsigned char buf[8];
-   fread(buf, sizeof(buf), 1, f);
+    }
+    unsigned char buf[8];
+    fread(buf, sizeof(buf), 1, f);
     data_IHDR data = {0};
     get_png_data_IHDR(&data, f, 0, 0);
     if(is_png(buf, 8) == 1){
- //       char * tld = strrchr(argv[1], '/');
-        printf("%s: %d x %d", argv[1], data.width, data.height);
+        char* tld = strrchr(argv[1], '/');
+        printf("%s: %d x %d", tld[1], data.width, data.height);
+    } else{
+
     }
     fclose(f);
     return 0;
