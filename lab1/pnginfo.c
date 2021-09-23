@@ -32,7 +32,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
     for(int i = 0; i < 8; i++){
         printf("%c", chunk[i]);
     }
-    unsigned char temp[4];
+    char temp[4];
     for(int i = 0; i < 4; i++){
         temp[i] = chunk[i];
     }
