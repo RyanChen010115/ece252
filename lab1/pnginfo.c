@@ -15,7 +15,7 @@ typedef struct data_IHDR {// IHDR chunk data
     U8  compression;  /* only method 0 is defined for now */
     U8  filter;       /* only method 0 is defined for now */
     U8  interlace;    /* =0: no interlace; =1: Adam7 interlace */
-} *data_IHDR_p;
+} data_IHDR;
 
 int is_png(U8 *buf, size_t n){
     if(buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47){
@@ -36,8 +36,8 @@ int main(int argc, char *argv[]){
     FILE *f = fopen(argv[1], "rb");
     unsigned char buf[8];
     fread(buf, sizeof(buf), 1, f);
-    data_IHDR_p data;
-    get_png_data_IHDR(&data, f, 0, 0);
+    data_IHDR *data;
+    get_png_data_IHDR(data, f, 0, 0);
     if(is_png(buf, 8) == 1){
         char * tld = strrchr(argv[1], '/');
         printf("%s: %d x %d", tld[1], data->width, data->height);
