@@ -33,15 +33,15 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
 }
 
 int main(int argc, char *argv[]){
-    FILE *f = fopen(argv[1], "rb");
-    unsigned char buf[8];
-    fread(buf, sizeof(buf), 1, f);
+   // FILE *f = fopen(argv[1], "rb");
+   // unsigned char buf[8];
+   // fread(buf, sizeof(buf), 1, f);
 //     data_IHDR data = {0};
 //     get_png_data_IHDR(&data, f, 0, 0);
 //     if(is_png(buf, 8) == 1){
 //  //       char * tld = strrchr(argv[1], '/');
 //         printf("%s: %d x %d", argv[1], data.width, data.height);
 //     }
-    fclose(f);
+ //   fclose(f);
     return 0;
 }
