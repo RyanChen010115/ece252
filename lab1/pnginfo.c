@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 
 typedef unsigned char U8;
@@ -32,17 +33,17 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
     for(int i = 0; i < 8; i++){
         printf("%x", chunk[i]);
     }
-    // char temp[4];
-    // for(int i = 0; i < 4; i++){
-    //     temp[i] = chunk[i];
-    //     printf("%x", temp[i]);
-    // }
-    // out->width = atoi(temp);
-    // for(int i = 0; i < 4; i++){
-    //     temp[i] = chunk[i + 4];
-    //     printf("%x", temp[i]);
-    // }
-    // out->height = atoi(temp);
+    char temp[4];
+    uint32_t w = (uint32_t)chunk[0] << 24 |
+      (uint32_t)chunk[1] << 16 |
+      (uint32_t)chunk[2] << 8  |
+      (uint32_t)chunk[3];
+    out->width = w;
+    uint32_t h = (uint32_t)chunk[5] << 24 |
+      (uint32_t)chunk[6] << 16 |
+      (uint32_t)chunk[7] << 8  |
+      (uint32_t)chunk[8];
+    out->height = h;
     return 1;
 }
 
