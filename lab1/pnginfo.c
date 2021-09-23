@@ -33,7 +33,10 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
 }
 
 int main(int argc, char *argv[]){
-   FILE *f = fopen(argv[1], "rb");
+   FILE *f = fopen("./images/uweng.png", "rb");
+   if(f == NULL){
+       return -1;
+   }
    // unsigned char buf[8];
    // fread(buf, sizeof(buf), 1, f);
 //     data_IHDR data = {0};
