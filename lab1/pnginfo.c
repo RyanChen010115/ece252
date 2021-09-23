@@ -30,19 +30,19 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
     unsigned char chunk[8];
     fread(chunk, sizeof(chunk), 1, fp);
     for(int i = 0; i < 8; i++){
-        printf("%c", chunk[i]);
+        printf("%x", chunk[i]);
     }
-    char temp[4];
-    for(int i = 0; i < 4; i++){
-        temp[i] = chunk[i];
-        printf("%x", temp[i]);
-    }
-    out->width = atoi(temp);
-    for(int i = 0; i < 4; i++){
-        temp[i] = chunk[i + 4];
-        printf("%x", temp[i]);
-    }
-    out->height = atoi(temp);
+    // char temp[4];
+    // for(int i = 0; i < 4; i++){
+    //     temp[i] = chunk[i];
+    //     printf("%x", temp[i]);
+    // }
+    // out->width = atoi(temp);
+    // for(int i = 0; i < 4; i++){
+    //     temp[i] = chunk[i + 4];
+    //     printf("%x", temp[i]);
+    // }
+    // out->height = atoi(temp);
     return 1;
 }
 
