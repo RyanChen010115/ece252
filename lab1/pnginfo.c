@@ -33,7 +33,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
 }
 
 int main(int argc, char *argv[]){
-   FILE *f = fopen("./starter/images/uweng.png", "rb");
+   FILE *f = fopen(argv[1], "rb");
    if(f == NULL){
        printf("Failed");
        return -1;
