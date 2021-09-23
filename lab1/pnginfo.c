@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+
 typedef unsigned char U8;
 typedef unsigned int  U32;
 
@@ -27,8 +28,8 @@ int is_png(U8 *buf, size_t n){
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
     unsigned char chunk[13];
     fread(chunk, sizeof(chunk), 1, fp);
-    out->width = chunk[0];
-    out->height = chunk[1];
+    out->width = (int)chunk[0];
+    out->height = (int)chunk[1];
     return 1;
 }
 
