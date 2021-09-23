@@ -6,7 +6,7 @@ LDFLAGS=-g
 SRCS=pnginfo.c
 OBJS=pnginfo.o
 
-all: pnginfo.out
+all: pnginfo
 
 pnginfo.out: $(OBJS) 
 	$(LD) $(LDFLAGS) -o $@ $^

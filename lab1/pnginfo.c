@@ -42,5 +42,6 @@ int main(int argc, char *argv[]){
  //       char * tld = strrchr(argv[1], '/');
         printf("%s: %d x %d", argv[1], data.width, data.height);
     }
+    fclose(f);
     return 0;
 }
