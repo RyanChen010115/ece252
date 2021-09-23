@@ -26,9 +26,9 @@ int is_png(U8 *buf, size_t n){
 }
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    unsigned char chunk[13];
+    unsigned char chunk[8];
     fread(chunk, sizeof(chunk), 1, fp);
-    for(int i = 0; i < 13; i++){
+    for(int i = 0; i < 8; i++){
         printf("%c", chunk[i]);
     }
     out->width = (int)chunk[0];
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
        printf("Failed");
        return -1;
     }
-    unsigned char buf[8];
+    unsigned char buf[16];
     fread(buf, sizeof(buf), 1, f);
     data_IHDR data = {0};
     get_png_data_IHDR(&data, f, 0, 0);
