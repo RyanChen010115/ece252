@@ -68,7 +68,7 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         U32 crc_val = crc(buf17, l);
-        printf("%lu", crc_val);
+        printf("%d", crc_val);
 
 
         
