@@ -34,7 +34,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
       (uint32_t)buf[6] << 8  |
       (uint32_t)buf[7];
     for(int i = 4; i < 8; i++){
-        printf("%x", buf[i]);
+        printf("%x\n", buf[i]);
     }
     out->height = h;
     return 1;
