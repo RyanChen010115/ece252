@@ -65,8 +65,8 @@ int main(int argc, char *argv[]){
         U8 IHDRData[5];
         U32 IHDRCRC[32];
 
-        fread(widthPTR, sizeof(32), 1, f);
-        fread(heightPTR, sizeof(32), 1, f);
+        fread(widthPTR, sizeof(U32), 1, f);
+        fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(IHDRCRC, sizeof(IHDRCRC), 1, f);
 
