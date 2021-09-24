@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "starter/png_util/lab_png.h"
-#include "starter/png_util/crc.c"
-#include "starter/png_util/zutil.h"
+#include "./starter/png_util/lab_png.h"
+#include "./starter/png_util/crc.c"
+#include "./starter/png_util/zutil.h"
 
 
 typedef unsigned char U8;
@@ -72,9 +72,9 @@ int main(int argc, char *argv[]){
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
         // Do compression stuff
-        // U8* unComp = malloc(sizeof(U8)*num*2);
-        // U64 lenUnComp = 0;
-        //mem_inf(unComp, &lenUnComp, IDATdata, num);
+        U8* unComp = malloc(sizeof(U8)*num*2);
+        U64 lenUnComp = 0;
+        mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32), 1, f);
         
         printf("%x", CRC[0]);
@@ -91,12 +91,14 @@ int main(int argc, char *argv[]){
         chunk->p_data = IDATdata;
         chunkPTR[i-1] = chunk;
 
+
         free(IHDRlength);
         free(IHDRtype);
         free(widthPTR);
         free(heightPTR);
         free(length);
         free(CRC);
+        free(IDATdata);
         fclose(f);
     }
     printf("\n%x", chunkPTR[0]->crc);
