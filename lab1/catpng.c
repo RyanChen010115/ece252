@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
         tHeight += height;
         // Reading from IDAT
         U32* length = malloc(sizeof(U32));
-        U8* IDATtype = malloc(sizeof(U8)*4);
+        U8 IDATtype[4];
         U32* CRC = malloc(sizeof(U32));
         fread(length, sizeof(U32), 1, f);
         fread(IDATtype, sizeof(IDATtype), 1, f);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32), 1, f);
         for(int i = 0; i < 4; i++){
-            printf("%x", ICRC[i]);
+            printf("%x", CRC[i]);
         }
         
         chunk_p chunk = malloc(sizeof(chunk_p));
