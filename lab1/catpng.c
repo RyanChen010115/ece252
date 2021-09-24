@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32), 1, f);
         for(int i = 0; i < 4; i++){
-            printf("%x", CRC[i]);
+            printf("%x", CRC[3-i]);
         }
         
         chunk_p chunk = malloc(sizeof(chunk_p));
@@ -90,23 +90,6 @@ int main(int argc, char *argv[]){
         chunk->p_data = malloc(sizeof(IDATdata));
         chunk->p_data = IDATdata;
         chunkPTR[i-1] = chunk;
-        // fread(buf4, sizeof(buf4), 1, f);
-        // fread(IHDR, sizeof(IHDR), 1, f);
-        // fread(buf4, sizeof(buf4), 1, f);
-        // data_IHDR data = {0};
-        // get_png_data_IHDR(&data, f, IHDR);
-        // printf("\n%d\n", data.height);
-        // height += data.height;
-        // // end of IHDR
-        // fread(buf4, sizeof(buf4), 1, f);
-        // int l = (uint32_t)buf4[0] << 24 |
-        //     (uint32_t)buf4[1] << 16 |
-        //     (uint32_t)buf4[2] << 8  |
-        //     (uint32_t)buf4[3];
-        // tLength += l;
-        // ptrArr[i - 1] = malloc(sizeof(char) * l);
-        // // store read value in static array then use the compress tool to store it in dynamic
-        // fread(buf4, sizeof(buf4), 1, f);
 
         free(IHDRlength);
         free(IHDRtype);
