@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
         for(int i = 0; i < 4; i++){
             printf("%x", crc4[i]);
         }
-        printf("\n%x\n", crc_val);
+        printf("\n%d\n", crc_val);
         int crcTemp = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
