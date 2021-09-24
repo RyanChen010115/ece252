@@ -59,15 +59,15 @@ int main(int argc, char *argv[]){
         unsigned char length[4];
         unsigned char crc[4];
         while(fread(length, sizeof(length), 1, f) == 1){
-            uint32_t l = (uint32_t)length[4] << 24 |
-            (uint32_t)length[5] << 16 |
-            (uint32_t)length[6] << 8  |
-            (uint32_t)length[7];
-            printf("%d", l);
-            fread(length, sizeof(length), 1, f);
-            fread(length, sizeof(length), l/4, f);
-            fread(crc, sizeof(crc), 1, f);
-            
+            // uint32_t l = (uint32_t)length[4] << 24 |
+            // (uint32_t)length[5] << 16 |
+            // (uint32_t)length[6] << 8  |
+            // (uint32_t)length[7];
+            // printf("%d", l);
+            // fread(length, sizeof(length), 1, f);
+            // fread(length, sizeof(length), l/4, f);
+            // fread(crc, sizeof(crc), 1, f);
+
         }
     } else{
         char* tld = strrchr(argv[1], '/');
