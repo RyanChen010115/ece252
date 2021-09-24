@@ -49,6 +49,7 @@ int main(int argc, char *argv[]){
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
         fread(header, sizeof(header), 1, f);
+        fread(IHDR, sizeof(IHDR), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
         printf("%d", data.height);
