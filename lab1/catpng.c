@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
         U32* widthPTR = malloc(sizeof(U32));
         U32* heightPTR = malloc(sizeof(U32));
         U8 IHDRData[5];
-        U32 ICRC[32];
+        U8 ICRC[4];
 
         fread(IHDRlength, sizeof(U32), 1, f);
         fread(IHDRtype, sizeof(U32), 1, f);
