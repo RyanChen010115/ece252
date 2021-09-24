@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
         printf("%s: %d x %d\n", tld + 4, data.width, data.height);
     } else{
         char* tld = strrchr(argv[1], '/');
-        printf("%s: Not a PNG file\n", tld + 4, data.width, data.height);
+        printf("%s: Not a PNG file\n", tld + 4);
     }
     fclose(f);
     return 0;
