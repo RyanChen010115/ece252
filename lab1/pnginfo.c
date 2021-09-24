@@ -62,6 +62,7 @@ int main(int argc, char *argv[]){
         unsigned char crc[4];
         fread(crc, sizeof(crc), 1, f);
         //compare CRC
+        printf("%s", crc);
         fread(length, sizeof(length), 1, f); // read length
         uint32_t l = (uint32_t)length[0] << 24 |
             (uint32_t)length[1] << 16 |
