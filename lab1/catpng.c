@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
     int height = 0;
     unsigned char header[8];
     // unsigned char length[4];
-    unsigned char buf[4];
+    unsigned char buf4[4];
     unsigned char IHDR[17];
     for(int i = 1; i < argc; i++){
         printf("HERE");
