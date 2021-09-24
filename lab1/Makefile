@@ -2,6 +2,7 @@ CC=gcc
 CFLAGS=-Wall -g
 LD=gcc
 LDFLAGS=-g
+LDLIBS = -lz   # link with libz
 
 a_SRCS=pnginfo.c
 a_OBJS=pnginfo.o
@@ -15,13 +16,13 @@ c_OBJS=catpng.o
 all: pnginfo findpng catpng
 
 pnginfo.out: $(a_OBJS) 
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^
 
 findpng.out: $(b_OBJS) 
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^
 
 catpng.out: $(c_OBJS) 
-	$(LD) $(LDFLAGS) -o $@ $^
+	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
