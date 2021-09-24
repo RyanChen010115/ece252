@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
         unsigned char bufx[lenght1];
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
-        crc_val = crc(bufx, l + 4);
+        crc_val = crc(bufx, lenght1 + 4);
         for(int i = 0; i < 4; i++){
             printf("%x", crc4[i]);
         }
