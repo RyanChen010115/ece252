@@ -8,7 +8,7 @@ OBJS=catpng.o
 
 all: catpng
 
-pnginfo.out: $(OBJS) 
+catpng.out: $(OBJS) 
 	$(LD) $(LDFLAGS) -o $@ $^
 
 .c.o:
