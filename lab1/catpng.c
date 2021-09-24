@@ -7,6 +7,7 @@
 #include "./starter/png_util/lab_png.h"
 #include "./starter/png_util/crc.c"
 #include "./starter/png_util/zutil.h"
+#include "./starter/png_util/zutil.c"
 
 
 typedef unsigned char U8;
