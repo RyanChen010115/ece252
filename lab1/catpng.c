@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
                     ((num<<24)&0xff000000); 
         printf("%d\n", num);
         tLength += num;
-        U8* IDATdata = (*U8)malloc( num);
+        U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
         // Do compression stuff
         // U8* unComp = malloc(sizeof(U8)*num*2);
