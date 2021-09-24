@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
             (uint32_t)length[3];
             printf("%d", l);
             fread(length, sizeof(length), 1, f);
-            for(int i = 0; i < l; i + 4){
+            for(int i = 0; i < l; i += 4){
                 fread(length, sizeof(length), 1, f);
             }
             
