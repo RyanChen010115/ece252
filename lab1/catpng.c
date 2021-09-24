@@ -49,6 +49,7 @@ int main(int argc, char *argv[]){
     // unsigned char buf[4];
     unsigned char IHDR[17];
     for(int i = 0; i < argc; i++){
+        printf("HERE");
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
         fread(header, sizeof(header), 1, f);
