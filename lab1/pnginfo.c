@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
             printf("%x", crc4[i]);
         }
         printf("\n%x\n", crc_val);
-        U32 crcTemp = (uint32_t)crc4[0] << 24 |
+        unsigned int crcTemp = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
