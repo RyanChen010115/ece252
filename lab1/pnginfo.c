@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
         fread(buf4, sizeof(buf4), 1, f);
         fread(buf4, sizeof(buf4), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
-        // crc_val = crc(buf4, 4);
+        crc_val = crc(buf4, 4);
         // for(int i = 0; i < 4; i++){
         //     printf("%x", crc4[i]);
         // }
