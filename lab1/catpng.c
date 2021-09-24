@@ -62,11 +62,12 @@ int main(int argc, char *argv[]){
         fread(length, sizeof(U32), 1, f);
         fread(IDATtype, sizeof(IDATtype), 1, f);
         U32 num = *length;
-        printf("%d\n", num);
+        
         num = ((num>>24)&0xff) | 
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
+        printf("%d\n", num);
         tLength += num;
         U8* IDATdata = malloc(sizeof(U8) * num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
