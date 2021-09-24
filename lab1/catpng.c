@@ -33,6 +33,9 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
       (uint32_t)buf[5] << 16 |
       (uint32_t)buf[6] << 8  |
       (uint32_t)buf[7];
+    for(int i = 4; i < 8; i++){
+        printf("%x", buf[i]);
+    }
     out->height = h;
     return 1;
 }
@@ -52,7 +55,7 @@ int main(int argc, char *argv[]){
         fread(IHDR, sizeof(IHDR), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
-        printf("%d", data.height);
+        printf("\n%d\n", data.height);
         height += data.height;
         fclose(f);
     }
