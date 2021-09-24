@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
         fread(header, sizeof(header), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
-        printf("%d", data.height)
+        printf("%d", data.height);
         height += data.heigth;
         fclose(f);
     }
