@@ -15,19 +15,19 @@ typedef unsigned long int U64;
 
 
 
-int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
-    uint32_t w = (uint32_t)buf[4] << 24 |
-      (uint32_t)buf[5] << 16 |
-      (uint32_t)buf[6] << 8  |
-      (uint32_t)buf[7];
-    out->width = w;
-    uint32_t h = (uint32_t)buf[8] << 24 |
-      (uint32_t)buf[9] << 16 |
-      (uint32_t)buf[10] << 8  |
-      (uint32_t)buf[11];
-    out->height = h;
-    return 1;
-}
+// int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
+//     uint32_t w = (uint32_t)buf[4] << 24 |
+//       (uint32_t)buf[5] << 16 |
+//       (uint32_t)buf[6] << 8  |
+//       (uint32_t)buf[7];
+//     out->width = w;
+//     uint32_t h = (uint32_t)buf[8] << 24 |
+//       (uint32_t)buf[9] << 16 |
+//       (uint32_t)buf[10] << 8  |
+//       (uint32_t)buf[11];
+//     out->height = h;
+//     return 1;
+// }
 
 
 int main(int argc, char *argv[]){
