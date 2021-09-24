@@ -73,10 +73,12 @@ int main(int argc, char *argv[]){
         }
         fread(crc, sizeof(crc), 1, f); // read crc
         // compare CRC
+        printf("%s", crc);
         fread(length, sizeof(length), 1, f);
         fread(length, sizeof(length), 1, f);
         fread(crc, sizeof(crc), 1, f);
         //compare CRC
+        printf("%s", crc);
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
