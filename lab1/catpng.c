@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(IHDRCRC, sizeof(IHDRCRC), 1, f);
 
-        height += *heightPTR;
+        //height += *heightPTR;
         printf("%d", height);
         
         // fread(buf4, sizeof(buf4), 1, f);
