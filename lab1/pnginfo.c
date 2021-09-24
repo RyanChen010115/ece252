@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
         if(crc_val != crcTemp){
-            printf("IDAT chunk CRC error: computed %x, expected %x", crc_val, crcTemp);
+            printf("IDAT chunk CRC error: computed %x, expected %x\n", crc_val, crcTemp);
             return 0;
         }
 
@@ -95,16 +95,16 @@ int main(int argc, char *argv[]){
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(bufx, l+4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
+        for(int i = 0; i < 4; i++){
+            printf("%x", crc4[i]);
+        }
+        printf("\n%x\n", crc_val);
         crcTemp = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
         if(crc_val != crcTemp){
-            printf("IDAT chunk CRC error: computed %x, expected %x", crc_val, crcTemp);
+            printf("IDAT chunk CRC error: computed %x, expected %x\n", crc_val, crcTemp);
             return 0;
         }
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]){
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
         if(crc_val != crcTemp){
-            printf("IDAT chunk CRC error: computed %x, expected %x", crc_val, crcTemp);
+            printf("IDAT chunk CRC error: computed %x, expected %x\n", crc_val, crcTemp);
             return 0;
         }
 
