@@ -44,19 +44,24 @@ int main(int argc, char *argv[]){
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(ICRC, sizeof(ICRC), 1, f);
-        U64 num = *heightPTR;
-        num = ((num>>24)&0xff) | 
-                    ((num<<8)&0xff0000) | 
-                    ((num>>8)&0xff00) | 
-                    ((num<<24)&0xff000000); 
-        tHeight += num;
+        U64 height = *heightPTR;
+        U64 width = *widthPTR;
+        height = ((height>>24)&0xff) | 
+                    ((height<<8)&0xff0000) | 
+                    ((height>>8)&0xff00) | 
+                    ((height<<24)&0xff000000); 
+        width = ((width>>24)&0xff) | 
+                    ((width<<8)&0xff0000) | 
+                    ((width>>8)&0xff00) | 
+                    ((width<<24)&0xff000000); 
+        tHeight += height;
         // Reading from IDAT
         U32* length = malloc(sizeof(U32));
         U8 type[4];
         U32* CRC = malloc(sizeof(U32));
         fread(length, sizeof(U32), 1, f);
         fread(type, sizeof(type), 1, f);
-        num = *length;
+        U64 num = *length;
         num = ((num>>24)&0xff) | 
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
@@ -64,6 +69,7 @@ int main(int argc, char *argv[]){
         tLength += num;
         U8* IDATdata = malloc(sizeof(U8) * num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
+        pringf("%d, %d", height, width);
         // U8* unComp = malloc(sizeof(U8)*num*2);
         // U64 lenUnComp = 0;
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
