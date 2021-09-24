@@ -47,7 +47,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
 
 
 int main(int argc, char *argv[]){
-    const int NUM_FILES = argc - 1;
+
     FILE *wr = fopen("./result.png", "wb+");
     int height = 0;
     //int tLength = 0;
