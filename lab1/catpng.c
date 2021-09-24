@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
         printf("%d", data.height);
-        height += data.heigth;
+        height += data.height;
         fclose(f);
     }
     fclose(wr);
