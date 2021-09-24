@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(ICRC, sizeof(ICRC), 1, f);
-        U32 num = *heightPTR;
+        U64 num = *heightPTR;
         num = ((num>>24)&0xff) | 
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]){
         U8* IDATdata = malloc(sizeof(U8) * num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
         U8* unComp = malloc(sizeof(U8)*num*2);
-        int lenUnComp = 0;
+        U64 lenUnComp = 0;
         mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32) * num, 1, f);
         
