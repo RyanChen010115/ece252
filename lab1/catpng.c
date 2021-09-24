@@ -58,30 +58,43 @@ int main(int argc, char *argv[]){
     // unsigned char IHDR[17];
     // chunk_p chunkPTR[NUM_FILES];
     for(int i = 1; i < argc; i++){
-        U32* length = malloc(sizeof(U32));
-        U32* type = malloc(sizeof(U32));
+        U32* IHDRlength = malloc(sizeof(U32));
+        U32* IHDRtype = malloc(sizeof(U32));
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
         // Reading from IHDR
         
-        U32* widthPTR = malloc(sizeof(32));
-        U32* heightPTR = malloc(sizeof(32));
+        U32* widthPTR = malloc(sizeof(U32));
+        U32* heightPTR = malloc(sizeof(U32));
         U8 IHDRData[5];
-        U32 IHDRCRC[32];
+        U32 ICRC[32];
 
-        fread(length, sizeof(U32), 1, f);
-        fread(type, sizeof(U32), 1, f);
+        fread(IHDRlength, sizeof(U32), 1, f);
+        fread(IHDRtype, sizeof(U32), 1, f);
         fread(widthPTR, sizeof(U32), 1, f);
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
-        fread(IHDRCRC, sizeof(IHDRCRC), 1, f);
+        fread(ICRC, sizeof(ICRC), 1, f);
         U32 num = *heightPTR;
-        num = ((num>>24)&0xff) | // move byte 3 to byte 0
-                    ((num<<8)&0xff0000) | // move byte 1 to byte 2
-                    ((num>>8)&0xff00) | // move byte 2 to byte 1
-                    ((num<<24)&0xff000000); // byte 0 to byte 3
-        height += *heightPTR;
+        num = ((num>>24)&0xff) | 
+                    ((num<<8)&0xff0000) | 
+                    ((num>>8)&0xff00) | 
+                    ((num<<24)&0xff000000); 
+        height += num;
+
+        U32* length = malloc(sizeof(U32));
+        U8 type[4];
+        fread(length, sizeof(U32), 1, f);
+        fread(type, sizeof(type), 1, f);
+        num = *length;
+        num = ((num>>24)&0xff) | 
+                    ((num<<8)&0xff0000) | 
+                    ((num>>8)&0xff00) | 
+                    ((num<<24)&0xff000000); 
         printf("%d", num);
+
+        // Reading from IDAT
+
         
         // fread(buf4, sizeof(buf4), 1, f);
         // fread(IHDR, sizeof(IHDR), 1, f);
@@ -101,7 +114,10 @@ int main(int argc, char *argv[]){
         // // store read value in static array then use the compress tool to store it in dynamic
         // fread(buf4, sizeof(buf4), 1, f);
 
-        
+        free(IHDRlength);
+        free(IHDRtype);
+        free(widthPTR);
+        free(heightPTR):
         fclose(f);
     }
     // for(int i = 0; i < NUM_FILES; i++){
