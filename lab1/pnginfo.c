@@ -54,6 +54,7 @@ int main(int argc, char *argv[]){
     }
     unsigned char buf[8];
     unsigned char buf4[4];
+    unsigned char crc[4];
     fread(buf, sizeof(buf), 1, f);
     
     if(is_png(buf, 8) == 1){
@@ -64,12 +65,13 @@ int main(int argc, char *argv[]){
             (uint32_t)buf4[3];
         unsigned char buf17[17];
         fread(buf17, sizeof(buf17), 1, f);
+        fread(crc, sizeof(crc), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         U32 crc_val = crc(buf17, l);
-        printf("%x", crc_val);
+        printf("%x", crc);
 
 
         
