@@ -13,6 +13,7 @@
 #include "zutil.h"
 #include <string.h>
 #include <assert.h>
+#include "zlib.h"
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
