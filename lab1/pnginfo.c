@@ -30,15 +30,15 @@ int is_png(U8 *buf, size_t n){
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
     unsigned char chunk[13];
     fread(chunk, sizeof(chunk), 1, fp);
-    uint32_t w = (uint32_t)chunk[8] << 24 |
-      (uint32_t)chunk[9] << 16 |
-      (uint32_t)chunk[10] << 8  |
-      (uint32_t)chunk[11];
+    uint32_t w = (uint32_t)chunk[0] << 24 |
+      (uint32_t)chunk[1] << 16 |
+      (uint32_t)chunk[2] << 8  |
+      (uint32_t)chunk[3];
     out->width = w;
-    uint32_t h = (uint32_t)chunk[12] << 24 |
-      (uint32_t)chunk[13] << 16 |
-      (uint32_t)chunk[14] << 8  |
-      (uint32_t)chunk[15];
+    uint32_t h = (uint32_t)chunk[14] << 24 |
+      (uint32_t)chunk[5] << 16 |
+      (uint32_t)chunk[6] << 8  |
+      (uint32_t)chunk[7];
     out->height = h;
     return 1;
 }
@@ -51,9 +51,11 @@ int main(int argc, char *argv[]){
     }
     unsigned char buf[8];
     fread(buf, sizeof(buf), 1, f);
-    data_IHDR data = {0};
-    get_png_data_IHDR(&data, f, 0, 0);
+    
     if(is_png(buf, 8) == 1){
+        fread(buf, sizeof(buf), 1, f);
+        data_IHDR data = {0};
+        get_png_data_IHDR(&data, f, 0, 0);
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         unsigned char length[4];
