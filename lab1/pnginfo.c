@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "starter/png_util/lab_png.h"
+#include "starter/png_util/crc.c"
+#include "starter/png_util/zutil.h"
+
 
 typedef unsigned char U8;
 typedef unsigned int  U32;
@@ -27,18 +31,16 @@ int is_png(U8 *buf, size_t n){
     return 0;
 }
 
-int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    unsigned char chunk[13];
-    fread(chunk, sizeof(chunk), 1, fp);
-    uint32_t w = (uint32_t)chunk[0] << 24 |
-      (uint32_t)chunk[1] << 16 |
-      (uint32_t)chunk[2] << 8  |
-      (uint32_t)chunk[3];
+int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, char* buf){
+    uint32_t w = (uint32_t)buf[4] << 24 |
+      (uint32_t)buf[5] << 16 |
+      (uint32_t)buf[6] << 8  |
+      (uint32_t)buf[7];
     out->width = w;
-    uint32_t h = (uint32_t)chunk[4] << 24 |
-      (uint32_t)chunk[5] << 16 |
-      (uint32_t)chunk[6] << 8  |
-      (uint32_t)chunk[7];
+    uint32_t h = (uint32_t)buf[8] << 24 |
+      (uint32_t)buf[9] << 16 |
+      (uint32_t)buf[10] << 8  |
+      (uint32_t)buf[11];
     out->height = h;
     return 1;
 }
@@ -50,36 +52,44 @@ int main(int argc, char *argv[]){
        return -1;
     }
     unsigned char buf[8];
+    unsigned char buf4[4];
     fread(buf, sizeof(buf), 1, f);
     
     if(is_png(buf, 8) == 1){
-        fread(buf, sizeof(buf), 1, f);
+        fread(buf4, sizeof(buf4), 1, f);
+        unsigned char buf17[17];
         data_IHDR data = {0};
-        get_png_data_IHDR(&data, f, 0, 0);
+        get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
-        unsigned char length[4];
-        unsigned char crc[4];
-        fread(crc, sizeof(crc), 1, f);
-        //compare CRC
-        printf("%x", crc[0]);
-        fread(length, sizeof(length), 1, f); // read length
-        uint32_t l = (uint32_t)length[0] << 24 |
-            (uint32_t)length[1] << 16 |
-            (uint32_t)length[2] << 8  |
-            (uint32_t)length[3];
-        fread(length, sizeof(length), 1, f); // read type
-        for(int i = 0; i < l; i += 4){ // read data
-            fread(length, sizeof(length), 1, f);
-        }
-        fread(crc, sizeof(crc), 1, f); // read crc
-        // compare CRC
-        printf("%x", crc[0]);
-        fread(length, sizeof(length), 1, f);
-        fread(length, sizeof(length), 1, f);
-        fread(crc, sizeof(crc), 1, f);
-        //compare CRC
-        printf("%x", crc[0]);
+
+
+
+        
+        
+        
+        // unsigned char length[4];
+        // unsigned char crc[4];
+        // fread(crc, sizeof(crc), 1, f);
+        // //compare CRC
+        // printf("%x", crc[0]);
+        // fread(length, sizeof(length), 1, f); // read length
+        // uint32_t l = (uint32_t)length[0] << 24 |
+        //     (uint32_t)length[1] << 16 |
+        //     (uint32_t)length[2] << 8  |
+        //     (uint32_t)length[3];
+        // fread(length, sizeof(length), 1, f); // read type
+        // for(int i = 0; i < l; i += 4){ // read data
+        //     fread(length, sizeof(length), 1, f);
+        // }
+        // fread(crc, sizeof(crc), 1, f); // read crc
+        // // compare CRC
+        // printf("%x", crc[0]);
+        // fread(length, sizeof(length), 1, f);
+        // fread(length, sizeof(length), 1, f);
+        // fread(crc, sizeof(crc), 1, f);
+        // //compare CRC
+        // printf("%x", crc[0]);
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
