@@ -99,7 +99,7 @@ int main(int argc, char *argv[]){
         free(CRC);
         fclose(f);
     }
-    printf("\n%d", chunkPTR[0]->crc);
+    printf("\n%x", chunkPTR[0]->crc);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
