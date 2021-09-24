@@ -24,19 +24,18 @@ typedef struct data_IHDR {// IHDR chunk data
 } data_IHDR;
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
-    uint32_t w = (uint32_t)buf[0] << 24 |
-      (uint32_t)buf[1] << 16 |
-      (uint32_t)buf[2] << 8  |
-      (uint32_t)buf[3];
-    out->width = w;
-    for(int i = 4; i < 8; i++){
-        printf("%x\n", buf[i]);
-    }
-    uint32_t h = (uint32_t)buf[4] << 24 |
+    uint32_t w = (uint32_t)buf[4] << 24 |
       (uint32_t)buf[5] << 16 |
       (uint32_t)buf[6] << 8  |
       (uint32_t)buf[7];
-    
+    out->width = w;
+    uint32_t h = (uint32_t)buf[8] << 24 |
+      (uint32_t)buf[9] << 16 |
+      (uint32_t)buf[10] << 8  |
+      (uint32_t)buf[11];
+    for(int i = 4; i < 8; i++){
+        printf("%x\n", buf[i]);
+    }
     out->height = h;
     return 1;
 }
@@ -47,14 +46,15 @@ int main(int argc, char *argv[]){
     int height = 0;
     unsigned char header[8];
     // unsigned char length[4];
-    //unsigned char buf[4];
+    unsigned char buf[4];
     unsigned char IHDR[17];
     for(int i = 1; i < argc; i++){
         printf("HERE");
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
-        fread(header, sizeof(header), 1, f);
+        fread(buf4, sizeof(buf4), 1, f);
         fread(IHDR, sizeof(IHDR), 1, f);
+        fread(buf4, sizeof(buf4), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
         //printf("\n%d\n", data.height);
