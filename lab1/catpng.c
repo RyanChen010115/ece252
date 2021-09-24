@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
-    // chunk_p chunkPTR[NUM_FILES];
+    chunk_p chunkPTR[NUM_FILES];
     for(int i = 1; i < argc; i++){
         U32* IHDRlength = malloc(sizeof(U32));
         U32* IHDRtype = malloc(sizeof(U32));
@@ -57,11 +57,11 @@ int main(int argc, char *argv[]){
         tHeight += height;
         // Reading from IDAT
         U32* length = malloc(sizeof(U32));
-        U8 type[4];
+        U8* IDATtype = malloc(sizeof(8)*4);
         U32* CRC = malloc(sizeof(U32));
         fread(length, sizeof(U32), 1, f);
-        fread(type, sizeof(type), 1, f);
-        U64 num = *length;
+        fread(IDATtype, sizeof(IDATtype), 1, f);
+        U32 num = *length;
         num = ((num>>24)&0xff) | 
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
@@ -69,14 +69,19 @@ int main(int argc, char *argv[]){
         tLength += num;
         U8* IDATdata = malloc(sizeof(U8) * num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
-        printf("%ld, %ld", height, width);
+        // Do compression stuff
         // U8* unComp = malloc(sizeof(U8)*num*2);
         // U64 lenUnComp = 0;
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32) * num, 1, f);
         
-
-        
+        chunk_p chunk = malloc(sizeof(chunk_p));
+        chunk->length = num;
+        chunk->type = IDATtype;
+        chunk->crc = *CRC;
+        chunk->p_data = malloc(sizeof(IDATdata));
+        chunk->p_data = IDATdata;
+        chunkPTR[i-1] = chunk;
         // fread(buf4, sizeof(buf4), 1, f);
         // fread(IHDR, sizeof(IHDR), 1, f);
         // fread(buf4, sizeof(buf4), 1, f);
@@ -100,6 +105,7 @@ int main(int argc, char *argv[]){
         free(widthPTR);
         free(heightPTR);
         free(length);
+        free(CRC);
         fclose(f);
     }
     // for(int i = 0; i < NUM_FILES; i++){
