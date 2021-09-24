@@ -59,8 +59,24 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         unsigned char length[4];
+        unsigned char crc[4];
+        fread(crc, sizeof(crc), 1, f);
+        //compare CRC
+        fread(length, sizeof(length), 1, f); // read length
+        uint32_t l = (uint32_t)length[0] << 24 |
+            (uint32_t)length[1] << 16 |
+            (uint32_t)length[2] << 8  |
+            (uint32_t)length[3];
+        fread(length, sizeof(length), 1, f); // read type
+        for(int i = 0; i < l; i += 4){ // read data
+            fread(length, sizeof(length), 1, f);
+        }
+        fread(crc, sizeof(crc), 1, f); // read crc
+        // compare CRC
         fread(length, sizeof(length), 1, f);
-       
+        fread(length, sizeof(length), 1, f);
+        fread(crc, sizeof(crc), 1, f);
+        //compare CRC
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
