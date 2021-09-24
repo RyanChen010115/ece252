@@ -64,25 +64,32 @@ int main(int argc, char *argv[]){
             (uint32_t)buf4[1] << 16 |
             (uint32_t)buf4[2] << 8  |
             (uint32_t)buf4[3];
-        printf("%d\n", l);
         fread(buf17, sizeof(buf17), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
-        U32 crc_val = crc(buf17, 17);
+        U32 crc_val = crc(buf17, l + 4);
         for(int i = 0; i < 4; i++){
             printf("%x", crc4[i]);
         }
         printf("\n%x\n", crc_val);
 
-        
-
-
-        
-        
-        
+        fread(buf4, sizeof(buf4), 1, f);
+        l = (uint32_t)buf4[0] << 24 |
+            (uint32_t)buf4[1] << 16 |
+            (uint32_t)buf4[2] << 8  |
+            (uint32_t)buf4[3];
+        const lenght1 = l;
+        fread(crc4, sizeof(crc4), 1, f);
+        unsigned char bufx[lenght1];
+        fread(bufx, sizeof(bufx), 1, f);
+        crc_val = crc(bufx, l + 4);
+        for(int i = 0; i < 4; i++){
+            printf("%x", crc4[i]);
+        }
+        printf("\n%x\n", crc_val);
         // unsigned char length[4];
         // unsigned char crc[4];
         // fread(crc, sizeof(crc), 1, f);
