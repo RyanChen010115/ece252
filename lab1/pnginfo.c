@@ -6,7 +6,6 @@
 
 #include "starter/png_util/crc.c"
 
-#include "starter/png_util/zutil.h"
 
 
 typedef unsigned char U8;
