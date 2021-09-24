@@ -35,12 +35,12 @@ pnginfo.out: $(OBJS)
 
 -include $(SRCS:.c=.d) 
 
-SRCS=pnginfo.c
-OBJS=pnginfo.o
+SRCS=findpng.c
+OBJS=findpng.o
 
-all: pnginfo
+all: findpng
 
-pnginfo.out: $(OBJS) 
+findpng.out: $(OBJS) 
 	$(LD) $(LDFLAGS) -o $@ $^
 
 .c.o:
