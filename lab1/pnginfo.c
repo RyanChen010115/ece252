@@ -58,9 +58,10 @@ int main(int argc, char *argv[]){
     get_png_data_IHDR(&data, f, 0, 0);
     if(is_png(buf, 8) == 1){
         char* tld = strrchr(argv[1], '/');
-        printf("%s: %d x %d", tld, data.width, data.height);
+        printf("%s: %d x %d\n", tld + 4, data.width, data.height);
     } else{
-
+        char* tld = strrchr(argv[1], '/');
+        printf("%s: Not a PNG file\n", tld + 4, data.width, data.height);
     }
     fclose(f);
     return 0;
