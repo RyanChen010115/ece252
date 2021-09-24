@@ -70,12 +70,9 @@ int main(int argc, char *argv[]){
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
-        printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
+        printf("%s: %d x %d\n", tld, data.width, data.height);
         U32 crc_val = crc(buf17, l + 4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%d\n", crc_val);
+
         U32 crcTemp = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
@@ -95,10 +92,6 @@ int main(int argc, char *argv[]){
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(bufx, l+4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
         U32 crcTemp2 = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
@@ -112,10 +105,7 @@ int main(int argc, char *argv[]){
         fread(buf4, sizeof(buf4), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(buf4, 4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
+
         U32 crcTemp3 = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
@@ -125,29 +115,6 @@ int main(int argc, char *argv[]){
             return 0;
         }
 
-
-        // unsigned char length[4];
-        // unsigned char crc[4];
-        // fread(crc, sizeof(crc), 1, f);
-        // //compare CRC
-        // printf("%x", crc[0]);
-        // fread(length, sizeof(length), 1, f); // read length
-        // uint32_t l = (uint32_t)length[0] << 24 |
-        //     (uint32_t)length[1] << 16 |
-        //     (uint32_t)length[2] << 8  |
-        //     (uint32_t)length[3];
-        // fread(length, sizeof(length), 1, f); // read type
-        // for(int i = 0; i < l; i += 4){ // read data
-        //     fread(length, sizeof(length), 1, f);
-        // }
-        // fread(crc, sizeof(crc), 1, f); // read crc
-        // // compare CRC
-        // printf("%x", crc[0]);
-        // fread(length, sizeof(length), 1, f);
-        // fread(length, sizeof(length), 1, f);
-        // fread(crc, sizeof(crc), 1, f);
-        // //compare CRC
-        // printf("%x", crc[0]);
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
