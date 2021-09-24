@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
         // U64 lenUnComp = 0;
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32), 1, f);
-        printf("%x", *CRC);
+        printf("%x", ICRC);
         chunk_p chunk = malloc(sizeof(chunk_p));
         chunk->length = num;
         chunk->type[0] = IDATtype[0];
