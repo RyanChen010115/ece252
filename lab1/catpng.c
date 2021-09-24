@@ -52,6 +52,7 @@ int main(int argc, char *argv[]){
     int height = 0;
     //int tLength = 0;
     unsigned char header[8];
+
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
@@ -74,9 +75,13 @@ int main(int argc, char *argv[]){
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(IHDRCRC, sizeof(IHDRCRC), 1, f);
-
+        U32 num = *heightPTR;
+        num = ((num>>24)&0xff) | // move byte 3 to byte 0
+                    ((num<<8)&0xff0000) | // move byte 1 to byte 2
+                    ((num>>8)&0xff00) | // move byte 2 to byte 1
+                    ((num<<24)&0xff000000); // byte 0 to byte 3
         height += *heightPTR;
-        printf("%d", *heightPTR);
+        printf("%d", num);
         
         // fread(buf4, sizeof(buf4), 1, f);
         // fread(IHDR, sizeof(IHDR), 1, f);
