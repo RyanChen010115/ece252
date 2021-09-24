@@ -31,7 +31,7 @@ int is_png(U8 *buf, size_t n){
     return 0;
 }
 
-int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, char* buf){
+int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
     uint32_t w = (uint32_t)buf[4] << 24 |
       (uint32_t)buf[5] << 16 |
       (uint32_t)buf[6] << 8  |
