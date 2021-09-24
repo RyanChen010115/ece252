@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
-        printf("%s: %d x %d\n", tld, data.width, data.height);
+        printf("%s: %d x %d\n", tld+ sizeof(char), data.width, data.height);
         U32 crc_val = crc(buf17, l + 4);
 
         U32 crcTemp = (uint32_t)crc4[0] << 24 |
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
 
     } else{
         char* tld = strrchr(argv[1], '/');
-        printf("%s: Not a PNG file\n", tld + 4);
+        printf("%s: Not a PNG file\n", tld + sizeof(char));
     }
     
     fclose(f);
