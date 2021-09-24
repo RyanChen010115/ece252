@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
             (uint32_t)buf4[1] << 16 |
             (uint32_t)buf4[2] << 8  |
             (uint32_t)buf4[3];
-        const lenght1 = l;
+        const int lenght1 = l;
         fread(crc4, sizeof(crc4), 1, f);
         unsigned char bufx[lenght1];
         fread(bufx, sizeof(bufx), 1, f);
