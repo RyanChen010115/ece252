@@ -49,7 +49,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
 int main(int argc, char *argv[]){
     FILE *f = fopen(argv[1], "rb");
     if(f == NULL){
-       printf("Failed");
+       printf("File not found");
        return -1;
     }
     unsigned char buf[8];
@@ -72,10 +72,16 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         U32 crc_val = crc(buf17, l + 4);
-        for(int i = 0; i < 4; i++){
-            printf("%x", crc4[i]);
-        }
-        printf("\n%x\n", crc_val);
+        // for(int i = 0; i < 4; i++){
+        //     printf("%x", crc4[i]);
+        // }
+        // printf("\n%x\n", crc_val);
+        U32 crcTemp = (uint32_t)crc4[0] << 24 |
+            (uint32_t)crc4[1] << 16 |
+            (uint32_t)crc4[2] << 8  |
+            (uint32_t)crc4[3];
+
+        printf("%d\n", crcTemp);
 
         fread(buf4, sizeof(buf4), 1, f);
         l = (uint32_t)buf4[0] << 24 |
@@ -87,19 +93,19 @@ int main(int argc, char *argv[]){
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(bufx, l+4);
-        for(int i = 0; i < 4; i++){
-            printf("%x", crc4[i]);
-        }
-        printf("\n%x\n", crc_val);
+        // for(int i = 0; i < 4; i++){
+        //     printf("%x", crc4[i]);
+        // }
+        // printf("\n%x\n", crc_val);
 
         fread(buf4, sizeof(buf4), 1, f);
         fread(buf4, sizeof(buf4), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(buf4, 4);
-        for(int i = 0; i < 4; i++){
-            printf("%x", crc4[i]);
-        }
-        printf("\n%x\n", crc_val);
+        // for(int i = 0; i < 4; i++){
+        //     printf("%x", crc4[i]);
+        // }
+        // printf("\n%x\n", crc_val);
 
 
         // unsigned char length[4];
