@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
-        if(crc_val != crcTemp){
+        if(crc_val != crcTemp2){
             printf("IDAT chunk CRC error: computed %x, expected %x\n", crc_val, crcTemp2);
             return 0;
         }
@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
             (uint32_t)crc4[3];
-        if(crc_val != crcTemp){
+        if(crc_val != crcTemp3){
             printf("IDAT chunk CRC error: computed %x, expected %x\n", crc_val, crcTemp3);
             return 0;
         }
