@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
         free(IHDRlength);
         free(IHDRtype);
         free(widthPTR);
-        free(heightPTR):
+        free(heightPTR);
         fclose(f);
     }
     // for(int i = 0; i < NUM_FILES; i++){
