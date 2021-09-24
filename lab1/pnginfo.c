@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         unsigned char length[4];
-        unsigned char crc[4];
+        //unsigned char crc[4];
         while(fread(length, sizeof(length), 1, f) == 1){
             // uint32_t l = (uint32_t)length[4] << 24 |
             // (uint32_t)length[5] << 16 |
