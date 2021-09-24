@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
         fread(widthPTR, sizeof(U32), 1, f);
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
-        fread(ICRC, sizeof(ICRC), 1, f);
+        fread(ICRC, sizeof(ICRC), 1, f);z
         U64 height = *heightPTR;
         U64 width = *widthPTR;
         height = ((height>>24)&0xff) | 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
         tHeight += height;
         // Reading from IDAT
         U32* length = malloc(sizeof(U32));
-        U8* IDATtype = malloc(sizeof(8)*4);
+        U8* IDATtype = malloc(sizeof(U8)*4);
         U32* CRC = malloc(sizeof(U32));
         fread(length, sizeof(U32), 1, f);
         fread(IDATtype, sizeof(IDATtype), 1, f);
