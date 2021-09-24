@@ -28,17 +28,17 @@ int is_png(U8 *buf, size_t n){
 }
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    unsigned char chunk[16];
+    unsigned char chunk[13];
     fread(chunk, sizeof(chunk), 1, fp);
-    uint32_t w = (uint32_t)chunk[0] << 24 |
-      (uint32_t)chunk[1] << 16 |
-      (uint32_t)chunk[2] << 8  |
-      (uint32_t)chunk[3];
+    uint32_t w = (uint32_t)chunk[8] << 24 |
+      (uint32_t)chunk[9] << 16 |
+      (uint32_t)chunk[10] << 8  |
+      (uint32_t)chunk[11];
     out->width = w;
-    uint32_t h = (uint32_t)chunk[4] << 24 |
-      (uint32_t)chunk[5] << 16 |
-      (uint32_t)chunk[6] << 8  |
-      (uint32_t)chunk[7];
+    uint32_t h = (uint32_t)chunk[12] << 24 |
+      (uint32_t)chunk[13] << 16 |
+      (uint32_t)chunk[14] << 8  |
+      (uint32_t)chunk[15];
     out->height = h;
     return 1;
 }
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
        printf("Failed");
        return -1;
     }
-    unsigned char buf[16];
+    unsigned char buf[8];
     fread(buf, sizeof(buf), 1, f);
     data_IHDR data = {0};
     get_png_data_IHDR(&data, f, 0, 0);
@@ -57,22 +57,8 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         unsigned char length[4];
-        unsigned char crc[4];
-        while(fread(length, sizeof(length), 1, f) == 1){
-            uint32_t l = (uint32_t)length[0] << 24 |
-            (uint32_t)length[1] << 16 |
-            (uint32_t)length[2] << 8  |
-            (uint32_t)length[3];
-            printf("here\n");
-            printf("%d\n", l);
-            fread(length, sizeof(length), 1, f);
-            for(int i = 0; i < l; i += 4){
-                fread(length, sizeof(length), 1, f);
-            }
-            
-            fread(crc, sizeof(crc), 1, f);
-
-        }
+        fread(length, sizeof(length), 1, f);
+       
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
