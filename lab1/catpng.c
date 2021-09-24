@@ -57,14 +57,19 @@ int main(int argc, char *argv[]){
     // unsigned char IHDR[17];
     // chunk_p chunkPTR[NUM_FILES];
     for(int i = 1; i < argc; i++){
+        U32* length = malloc(sizeof(U32));
+        U32* type = malloc(sizeof(U32));
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
         // Reading from IHDR
+        
         U32* widthPTR = malloc(sizeof(32));
         U32* heightPTR = malloc(sizeof(32));
         U8 IHDRData[5];
         U32 IHDRCRC[32];
 
+        fread(length, sizeof(U32), 1, f);
+        fread(type, sizeof(U32), 1, f);
         fread(widthPTR, sizeof(U32), 1, f);
         fread(heightPTR, sizeof(U32), 1, f);
         fread(IHDRData, sizeof(IHDRData), 1, f);
