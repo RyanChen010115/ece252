@@ -28,11 +28,8 @@ int is_png(U8 *buf, size_t n){
 }
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    unsigned char chunk[8];
+    unsigned char chunk[16];
     fread(chunk, sizeof(chunk), 1, fp);
-    for(int i = 0; i < 8; i++){
-        printf("%x", chunk[i]);
-    }
     uint32_t w = (uint32_t)chunk[0] << 24 |
       (uint32_t)chunk[1] << 16 |
       (uint32_t)chunk[2] << 8  |
@@ -59,10 +56,24 @@ int main(int argc, char *argv[]){
     if(is_png(buf, 8) == 1){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
+        unsigned char length[4];
+        unsigned char crc[4];
+        while(fread(length, sizeof(length), 1, f) == 1){
+            uint32_t l = (uint32_t)length[4] << 24 |
+            (uint32_t)length[5] << 16 |
+            (uint32_t)length[6] << 8  |
+            (uint32_t)length[7];
+            printf("%d", l);
+            fread(length, sizeof(length), 1, f);
+            fread(length, sizeof(length), l/4, f);
+            fread(crc, sizeof(crc), 1, f);
+            
+        }
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
     }
+    
     fclose(f);
     return 0;
 }
