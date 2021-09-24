@@ -114,7 +114,7 @@ int main(int argc, char *argv[]){
         free(CRC);
         fclose(f);
     }
-    printf("%d", chunkPTR[0]->crc);
+    //printf("%d", chunkPTR[0]->crc);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
