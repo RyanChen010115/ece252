@@ -81,7 +81,8 @@ int main(int argc, char *argv[]){
         fread(IDATdata, sizeof(U8) * num, 1, f);
         U8* unComp = malloc(sizeof(U8)*num*2);
         U64 lenUnComp = 0;
-        mem_inf(unComp, &lenUnComp, IDATdata, num);
+        int ret = 0;
+        ret = mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32) * num, 1, f);
         
 

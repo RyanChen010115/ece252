@@ -7,9 +7,15 @@ int is_png(U8 *buf, size_t n){
 }
 
 int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
-    char header[8];
-    fread(header, sizeof(header), 1, fp);
-    out->width = buf + 24 - 8;
-    out->height = buf + 24 - 4;
+    uint32_t w = (uint32_t)buf[4] << 24 |
+      (uint32_t)buf[5] << 16 |
+      (uint32_t)buf[6] << 8  |
+      (uint32_t)buf[7];
+    out->width = w;
+    uint32_t h = (uint32_t)buf[8] << 24 |
+      (uint32_t)buf[9] << 16 |
+      (uint32_t)buf[10] << 8  |
+      (uint32_t)buf[11];
+    out->height = h;
     return 1;
 }
