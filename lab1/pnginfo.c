@@ -11,6 +11,7 @@
 typedef unsigned char U8;
 typedef unsigned int  U32;
 
+
 typedef struct data_IHDR {// IHDR chunk data 
     U32 width;        /* width in pixels, big endian   */
     U32 height;       /* height in pixels, big endian  */
@@ -56,13 +57,18 @@ int main(int argc, char *argv[]){
     
     if(is_png(buf, 8) == 1){
         fread(buf4, sizeof(buf4), 1, f);
+        U32 l = (uint32_t)buf4[0] << 24 |
+            (uint32_t)buf4[1] << 16 |
+            (uint32_t)buf4[2] << 8  |
+            (uint32_t)buf4[3];
         unsigned char buf17[17];
         fread(buf17, sizeof(buf17), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
-
+        U32 crc_val = crc(buf17, l);
+        printf("%lu", crc_val);
 
 
         
