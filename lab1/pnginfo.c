@@ -57,6 +57,7 @@ int main(int argc, char *argv[]){
     if(is_png(buf, 8) == 1){
         fread(buf4, sizeof(buf4), 1, f);
         unsigned char buf17[17];
+        fread(buf17, sizeof(buf17), 1, f);
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, buf17);
         char* tld = strrchr(argv[1], '/');
