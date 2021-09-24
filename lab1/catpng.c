@@ -76,9 +76,9 @@ int main(int argc, char *argv[]){
         // U64 lenUnComp = 0;
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
         fread(CRC, sizeof(U32), 1, f);
-        for(int i = 0; i < 4; i++){
-            printf("%x", CRC[i]);
-        }
+        
+        printf("%x", CRC[0]);
+        
         
         chunk_p chunk = malloc(sizeof(chunk_p));
         chunk->length = num;
