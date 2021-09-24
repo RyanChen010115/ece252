@@ -42,8 +42,8 @@ int main(int argc, char *argv[]){
     FILE *wr = fopen("./result.png", "wb+");
     int height = 0;
     unsigned char header[8];
-    unsigned char length[4];
-    unsigned char buf[4];
+    // unsigned char length[4];
+    // unsigned char buf[4];
     unsigned char IHDR[17];
     for(int i = 0; i < argc; i++){
         FILE *f = fopen(argv[i], "rb");
@@ -52,6 +52,7 @@ int main(int argc, char *argv[]){
         data_IHDR data = {0};
         get_png_data_IHDR(&data, f, IHDR);
         printf("%d", data.height)
+        height += data.heigth;
         fclose(f);
     }
     fclose(wr);
