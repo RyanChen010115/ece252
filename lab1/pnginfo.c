@@ -72,10 +72,10 @@ int main(int argc, char *argv[]){
         char* tld = strrchr(argv[1], '/');
         printf("%s: %d x %d\n", tld + sizeof(char), data.width, data.height);
         U32 crc_val = crc(buf17, l + 4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
+        for(int i = 0; i < 4; i++){
+            printf("%x", crc4[i]);
+        }
+        printf("\n%x\n", crc_val);
         U32 crcTemp = (uint32_t)crc4[0] << 24 |
             (uint32_t)crc4[1] << 16 |
             (uint32_t)crc4[2] << 8  |
@@ -93,19 +93,19 @@ int main(int argc, char *argv[]){
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(bufx, l+4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
+        for(int i = 0; i < 4; i++){
+            printf("%x", crc4[i]);
+        }
+        printf("\n%x\n", crc_val);
 
         fread(buf4, sizeof(buf4), 1, f);
         fread(buf4, sizeof(buf4), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         crc_val = crc(buf4, 4);
-        // for(int i = 0; i < 4; i++){
-        //     printf("%x", crc4[i]);
-        // }
-        // printf("\n%x\n", crc_val);
+        for(int i = 0; i < 4; i++){
+            printf("%x", crc4[i]);
+        }
+        printf("\n%x\n", crc_val);
 
 
         // unsigned char length[4];
