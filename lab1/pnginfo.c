@@ -63,6 +63,7 @@ int main(int argc, char *argv[]){
             (uint32_t)length[1] << 16 |
             (uint32_t)length[2] << 8  |
             (uint32_t)length[3];
+            printf("here\n");
             printf("%d\n", l);
             fread(length, sizeof(length), 1, f);
             for(int i = 0; i < l; i += 4){
