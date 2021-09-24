@@ -26,7 +26,7 @@ typedef struct data_IHDR {// IHDR chunk data
 } data_IHDR;
 
 int is_png(U8 *buf, size_t n){
-    if(buff[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
+    if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
         return 1;
     }
     return 0;
