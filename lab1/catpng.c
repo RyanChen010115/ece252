@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
         tLength += num;
         U8* IDATdata = malloc(sizeof(U8) * num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
-        printf("%d, %d", height, width);
+        printf("%ld, %ld", height, width);
         // U8* unComp = malloc(sizeof(U8)*num*2);
         // U64 lenUnComp = 0;
         //mem_inf(unComp, &lenUnComp, IDATdata, num);
