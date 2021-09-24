@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
 
     FILE *wr = fopen("./result.png", "wb+");
     int height = 0;
-    //int tLength = 0;
+    int tLength = 0;
     unsigned char header[8];
 
     // unsigned char length[4];
@@ -81,9 +81,10 @@ int main(int argc, char *argv[]){
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
         height += num;
-
+        // Reading from IDAT
         U32* length = malloc(sizeof(U32));
         U8 type[4];
+        U32* CRC = malloc(sizeof(U32));
         fread(length, sizeof(U32), 1, f);
         fread(type, sizeof(type), 1, f);
         num = *length;
@@ -91,9 +92,14 @@ int main(int argc, char *argv[]){
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
-        printf("%d", num);
-
-        // Reading from IDAT
+        tLength += num;
+        U8* IDATdata = malloc(sizeof(U8) * num);
+        fread(IDATdata, sizeof(U8) * num, 1, f);
+        U8* unComp = malloc(sizeof(U8)*num*2);
+        int lenUnComp = 0;
+        mem_inf(unComp, &lenUnComp, IDATdata, num);
+        fread(CRC, sizeof(U32) * num, 1, f);
+        
 
         
         // fread(buf4, sizeof(buf4), 1, f);
@@ -118,6 +124,7 @@ int main(int argc, char *argv[]){
         free(IHDRtype);
         free(widthPTR);
         free(heightPTR);
+        free(length);
         fclose(f);
     }
     // for(int i = 0; i < NUM_FILES; i++){
