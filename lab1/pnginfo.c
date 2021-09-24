@@ -55,6 +55,7 @@ int main(int argc, char *argv[]){
     unsigned char buf[8];
     unsigned char buf4[4];
     unsigned char crc4[4];
+    unsigned char buf17[17];
     fread(buf, sizeof(buf), 1, f);
     
     if(is_png(buf, 8) == 1){
@@ -64,7 +65,6 @@ int main(int argc, char *argv[]){
             (uint32_t)buf4[2] << 8  |
             (uint32_t)buf4[3];
         printf("%d", l);
-        unsigned char buf17[17];
         fread(buf17, sizeof(buf17), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
         data_IHDR data = {0};
