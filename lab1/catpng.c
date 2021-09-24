@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "png_util/lab_png.h"
-#include "png_util/crc.c"
-#include "png_util/zutil.h"
+#include "starter/png_util/lab_png.h"
+#include "starter/png_util/crc.c"
+#include "starter/png_util/zutil.h"
 
 
 typedef unsigned char U8;
