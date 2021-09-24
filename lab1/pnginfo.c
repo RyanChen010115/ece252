@@ -35,7 +35,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, long offset, int whence){
       (uint32_t)chunk[2] << 8  |
       (uint32_t)chunk[3];
     out->width = w;
-    uint32_t h = (uint32_t)chunk[14] << 24 |
+    uint32_t h = (uint32_t)chunk[4] << 24 |
       (uint32_t)chunk[5] << 16 |
       (uint32_t)chunk[6] << 8  |
       (uint32_t)chunk[7];
