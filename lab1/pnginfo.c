@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
         for(int i = 0; i < 4; i++){
             printf("%x", crc4[i]);
         }
-        printf("%x", crc_val);
+        printf("\n%x\n", crc_val);
 
         
 
