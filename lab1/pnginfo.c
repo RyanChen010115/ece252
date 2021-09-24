@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
         unsigned char crc[4];
         fread(crc, sizeof(crc), 1, f);
         //compare CRC
-        printf("%c", crc[0]);
+        printf("%x", crc[0]);
         fread(length, sizeof(length), 1, f); // read length
         uint32_t l = (uint32_t)length[0] << 24 |
             (uint32_t)length[1] << 16 |
@@ -74,12 +74,12 @@ int main(int argc, char *argv[]){
         }
         fread(crc, sizeof(crc), 1, f); // read crc
         // compare CRC
-        printf("%c", crc[0]);
+        printf("%x", crc[0]);
         fread(length, sizeof(length), 1, f);
         fread(length, sizeof(length), 1, f);
         fread(crc, sizeof(crc), 1, f);
         //compare CRC
-        printf("%c", crc[0]);
+        printf("%x", crc[0]);
     } else{
         char* tld = strrchr(argv[1], '/');
         printf("%s: Not a PNG file\n", tld + 4);
