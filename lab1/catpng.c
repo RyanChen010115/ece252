@@ -60,8 +60,8 @@ int main(int argc, char *argv[]){
         FILE *f = fopen(argv[i], "rb");
         fread(header, sizeof(header), 1, f);
         // Reading from IHDR
-        U32* widthPTR = NULL;
-        U32* heightPTR = NULL;
+        U32* widthPTR = malloc(sizeof(32));
+        U32* heightPTR = malloc(sizeof(32));
         U8 IHDRData[5];
         U32 IHDRCRC[32];
 
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(IHDRCRC, sizeof(IHDRCRC), 1, f);
 
-        //height += *heightPTR;
+        height += *heightPTR;
         printf("%d", height);
         
         // fread(buf4, sizeof(buf4), 1, f);
