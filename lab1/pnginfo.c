@@ -82,8 +82,7 @@ int main(int argc, char *argv[]){
             (uint32_t)buf4[2] << 8  |
             (uint32_t)buf4[3];
         printf("%d", l);
-        const int lenght1 = l;
-        fread(buf4, sizeof(buf4), 1, f);
+        const int lenght1 = l + 4;
         unsigned char bufx[lenght1];
         fread(bufx, sizeof(bufx), 1, f);
         fread(crc4, sizeof(crc4), 1, f);
