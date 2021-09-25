@@ -19,10 +19,6 @@ typedef unsigned long int U64;
 int main(int argc, char *argv[]){
     const int NUM_FILES = argc - 1;
     FILE *wr = fopen("./result.png", "wb+");
-    if(f == NULL){
-       printf("File not found");
-       return -1;
-    }
     int tHeight = 0;
     int tLength = 0;
     U64 tLengthUC = 0;
@@ -37,6 +33,10 @@ int main(int argc, char *argv[]){
         U32* IHDRlength = malloc(sizeof(U32));
         U32* IHDRtype = malloc(sizeof(U32));
         FILE *f = fopen(argv[i], "rb");
+        if(f == NULL){
+            printf("File not found");
+            return -1;
+        }
         fread(header, sizeof(header), 1, f);
         // Reading from IHDR
         
