@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
     FILE *IDAT = fopen("./IDAT.png", "wb+");
     U64 width = 0;
     U32 tHeight = 0;
-    int tLength = 0;
+    U64 tLength = 0;
     U64 tLengthUC = 0;
     unsigned char header[8];
     U32 IEND[3];
@@ -133,8 +133,8 @@ int main(int argc, char *argv[]){
     const int uclength = tLengthUC;
     U8 finalChunk[uclength];
     fread(finalChunk, sizeof(finalChunk), 1, IDAT);
-
-    //mem_def()
+    U8 cChunk[tLength];
+    mem_def(cChunk, tLength, finalChunk, uclength);
     //write IEND to file
     printf("\n%d", tHeight);
     printf("\n%x", tHeight);
