@@ -119,7 +119,8 @@ int main(int argc, char *argv[]){
     fwrite(widthPTR, sizeof(U32), 1, IHDR);
     char temp[4];
     sprintf(temp, "%x", tHeight);
-    fwrite(temp, sizeof(temp), 1, IHDR);
+    printf("\n%x", temp);
+    fwrite(&tHeight, sizeof(temp), 1, IHDR);
     //write chunk to file
     //write IEND to file
     printf("\n%d", tHeight);
