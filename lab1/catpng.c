@@ -20,6 +20,7 @@ int main(int argc, char *argv[]){
     const int NUM_FILES = argc - 1;
     FILE *wr = fopen("./result.png", "wb+");
     FILE *IHDR = fopen("./IHDR.png", "wb+");
+    FILE *IDAT = fopen("./IDAT.png", "wb+");
     U32 tHeight = 0;
     int tLength = 0;
     U64 tLengthUC = 0;
@@ -31,6 +32,7 @@ int main(int argc, char *argv[]){
     U32* heightPTR = malloc(sizeof(U32));
     U8 IHDRData[5];
     U8 ICRC[4];
+    U64 lenArr[NUM_FILES];
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
@@ -93,7 +95,7 @@ int main(int argc, char *argv[]){
         chunk->p_data = (U8*)malloc(height*(width*4+1));
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
-
+        lenArr[i] = lenUnComp;
 
         fread(CRC, sizeof(U32), 1, f);
         chunk->crc = *CRC;
@@ -115,11 +117,17 @@ int main(int argc, char *argv[]){
     fwrite(header, sizeof(header), 1, wr);
     //write IHDR to file
     fwrite(IHDRlength, sizeof(U32), 1, wr);
-    fwrite(IHDRtype, sizeof(U32), 1, IHDR);
-    fwrite(widthPTR, sizeof(U32), 1, IHDR);
+    fwrite(IHDRtype, sizeof(U32), 1, wr);
+    fwrite(widthPTR, sizeof(U32), 1, wr);
     U32* temp = &tHeight;
-    fwrite(temp, sizeof(temp), 1, IHDR);
+    fwrite(temp, sizeof(temp), 1, wr);
+    fwrite(IHDRData, sizeof(IHDRData), 1, wr);
+    fwrite(ICRC, sizeof(ICRC), 1, wr);
     //write chunk to file
+    for(iht i = 0; i < NUM_FILES; i++){
+        fwrite(chunkPTR[i]->p_data, sizeof(chunkPTR[i]->p_data), 1, IDAT);
+    }
+    //mem_def()
     //write IEND to file
     printf("\n%d", tHeight);
     printf("\n%x", tHeight);
@@ -132,6 +140,7 @@ int main(int argc, char *argv[]){
     }
     fclose(wr);
     fclose(IHDR);
+    fclose(IDAT);
     free(widthPTR);
     free(heightPTR);
     free(IHDRtype);
