@@ -125,7 +125,7 @@ int main(int argc, char *argv[]){
     fwrite(ICRC, sizeof(ICRC), 1, wr);
     //write chunk to file
     for(int i = 0; i < NUM_FILES; i++){
-        fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenARrr[i], 1, IDAT);
+        fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenArr[i], 1, IDAT);
     }
     //mem_def()
     //write IEND to file
