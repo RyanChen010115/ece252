@@ -24,14 +24,16 @@ int main(int argc, char *argv[]){
     U64 tLengthUC = 0;
     unsigned char header[8];
     U32 IEND[3];
+    U32* IHDRlength = malloc(sizeof(U32));
+    U32* IHDRtype = malloc(sizeof(U32));
 
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
     chunk_p chunkPTR[NUM_FILES];
     for(int i = 1; i < argc; i++){
-        U32* IHDRlength = malloc(sizeof(U32));
-        U32* IHDRtype = malloc(sizeof(U32));
+        
+        
         FILE *f = fopen(argv[i], "rb");
         if(f == NULL){
             printf("File not found");
@@ -74,7 +76,6 @@ int main(int argc, char *argv[]){
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
-        printf("%d\n", num);
         tLength += num;
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
@@ -89,7 +90,6 @@ int main(int argc, char *argv[]){
         chunk->type[2] = IDATtype[2];
         chunk->type[3] = IDATtype[3];
         chunk->p_data = (U8*)malloc(height*(width*4+1));
-        printf("\n%ld\n", height*(width*4+1));
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
 
@@ -101,8 +101,8 @@ int main(int argc, char *argv[]){
         //Get End Chunk
         fread(IEND, sizeof(IEND), 1, f);
 
-        free(IHDRlength);
-        free(IHDRtype);
+        
+        
         free(widthPTR);
         free(heightPTR);
         free(length);
@@ -110,6 +110,13 @@ int main(int argc, char *argv[]){
         free(IDATdata);
         fclose(f);
     }
+    //write header to file
+    fwrite(header, sizeof(header), 1, wr);
+    //write IHDR to file
+    fwrite(IHDRlength, sizeof(U32), 1, wr);
+    fwrite(IHDRlength, sizeof(U32), 1, wr);
+    //write chunk to file
+    //write IEND to file
     printf("\n%ld", tLengthUC);
     printf("\n%d", tHeight);
     printf("\n%x", chunkPTR[0]->crc);
@@ -117,5 +124,8 @@ int main(int argc, char *argv[]){
     //     free(ptrArr[i]);
     // }
     fclose(wr);
+    
+    free(IHDRtype);
+    free(IHDRlength);
     return 0;
 }
