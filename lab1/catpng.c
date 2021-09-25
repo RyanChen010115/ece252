@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
-        printf("%d\n", num);
+        printf("%ld\n", num);
         tLength += num;
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
