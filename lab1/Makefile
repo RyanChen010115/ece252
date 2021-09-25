@@ -38,6 +38,7 @@ catpng.out: $(c_OBJS)
 .PHONY: clean
 clean:
 	rm -f *.d *.o *.out 
+	rm catpng findpng pnginfo
 
 
 # CC=gcc
