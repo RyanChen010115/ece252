@@ -21,6 +21,7 @@ int main(int argc, char *argv[]){
     FILE *wr = fopen("./result.png", "wb+");
     int tHeight = 0;
     int tLength = 0;
+    U64 tLengthUC = 0;
     unsigned char header[8];
 
     // unsigned char length[4];
@@ -73,13 +74,8 @@ int main(int argc, char *argv[]){
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
         // Do compression stuff
-        U8* unComp = (U8*)malloc(height*(width*4+1));
+        // U8* unComp = (U8*)malloc(height*(width*4+1));
         U64 lenUnComp = 0;
-        mem_inf(unComp, &lenUnComp, IDATdata, num);
-        fread(CRC, sizeof(U32), 1, f);
-        
-        printf("%x", CRC[0]);
-        
         
         chunk_p chunk = malloc(sizeof(chunk_p));
         chunk->length = num;
@@ -87,11 +83,15 @@ int main(int argc, char *argv[]){
         chunk->type[1] = IDATtype[1];
         chunk->type[2] = IDATtype[2];
         chunk->type[3] = IDATtype[3];
-        chunk->crc = *CRC;
-        chunk->p_data = malloc(sizeof(IDATdata));
-        chunk->p_data = IDATdata;
-        chunkPTR[i-1] = chunk;
+        chunk->p_data = (U8*)malloc(height*(width*4+1));
+        mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
+        tLengthUC += lenUnComp;
 
+
+        fread(CRC, sizeof(U32), 1, f);
+        chunk->crc = *CRC;
+        chunkPTR[i-1] = chunk;
+        printf("%x", CRC[0]);
 
         free(IHDRlength);
         free(IHDRtype);
