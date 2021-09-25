@@ -102,6 +102,7 @@ int main(int argc, char *argv[]){
         free(IDATdata);
         fclose(f);
     }
+    printf("\n%x", chunkPTR[0]->crc);
     printf("\n%ld", tLengthUC);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
