@@ -21,6 +21,7 @@ int main(int argc, char *argv[]){
     FILE *wr = fopen("./result.png", "wb+");
     FILE *IHDR = fopen("./IHDR.png", "wb+");
     FILE *IDAT = fopen("./IDAT.png", "wb+");
+    U64 width = 0;
     U32 tHeight = 0;
     int tLength = 0;
     U64 tLengthUC = 0;
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]){
         fread(IHDRData, sizeof(IHDRData), 1, f);
         fread(ICRC, sizeof(ICRC), 1, f);
         U64 height = *heightPTR;
-        U64 width = *widthPTR;
+        width = *widthPTR;
         height = ((height>>24)&0xff) | 
                     ((height<<8)&0xff0000) | 
                     ((height>>8)&0xff00) | 
@@ -127,6 +128,12 @@ int main(int argc, char *argv[]){
     for(int i = 0; i < NUM_FILES; i++){
         fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenArr[i], 1, IDAT);
     }
+    fclose(IDAT);
+    FILE *IDAT = fopen("./IDAT.png", "rb");
+    const int uclength = tLengthUC;
+    U8 finalChunk[uclength];
+    fread(finalChunk, sizeof(finalChunk), 1, IDAT);
+    
     //mem_def()
     //write IEND to file
     printf("\n%d", tHeight);
