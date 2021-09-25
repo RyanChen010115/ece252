@@ -19,14 +19,18 @@ typedef unsigned long int U64;
 int main(int argc, char *argv[]){
     const int NUM_FILES = argc - 1;
     FILE *wr = fopen("./result.png", "wb+");
-    int tHeight = 0;
+    FILE *IHDR = fopen("./IHDR.png", "wb+");
+    U32 tHeight = 0;
     int tLength = 0;
     U64 tLengthUC = 0;
     unsigned char header[8];
     U32 IEND[3];
     U32* IHDRlength = malloc(sizeof(U32));
     U32* IHDRtype = malloc(sizeof(U32));
-
+    U32* widthPTR = malloc(sizeof(U32));
+    U32* heightPTR = malloc(sizeof(U32));
+    U8 IHDRData[5];
+    U8 ICRC[4];
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
@@ -42,10 +46,7 @@ int main(int argc, char *argv[]){
         fread(header, sizeof(header), 1, f);
         // Reading from IHDR
         
-        U32* widthPTR = malloc(sizeof(U32));
-        U32* heightPTR = malloc(sizeof(U32));
-        U8 IHDRData[5];
-        U8 ICRC[4];
+        
 
         fread(IHDRlength, sizeof(U32), 1, f);
         fread(IHDRtype, sizeof(U32), 1, f);
@@ -103,28 +104,34 @@ int main(int argc, char *argv[]){
 
         
         
-        free(widthPTR);
-        free(heightPTR);
+        
         free(length);
         free(CRC);
         free(IDATdata);
+        
         fclose(f);
     }
     //write header to file
     fwrite(header, sizeof(header), 1, wr);
     //write IHDR to file
     fwrite(IHDRlength, sizeof(U32), 1, wr);
-    fwrite(IHDRlength, sizeof(U32), 1, wr);
+    fwrite(IHDRtype, sizeof(U32), 1, IHDR);
+    fwrite(widthPTR, sizeof(U32), 1, IHDR);
+    fwrite(&tHeight, sizeof(U32), 1, IHDR);
     //write chunk to file
     //write IEND to file
     printf("\n%ld", tLengthUC);
-    printf("\n%d", tHeight);
     printf("\n%x", chunkPTR[0]->crc);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
+    for(int i = 0; i < NUM_FILES; i++){
+        free(chunkPTR[i]);
+    }
     fclose(wr);
-    
+    fclose(IHDR);
+    free(widthPTR);
+    free(heightPTR);
     free(IHDRtype);
     free(IHDRlength);
     return 0;
