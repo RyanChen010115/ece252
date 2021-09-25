@@ -127,7 +127,7 @@ int main(int argc, char *argv[]){
     fwrite(IHDRData, sizeof(IHDRData), 1, wr);
     fwrite(ICRC, sizeof(ICRC), 1, wr);
     //write chunk to file
-    fwrite(tL, sizeof(U32), 1, wr);
+    fwrite(&tL, sizeof(U32), 1, wr);
     fwrite(chunkPTR[0]->type, sizeof(U32), 1, wr);
 
     for(int i = 0; i < NUM_FILES; i++){
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
     U8 cChunk[tLength];
     mem_def(cChunk, &tLength, finalChunk, uclength, Z_DEFAULT_COMPRESSION);
     fwrite(cChunk, tLength, 1, wr);
-    fwrite(chunkPTR[0]->crc, sizeof(U32), 1, wr);
+    fwrite(&chunkPTR[0]->crc, sizeof(U32), 1, wr);
     //write IEND to file
     fwrite(IEND, sizeof(IEND), 1, wr);
 
