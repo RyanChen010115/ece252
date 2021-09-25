@@ -49,7 +49,7 @@ int get_png_data_IHDR(struct data_IHDR *out, FILE *fp, unsigned char* buf){
 int main(int argc, char *argv[]){
     FILE *f = fopen(argv[1], "rb");
     if(f == NULL){
-       printf("File not found");
+       printf("File not found\n");
        return -1;
     }
     unsigned char buf[8];

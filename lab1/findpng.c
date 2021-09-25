@@ -33,6 +33,10 @@ int open(char *location){
     struct dirent *dir;
     DIR *d;
     d = opendir(location);
+    if(d == NULL){
+        printf("No such directory path\n");
+        return -1;
+    }
 	struct stat buf;
 	char buff[256];
 	if (location[0] != '.' || location[1] != '/'){
