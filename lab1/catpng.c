@@ -19,6 +19,10 @@ typedef unsigned long int U64;
 int main(int argc, char *argv[]){
     const int NUM_FILES = argc - 1;
     FILE *wr = fopen("./result.png", "wb+");
+    if(f == NULL){
+       printf("File not found");
+       return -1;
+    }
     int tHeight = 0;
     int tLength = 0;
     U64 tLengthUC = 0;
@@ -85,6 +89,7 @@ int main(int argc, char *argv[]){
         chunk->type[2] = IDATtype[2];
         chunk->type[3] = IDATtype[3];
         chunk->p_data = (U8*)malloc(height*(width*4+1));
+        printf("\n%d\n", height*(width*4+1);
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
 
@@ -92,7 +97,6 @@ int main(int argc, char *argv[]){
         fread(CRC, sizeof(U32), 1, f);
         chunk->crc = *CRC;
         chunkPTR[i-1] = chunk;
-        printf("%x", CRC[0]);
 
         //Get End Chunk
         fread(IEND, sizeof(IEND), 1, f);
@@ -106,8 +110,8 @@ int main(int argc, char *argv[]){
         free(IDATdata);
         fclose(f);
     }
-    printf("\n%x", chunkPTR[0]->crc);
     printf("\n%ld", tLengthUC);
+    printf("\n%d", tHeight);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
