@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
                     ((width<<8)&0xff0000) | 
                     ((width>>8)&0xff00) | 
                     ((width<<24)&0xff000000); 
-        tHeight += height;
+        tHeight += *heightPTR;
         // Reading from IDAT
         U32* length = malloc(sizeof(U32));
         U8 IDATtype[4];
