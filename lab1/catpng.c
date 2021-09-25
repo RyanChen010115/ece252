@@ -112,6 +112,7 @@ int main(int argc, char *argv[]){
     }
     printf("\n%ld", tLengthUC);
     printf("\n%d", tHeight);
+    printf("\n%x", chunkPTR[0]->crc);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
