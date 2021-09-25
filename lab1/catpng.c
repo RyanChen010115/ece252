@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
         free(IDATdata);
         fclose(f);
     }
-    printf("\n%d", tLengthUC);
+    printf("\n%ld", tLengthUC);
     // for(int i = 0; i < NUM_FILES; i++){
     //     free(ptrArr[i]);
     // }
