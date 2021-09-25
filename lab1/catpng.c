@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
                     ((num<<8)&0xff0000) | 
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
-        printf("%ld\n", num);
+        printf("%d\n", num);
         tLength += num;
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
         chunk->type[2] = IDATtype[2];
         chunk->type[3] = IDATtype[3];
         chunk->p_data = (U8*)malloc(height*(width*4+1));
-        printf("\n%d\n", height*(width*4+1);
+        printf("\n%ld\n", height*(width*4+1);
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
 
