@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
     U32* heightPTR = malloc(sizeof(U32));
     U8 IHDRData[5];
     U8 ICRC[4];
-    //U64 lenArr[NUM_FILES];
+    U64 lenArr[NUM_FILES];
     // unsigned char length[4];
     // unsigned char buf4[4];
     // unsigned char IHDR[17];
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
         chunk->p_data = (U8*)malloc(height*(width*4+1));
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
-        //lenArr[i] = lenUnComp;
+        lenArr[i] = lenUnComp;
 
         fread(CRC, sizeof(U32), 1, f);
         chunk->crc = *CRC;
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]){
     fwrite(ICRC, sizeof(ICRC), 1, wr);
     //write chunk to file
     for(int i = 0; i < NUM_FILES; i++){
-        fwrite(chunkPTR[i]->p_data, sizeof(chunkPTR[i]->p_data), 1, IDAT);
+        fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenARrr[i], 1, IDAT);
     }
     //mem_def()
     //write IEND to file
