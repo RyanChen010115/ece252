@@ -23,6 +23,7 @@ int main(int argc, char *argv[]){
     int tLength = 0;
     U64 tLengthUC = 0;
     unsigned char header[8];
+    U32 IEND[3];
 
     // unsigned char length[4];
     // unsigned char buf4[4];
@@ -92,6 +93,9 @@ int main(int argc, char *argv[]){
         chunk->crc = *CRC;
         chunkPTR[i-1] = chunk;
         printf("%x", CRC[0]);
+
+        //Get End Chunk
+        fread(IEND, sizeof(IEND), 1, f);
 
         free(IHDRlength);
         free(IHDRtype);
