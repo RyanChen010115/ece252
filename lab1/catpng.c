@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
         chunk->type[2] = IDATtype[2];
         chunk->type[3] = IDATtype[3];
         chunk->p_data = (U8*)malloc(height*(width*4+1));
-        printf("\n%ld\n", height*(width*4+1);
+        printf("\n%ld\n", height*(width*4+1));
         mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
         tLengthUC += lenUnComp;
 
