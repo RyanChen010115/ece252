@@ -18,7 +18,7 @@ typedef unsigned long int U64;
 
 int main(int argc, char *argv[]){
     const int NUM_FILES = argc - 1;
-    FILE *wr = fopen("./result.png", "wb+");
+    FILE *wr = fopen("./all.png", "wb+");
     FILE *IDAT = fopen("./IDAT.png", "wb+");
     U64 width = 0;
     U32 tHeight = 0;
