@@ -129,11 +129,11 @@ int main(int argc, char *argv[]){
         fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenArr[i], 1, IDAT);
     }
     fclose(IDAT);
-    FILE *IDAT = fopen("./IDAT.png", "rb");
+    FILE *IDAT2 = fopen("./IDAT.png", "rb");
     const int uclength = tLengthUC;
     U8 finalChunk[uclength];
     fread(finalChunk, sizeof(finalChunk), 1, IDAT);
-    
+
     //mem_def()
     //write IEND to file
     printf("\n%d", tHeight);
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]){
     }
     fclose(wr);
     fclose(IHDR);
-    fclose(IDAT);
+    fclose(IDAT2);
     free(widthPTR);
     free(heightPTR);
     free(IHDRtype);
