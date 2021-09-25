@@ -135,7 +135,7 @@ int main(int argc, char *argv[]){
     fread(finalChunk, sizeof(finalChunk), 1, IDAT);
     U8 cChunk[tLength];
     mem_def(cChunk, &tLength, finalChunk, uclength, Z_DEFAULT_COMPRESSION);
-    fwrite(cChunk, sizeof(cChunk), 1, wr);
+    fwrite(cChunk, tLength, 1, wr);
     //write IEND to file
     printf("\n%d", tHeight);
     printf("\n%x", tHeight);
