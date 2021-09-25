@@ -25,6 +25,7 @@ int main(int argc, char *argv[]){
     U32 tHeight = 0;
     U64 tLength = 0;
     U64 tLengthUC = 0;
+    U32 tL = 0;
     unsigned char header[8];
     U32 IEND[3];
     U32* IHDRlength = malloc(sizeof(U32));
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]){
                     ((num>>8)&0xff00) | 
                     ((num<<24)&0xff000000); 
         tLength += num;
+        tL += *length;
         U8* IDATdata = (U8*)malloc( num);
         fread(IDATdata, sizeof(U8) * num, 1, f);
         // Do compression stuff
@@ -125,6 +127,9 @@ int main(int argc, char *argv[]){
     fwrite(IHDRData, sizeof(IHDRData), 1, wr);
     fwrite(ICRC, sizeof(ICRC), 1, wr);
     //write chunk to file
+    fwrite(tL, sizeof(U32), 1, wr);
+    fwrite(chunkPTR[0]->type, sizeof(U32), 1, wr);
+
     for(int i = 0; i < NUM_FILES; i++){
         fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenArr[i], 1, IDAT);
     }
@@ -136,13 +141,10 @@ int main(int argc, char *argv[]){
     U8 cChunk[tLength];
     mem_def(cChunk, &tLength, finalChunk, uclength, Z_DEFAULT_COMPRESSION);
     fwrite(cChunk, tLength, 1, wr);
+    fwrite(chunkPTR[0]->crc, sizeof(U32), 1, wr);
     //write IEND to file
-    printf("\n%d", tHeight);
-    printf("\n%x", tHeight);
-    printf("\n%x", chunkPTR[0]->crc);
-    // for(int i = 0; i < NUM_FILES; i++){
-    //     free(ptrArr[i]);
-    // }
+    fwrite(IEND, sizeof(IEND), 1, wr);
+
     for(int i = 0; i < NUM_FILES; i++){
         free(chunkPTR[i]);
     }
