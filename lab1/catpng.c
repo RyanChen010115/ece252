@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
     fwrite(&tHeight, sizeof(U32), 1, IHDR);
     //write chunk to file
     //write IEND to file
-    printf("\n%ld", tHeight);
+    printf("\n%d", tHeight);
     printf("\n%x", tHeight);
     printf("\n%x", chunkPTR[0]->crc);
     // for(int i = 0; i < NUM_FILES; i++){
