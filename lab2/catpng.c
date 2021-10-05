@@ -122,7 +122,7 @@ int catpng(int argc, char *argv[]){
     U32 IEND[3];
 
     for(int i = 1; i < argc; i++){
-        printf("%s", argv[i-1]);
+        printf("%s\n", argv[i-1]);
         FILE *f = fopen(argv[i], "rb");
         if(f == NULL){
             printf("File not found");

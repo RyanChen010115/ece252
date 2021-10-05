@@ -181,6 +181,7 @@ void getImages(CURL *curl_handle, char* url, RECV_BUF recv_buf){
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
             imageName[recv_buf.seq] = fname;
+            printf("%s\n", imageName[recv_buf.seq]);
         }
 
         curl_easy_reset(curl_handle);
