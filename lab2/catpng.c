@@ -97,7 +97,7 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 }
 
 
-int catpng(int argc, char *argv[]){
+int catpng(int argc){
 
     const int NUM_FILES = argc - 1;
 
@@ -122,8 +122,10 @@ int catpng(int argc, char *argv[]){
     U32 IEND[3];
 
     for(int i = 1; i < argc; i++){
-        printf("%s\n", argv[i-1]);
-        FILE *f = fopen(argv[i], "rb");
+        char fname[256];
+        sprintf(fname, "./output_%d.png", i-1);
+        //printf("%s\n", argv[i-1]);
+        FILE *f = fopen(fname, "rb");
         if(f == NULL){
             printf("File not found");
             return -1;
