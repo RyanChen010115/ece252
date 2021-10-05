@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <curl/curl.h>
-//#include "./catpng.c"
+#include "./catpng.c"
 
 #define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=1"
 #define DUM_URL "https://example.com/"
@@ -217,7 +217,7 @@ int main( int argc, char** argv )
     }
 
     getImages(curl_handle, url, recv_buf);
-    //catpng(51);
+    catpng(51);
 
     // /* specify URL to get */
     // curl_easy_setopt(curl_handle, CURLOPT_URL, url);

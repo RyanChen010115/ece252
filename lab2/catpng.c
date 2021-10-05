@@ -97,7 +97,7 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 }
 
 
-int main(int argc, char **argv){
+int catpng(int argc){
 
     const int NUM_FILES = argc - 1;
 
