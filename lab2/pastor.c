@@ -217,7 +217,7 @@ int main( int argc, char** argv )
     }
 
     getImages(curl_handle, url, recv_buf);
-    catpng(10);
+    catpng(3);
 
     // /* specify URL to get */
     // curl_easy_setopt(curl_handle, CURLOPT_URL, url);
