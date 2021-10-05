@@ -143,8 +143,10 @@ int write_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
-void getImages(CURL *curl_handle, char* url, RECV_BUF recv_buf){
+void getImages(CURL *curl_handle, char* url){
     while(imageRecvCount < 50){
+        RECV_BUF recv_buf;
+        recv_buf_init(&recv_buf, BUF_SIZE);
         CURLcode res;
         char fname[256];
 
@@ -183,7 +185,7 @@ void getImages(CURL *curl_handle, char* url, RECV_BUF recv_buf){
             imageName[recv_buf.seq] = fname;
             printf("%s\n", imageName[recv_buf.seq]);
         }
-
+        free(recv_buf);
         curl_easy_reset(curl_handle);
     }
 }
@@ -193,11 +195,9 @@ int main( int argc, char** argv )
 {
     CURL *curl_handle;
     char url[256];
-    RECV_BUF recv_buf;
     // char fname[256];
     // pid_t pid =getpid();
-    
-    recv_buf_init(&recv_buf, BUF_SIZE);
+
     
     if (argc == 1) {
         strcpy(url, IMG_URL); 
@@ -216,7 +216,7 @@ int main( int argc, char** argv )
         return 1;
     }
 
-    getImages(curl_handle, url, recv_buf);
+    getImages(curl_handle, url);
     //catpng(3);
 
     // /* specify URL to get */
