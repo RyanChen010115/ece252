@@ -1,5 +1,5 @@
-# Makefile, ECE252  
-# Yiqing Huang, 2018/11/02
+# # Makefile, ECE252  
+# # Yiqing Huang, 2018/11/02
 
 CC = gcc 
 CFLAGS = -Wall -std=c99 -g # "curl-config --cflags" output is empty  
