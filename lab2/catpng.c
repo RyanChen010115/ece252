@@ -97,7 +97,7 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 }
 
 
-int main(int argc, char *argv[]){
+int catpng(int argc, char *argv[]){
 
     const int NUM_FILES = argc - 1;
 
@@ -251,5 +251,157 @@ int main(int argc, char *argv[]){
     free(IHDRlength);
     free(IHDRtype);
     free(IHDRdata);
+
+
+    /*
+    const int NUM_FILES = argc - 1;
+    FILE *wr = fopen("./all.png", "wb+");
+    FILE *IDAT = fopen("./IDAT.png", "wb+");
+    U64 width = 0;
+    U32 tHeight = 0;
+    U64 tLength = 0;
+    U64 tLengthUC = 0;
+    U32 tL = 0;
+    
+    U32 IEND[3];
+    
+    U32* widthPTR = malloc(sizeof(U32));
+    U32* heightPTR = malloc(sizeof(U32));
+    U8 IHDRData[5];
+    U8 ICRC[4];
+    U64 lenArr[NUM_FILES];
+    // unsigned char length[4];
+    // unsigned char buf4[4];
+    // unsigned char IHDR[17];
+    chunk_p chunkPTR[NUM_FILES];
+
+    unsigned char header[8];
+    U32* IHDRlength = malloc(sizeof(U32));
+    U32* IHDRtype = malloc(sizeof(U32));
+
+
+    for(int i = 1; i < argc; i++){
+        
+        
+        FILE *f = fopen(argv[i], "rb");
+        if(f == NULL){
+            printf("File not found");
+            return -1;
+        }
+        fread(header, sizeof(header), 1, f);
+        // Reading from IHDR
+        fread(IHDRlength, sizeof(U32), 1, f);
+        fread(IHDRtype, sizeof(U32), 1, f);
+        data_IHDR_p IHDR_data = getDataIHDR(f);
+        fread(ICRC, sizeof(ICRC), 1, f);
+
+        
+
+
+
+
+        fread(IHDRlength, sizeof(U32), 1, f);
+        fread(IHDRtype, sizeof(U32), 1, f);
+        fread(widthPTR, sizeof(U32), 1, f);
+        fread(heightPTR, sizeof(U32), 1, f);
+        fread(IHDRData, sizeof(IHDRData), 1, f);
+        fread(ICRC, sizeof(ICRC), 1, f);
+        U64 height = *heightPTR;
+        width = *widthPTR;
+        height = ((height>>24)&0xff) | 
+                    ((height<<8)&0xff0000) | 
+                    ((height>>8)&0xff00) | 
+                    ((height<<24)&0xff000000); 
+        width = ((width>>24)&0xff) | 
+                    ((width<<8)&0xff0000) | 
+                    ((width>>8)&0xff00) | 
+                    ((width<<24)&0xff000000); 
+        tHeight += *heightPTR;
+        // Reading from IDAT
+        U32* length = malloc(sizeof(U32));
+        U8 IDATtype[4];
+        U32* CRC = malloc(sizeof(U32));
+        fread(length, sizeof(U32), 1, f);
+        fread(IDATtype, sizeof(IDATtype), 1, f);
+        U32 num = *length;
+        
+        num = ((num>>24)&0xff) | 
+                    ((num<<8)&0xff0000) | 
+                    ((num>>8)&0xff00) | 
+                    ((num<<24)&0xff000000); 
+        tLength += num;
+        tL += *length;
+        U8* IDATdata = (U8*)malloc( num);
+        fread(IDATdata, sizeof(U8) * num, 1, f);
+        // Do compression stuff
+        // U8* unComp = (U8*)malloc(height*(width*4+1));
+        U64 lenUnComp = 0;
+        
+        chunk_p chunk = malloc(sizeof(chunk_p));
+        chunk->length = num;
+        chunk->type[0] = IDATtype[0];
+        chunk->type[1] = IDATtype[1];
+        chunk->type[2] = IDATtype[2];
+        chunk->type[3] = IDATtype[3];
+        chunk->p_data = (U8*)malloc(height*(width*4+1));
+        mem_inf(chunk->p_data, &lenUnComp, IDATdata, num);
+        tLengthUC += lenUnComp;
+        lenArr[i] = lenUnComp;
+
+        fread(CRC, sizeof(U32), 1, f);
+        chunk->crc = *CRC;
+        chunkPTR[i-1] = chunk;
+
+        //Get End Chunk
+        fread(IEND, sizeof(IEND), 1, f);
+
+        
+        
+        
+        free(length);
+        free(CRC);
+        free(IDATdata);
+        
+        fclose(f);
+    }
+    //write header to file
+    fwrite(header, sizeof(header), 1, wr);
+    //write IHDR to file
+    fwrite(IHDRlength, sizeof(U32), 1, wr);
+    fwrite(IHDRtype, sizeof(U32), 1, wr);
+    fwrite(widthPTR, sizeof(U32), 1, wr);
+    U32* temp = &tHeight ;
+    fwrite(temp, sizeof(temp), 1, wr);
+    fwrite(IHDRData, sizeof(IHDRData), 1, wr);
+    fwrite(ICRC, sizeof(ICRC), 1, wr);
+    //write chunk to file
+    fwrite(&tL, sizeof(U32), 1, wr);
+    fwrite(chunkPTR[0]->type, sizeof(U32), 1, wr);
+
+    for(int i = 0; i < NUM_FILES; i++){
+        fwrite(chunkPTR[i]->p_data, sizeof(U8) * lenArr[i], 1, IDAT);
+    }
+    fclose(IDAT);
+    FILE *IDAT2 = fopen("./IDAT.png", "rb");
+    const int uclength = tLengthUC;
+    U8 finalChunk[uclength];
+    fread(finalChunk, sizeof(finalChunk), 1, IDAT);
+    U8 cChunk[tLength];
+    mem_def(cChunk, &tLength, finalChunk, uclength, Z_DEFAULT_COMPRESSION);
+    fwrite(cChunk, tLength, 1, wr);
+    fwrite(&chunkPTR[0]->crc, sizeof(U32), 1, wr);
+    //write IEND to file
+    fwrite(IEND, sizeof(IEND), 1, wr);
+
+    for(int i = 0; i < NUM_FILES; i++){
+        free(chunkPTR[i]);
+    }
+    fclose(wr);
+    fclose(IDAT2);
+    free(widthPTR);
+    free(heightPTR);
+    free(IHDRtype);
+    free(IHDRlength);
+    */
     return 0;
 }

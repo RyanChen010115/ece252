@@ -44,7 +44,7 @@ catpng2.out: $(d_OBJS)
 
 .PHONY: clean
 clean:
-	rm -f *.d *.o *.out 
+	rm -f *.d *.o *.out *.png
 	rm catpng catpng2 findpng pnginfo
 
 
