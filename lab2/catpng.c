@@ -124,10 +124,10 @@ int main(int argc, char** argv){
     for(int i = 1; i < argc + 1; i++){
         // char fname[256];
         // sprintf(fname, "./output_%d.png", i-1);
-        // printf("%s\n", fname);
+        printf("%s\n", argv[i]);
         FILE *f = fopen(argv[i], "rb");
         if(f == NULL){
-            printf("File not found");
+            printf("File not found\n");
             return -1;
         }
 
