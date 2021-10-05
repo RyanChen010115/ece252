@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
 
     for(int i = 1; i < argc2; i++){
         char fname[256];
-        sprintf(fname, "output_%d.png", i-1);
+        sprintf(fname, "./output_%d.png", i-1);
         printf("%s\n", fname);
         FILE *f = fopen(argv[i], "rb");
         if(f == NULL){
