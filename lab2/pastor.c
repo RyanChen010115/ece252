@@ -32,6 +32,7 @@ int write_file(const char *path, const void *in, size_t len);
 
 int imageRecv[50] = {0};
 int imageRecvCount = 0;
+char *imageName[50] = {""};
 
 size_t header_cb_curl(char *p_recv, size_t size, size_t nmemb, void *userdata)
 {
@@ -178,6 +179,7 @@ void getImages(CURL *curl_handle, char* url, RECV_BUF recv_buf){
             imageRecvCount++;
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
+            imageName[recv_buf.seq] = fname;
         }
 
         curl_easy_reset(curl_handle);
