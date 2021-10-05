@@ -122,6 +122,9 @@ int main(int argc, char *argv[]){
     U32 IEND[3];
 
     for(int i = 1; i < argc; i++){
+        char fname[256];
+        sprintf(fname, "./output_%d.png", i-1);
+        printf("%s\n", fname);
         FILE *f = fopen(argv[i], "rb");
         if(f == NULL){
             printf("File not found");
