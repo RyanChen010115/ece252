@@ -185,7 +185,7 @@ void getImages(CURL *curl_handle, char* url){
             imageName[recv_buf.seq] = fname;
             printf("%s\n", imageName[recv_buf.seq]);
         }
-        free(recv_buf);
+        recv_buf_cleanup(&recv_buf);
         curl_easy_reset(curl_handle);
     }
 }
@@ -252,6 +252,5 @@ int main( int argc, char** argv )
     /* cleaning up */
     curl_easy_cleanup(curl_handle);
     curl_global_cleanup();
-    recv_buf_cleanup(&recv_buf);
     return 0;
 }
