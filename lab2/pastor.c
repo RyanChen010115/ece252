@@ -188,7 +188,7 @@ int catpng(int argc){
         free(IDATchunk->p_data);
         fclose(f);
     }
-    
+    printf("1\n");
 
     U8* uIDATdata = malloc(sizeof(U8)*totalDecompLength);
     int k = 0;
@@ -198,7 +198,7 @@ int catpng(int argc){
             k++;
         }
     }
-
+printf("2\n");
     U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
     U64 IDATcomplength = 0;
     mem_def(fIDATdata, &IDATcomplength, uIDATdata, totalDecompLength, Z_BEST_COMPRESSION);
@@ -212,7 +212,7 @@ int catpng(int argc){
     //fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
     chunk_p fIDATchunk = malloc(sizeof(struct chunk));
-    
+    printf("3\n");
     fIDATchunk->length = IDATcomplength;
     fIDATchunk->type[0] = chunkPTR[0]->type[0];
     fIDATchunk->type[1] = chunkPTR[0]->type[1];
@@ -224,7 +224,7 @@ int catpng(int argc){
 
     //writing to file
     FILE *all = fopen("all.png", "wb+");
-
+printf("4\n");
     //write header
     fwrite(header, sizeof(header), 1, all);
 
@@ -241,7 +241,7 @@ int catpng(int argc){
     IHDRcrc = swap(IHDRcrc);
     //printf("%x", IHDRcrc);
     fwrite(&IHDRcrc, sizeof(U32), 1, all);
-
+printf("5\n");
     //write IDAT
     U32 IDATlength = swap(fIDATchunk->length);
     IDATcrc = swap(IDATcrc);
@@ -249,7 +249,7 @@ int catpng(int argc){
     fwrite(fIDATchunk->type, sizeof(fIDATchunk->type), 1, all);
     fwrite(fIDATchunk->p_data, IDATcomplength, 1, all);
     fwrite(&IDATcrc, sizeof(U32), 1, all);
-
+printf("6\n");
     //write IEND
     fwrite(IEND, sizeof(IEND), 1, all);
 
