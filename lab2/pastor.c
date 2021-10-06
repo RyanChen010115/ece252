@@ -232,7 +232,7 @@ printf("4\n");
     fwrite(IHDRlength, sizeof(U32), 1, all);
     fwrite(IHDRtype, sizeof(U32), 1, all);
     fwrite(IHDRwidth, sizeof(U32), 1, all);
-    fwrite(tempHeight, sizeof(U32), 1, all);
+    fwrite(&tempHeight, sizeof(U32), 1, all);
     fwrite(&IHDRdata->bit_depth, sizeof(U8), 1, all);
     fwrite(&IHDRdata->color_type, sizeof(U8), 1, all);
     fwrite(&IHDRdata->compression, sizeof(U8), 1, all);
