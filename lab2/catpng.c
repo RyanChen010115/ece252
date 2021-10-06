@@ -98,7 +98,7 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 
 
 int catpng(int argc){
-    argc = 5;
+    argc = 3;
     const int NUM_FILES = argc - 1;
 
     U32 totalHeight = 0;
@@ -123,7 +123,7 @@ int catpng(int argc){
 
     for(int i = 1; i < argc; i++){
         char fname[256];
-        sprintf(fname, "./output_%d.png", i-1);
+        sprintf(fname, "./images/p_%d.png", i-1);
         printf("%s\n", fname);
         FILE *f = fopen(fname, "rb");
         if(f == NULL){
