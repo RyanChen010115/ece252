@@ -14,6 +14,7 @@
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
 #define BUF_INC  524288   /* 1024*512  = 0.5M */
+#define STRIP_HEIGHT 6
 
 #define max(a, b) \
    ({ __typeof__ (a) _a = (a); \
@@ -204,8 +205,8 @@ int catpng(int argc){
     // for(int i = 0; i < IDATcomplength; i++){
     //     printf("%x", fIDATdata[i]);
     // }
-
-    U32 IHDRcrc = getIHDRcrc(IHDRdata, IHDRtype, IHDRwidth, IHDRheight);
+    U32 tempHeight = (argc - 1) * STRIP_HEIGHT;
+    U32 IHDRcrc = getIHDRcrc(IHDRdata, IHDRtype, IHDRwidth, &tempHeight);
     //printf("%x\n", IHDRcrc);
     //fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
