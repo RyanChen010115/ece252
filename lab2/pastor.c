@@ -85,6 +85,7 @@ U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
     fwrite(IHDRtype, sizeof(U32), 1, write);
     fwrite(width, sizeof(U32), 1, write);
     fwrite(height, sizeof(U32), 1, write);
+    *height = swap(*height);
     printf("%x\n", *height);
     fwrite(&IDHRdata->bit_depth, sizeof(U8), 1, write);
     fwrite(&IDHRdata->color_type, sizeof(U8), 1, write);
