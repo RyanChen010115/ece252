@@ -43,7 +43,9 @@ void getDataIHDR(FILE *f, data_IHDR_p res, U32* IHDRwidth, U32* IHDRheight){
     *IHDRwidth = *width_ptr;
     fread(length_ptr, sizeof(U32), 1, f);
     res->height = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
+    printf("%x\n", *length_ptr);
     *IHDRheight += *length_ptr;
+    printf("%x\n", *IHDRheight);
     fread(temp_ptr, sizeof(U8), 1, f);
     res->bit_depth = *temp_ptr;
     fread(temp_ptr, sizeof(U8), 1, f);
@@ -206,7 +208,6 @@ int catpng(int argc){
     // for(int i = 0; i < IDATcomplength; i++){
     //     printf("%x", fIDATdata[i]);
     // }
-    printf("%x\n", *IHDRheight);
     U32 tempHeight = (argc - 1) * STRIP_HEIGHT;
     U32 IHDRcrc = getIHDRcrc(IHDRdata, IHDRtype, IHDRwidth, &tempHeight);
     //printf("%x\n", IHDRcrc);
