@@ -116,7 +116,6 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 
 
 int catpng(int argc){
-    argc = 4;
     const int NUM_FILES = argc - 1;
 
     U32 totalHeight = 0;
@@ -141,7 +140,7 @@ int catpng(int argc){
 
     for(int i = 1; i < argc; i++){
         char fname[256];
-        sprintf(fname, "./images/p_%d.png", i-1);
+        sprintf(fname, "./output_%d.png", i-1);
         printf("%s\n", fname);
         FILE *f = fopen(fname, "rb");
         if(f == NULL){
@@ -476,7 +475,7 @@ int main( int argc, char** argv )
     }
 
     getImages(curl_handle, url);
-    catpng(5);
+    catpng(51);
 
     // /* specify URL to get */
     // curl_easy_setopt(curl_handle, CURLOPT_URL, url);
