@@ -400,7 +400,7 @@ int write_file(const char *path, const void *in, size_t len)
 }
 
 void getImages(CURL *curl_handle, char* url){
-    while(imageRecvCount < 50){
+    while(imageRecvCount < 5){
         RECV_BUF recv_buf;
         recv_buf_init(&recv_buf, BUF_SIZE);
         CURLcode res;
