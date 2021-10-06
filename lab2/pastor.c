@@ -83,6 +83,7 @@ U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
     fwrite(IHDRtype, sizeof(U32), 1, write);
     fwrite(width, sizeof(U32), 1, write);
     fwrite(height, sizeof(U32), 1, write);
+    printf("%x\n", *height);
     fwrite(&IDHRdata->bit_depth, sizeof(U8), 1, write);
     fwrite(&IDHRdata->color_type, sizeof(U8), 1, write);
     fwrite(&IDHRdata->compression, sizeof(U8), 1, write);
@@ -231,7 +232,7 @@ int catpng(int argc){
     fwrite(IHDRlength, sizeof(U32), 1, all);
     fwrite(IHDRtype, sizeof(U32), 1, all);
     fwrite(IHDRwidth, sizeof(U32), 1, all);
-    fwrite(IHDRheight, sizeof(U32), 1, all);
+    fwrite(tempHeight, sizeof(U32), 1, all);
     fwrite(&IHDRdata->bit_depth, sizeof(U8), 1, all);
     fwrite(&IHDRdata->color_type, sizeof(U8), 1, all);
     fwrite(&IHDRdata->compression, sizeof(U8), 1, all);
