@@ -206,7 +206,7 @@ int catpng(int argc){
     // for(int i = 0; i < IDATcomplength; i++){
     //     printf("%x", fIDATdata[i]);
     // }
-    printf("%x\n", IHDRheight);
+    printf("%x\n", *IHDRheight);
     U32 tempHeight = (argc - 1) * STRIP_HEIGHT;
     U32 IHDRcrc = getIHDRcrc(IHDRdata, IHDRtype, IHDRwidth, &tempHeight);
     //printf("%x\n", IHDRcrc);
