@@ -91,6 +91,8 @@ U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
     fwrite(IHDRtype, sizeof(U32), 1, write);
     fwrite(width, sizeof(U32), 1, write);
     fwrite(height, sizeof(U32), 1, write);
+    *height = swap(*height);
+    printf("%x\n", *height);
     fwrite(&IDHRdata->bit_depth, sizeof(U8), 1, write);
     fwrite(&IDHRdata->color_type, sizeof(U8), 1, write);
     fwrite(&IDHRdata->compression, sizeof(U8), 1, write);
@@ -145,6 +147,7 @@ int catpng(int argc){
     for(int i = 1; i < argc; i++){
         char fname[256];
         sprintf(fname, "./output_%d.png", i-1);
+        printf("%s\n", fname);
         FILE *f = fopen(fname, "rb");
         if(f == NULL){
             printf("File not found\n");
@@ -405,6 +408,7 @@ int write_file(const char *path, const void *in, size_t len)
 }
 
 void * getImages(void *link){
+    printf("thread created\n");
     char *url = (char*)link;
     CURL *curl_handle = curl_easy_init();
     if (curl_handle == NULL) {
@@ -439,7 +443,6 @@ void * getImages(void *link){
 
         if( res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-            return NULL;
         } else {
             printf("%lu bytes received in memory %p, seq=%d.\n", \
                 recv_buf.size, recv_buf.buf, recv_buf.seq);
@@ -457,6 +460,7 @@ void * getImages(void *link){
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
             imageName[recv_buf.seq] = fname;
+            printf("%s\n", imageName[recv_buf.seq]);
             sem_post(&sem);    
         }
         recv_buf_cleanup(&recv_buf);
