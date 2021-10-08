@@ -413,7 +413,7 @@ void * getImages(void *link){
     CURL *curl_handle = curl_easy_init();
     if (curl_handle == NULL) {
         fprintf(stderr, "curl_easy_init: returned NULL\n");
-        return;
+        return (*void);
     }
     int lim = 50;
     while(imageRecvCount < lim){
@@ -477,9 +477,6 @@ void * getImages(void *link){
 
 int main( int argc, char** argv ) 
 {
-    //for not, let argv[2] be the number of threads input
-    // char fname[256];
-    // pid_t pid =getpid();
     int numThreads;
     
     sem_init(&sem,1,1);
@@ -505,41 +502,9 @@ int main( int argc, char** argv )
     }
     sem_wait(&catsem);
     catpng(51);
-
-    // /* specify URL to get */
-    // curl_easy_setopt(curl_handle, CURLOPT_URL, url);
-
-    // /* register write call back function to process received data */
-    // curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl3); 
-    // /* user defined data structure passed to the call back function */
-    // curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&recv_buf);
-
-    // /* register header call back function to process received header data */
-    // curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
-    // /* user defined data structure passed to the call back function */
-    // curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&recv_buf);
-
-    // /* some servers requires a user-agent field */
-    // curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
-    
-    // /* get it! */
-    // res = curl_easy_perform(curl_handle);
-
-    // if( res != CURLE_OK) {
-    //     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-    // } else {
-	// printf("%lu bytes received in memory %p, seq=%d.\n", 
-    //            recv_buf.size, recv_buf.buf, recv_buf.seq);
-    // }
-
-    // sprintf(fname, "./output_%d_%d.png", recv_buf.seq, pid);
-    // write_file(fname, recv_buf.buf, recv_buf.size);
-
-    /* cleaning up */
-    int error;
+   
     for(int i = 0; i< numThreads; i++) {
-        error = pthread_join(threadID[i], NULL);
+        pthread_join(threadID[i], NULL);
         fprintf(stderr, "Thread %d terminated\n", i);
     }
     curl_global_cleanup();
