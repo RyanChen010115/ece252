@@ -413,7 +413,7 @@ void * getImages(void *link){
     CURL *curl_handle = curl_easy_init();
     if (curl_handle == NULL) {
         fprintf(stderr, "curl_easy_init: returned NULL\n");
-        return (*void);
+        return NULL;
     }
     int lim = 50;
     while(imageRecvCount < lim){
