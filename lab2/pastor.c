@@ -405,11 +405,9 @@ int write_file(const char *path, const void *in, size_t len)
 }
 
 void * getImages(void *link){
-    printf("thread created\n");
     char *url = (char*)link;
     CURL *curl_handle = curl_easy_init();
     if (curl_handle == NULL) {
-        fprintf(stderr, "curl_easy_init: returned NULL\n");
         return NULL;
     }
     int lim = 50;
@@ -439,13 +437,11 @@ void * getImages(void *link){
         res = curl_easy_perform(curl_handle);
 
         if( res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             return NULL;
         } 
 
-    
+        sem_wait(&sem);
         if(imageRecv[recv_buf.seq] == 0){
-            sem_wait(&sem);
             if (imageRecvCount > lim){
                 sem_post(&sem);
                 break;
@@ -454,9 +450,9 @@ void * getImages(void *link){
             imageRecvCount++;
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
-            imageName[recv_buf.seq] = fname;
-            sem_post(&sem);    
+            imageName[recv_buf.seq] = fname;   
         }
+        sem_post(&sem); 
         recv_buf_cleanup(&recv_buf);
         curl_easy_reset(curl_handle);
     }
