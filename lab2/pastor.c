@@ -11,7 +11,7 @@
 #include <semaphore.h>
 
 
-#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=3"
+#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=1"
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
