@@ -7,9 +7,11 @@
 #include "./lab_png.h"
 #include "./crc.c"
 #include "./zutil.c"
+#include <pthread.h>
+#include <semaphore.h>
 
 
-#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=3"
+#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=1"
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
@@ -27,6 +29,10 @@
 typedef unsigned char U8;
 typedef unsigned int  U32;
 typedef unsigned long int U64;
+sem_t sem;
+sem_t catsem;
+int activeThreads = 0;
+char url[256];
 
 U32 swap(U32 value)
 {
@@ -144,7 +150,7 @@ int catpng(int argc){
         printf("%s\n", fname);
         FILE *f = fopen(fname, "rb");
         if(f == NULL){
-            printf("File not found");
+            printf("File not found\n");
             return -1;
         }
 
@@ -401,8 +407,16 @@ int write_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
-void getImages(CURL *curl_handle, char* url){
-    while(imageRecvCount < 50){
+void * getImages(void *link){
+    printf("thread created\n");
+    char *url = (char*)link;
+    CURL *curl_handle = curl_easy_init();
+    if (curl_handle == NULL) {
+        fprintf(stderr, "curl_easy_init: returned NULL\n");
+        return;
+    }
+    int lim = 50;
+    while(imageRecvCount < lim){
         RECV_BUF recv_buf;
         recv_buf_init(&recv_buf, BUF_SIZE);
         CURLcode res;
@@ -430,48 +444,66 @@ void getImages(CURL *curl_handle, char* url){
         if( res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         } else {
-        printf("%lu bytes received in memory %p, seq=%d.\n", \
+            printf("%lu bytes received in memory %p, seq=%d.\n", \
                 recv_buf.size, recv_buf.buf, recv_buf.seq);
         }
 
     
         if(imageRecv[recv_buf.seq] == 0){
+            sem_wait(&sem);
+            if (imageRecvCount > lim){
+                sem_post(&sem);
+                break;
+            }
             imageRecv[recv_buf.seq] = 1;
             imageRecvCount++;
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
             imageName[recv_buf.seq] = fname;
             printf("%s\n", imageName[recv_buf.seq]);
+            sem_post(&sem);    
         }
         recv_buf_cleanup(&recv_buf);
         curl_easy_reset(curl_handle);
     }
+    curl_easy_cleanup(curl_handle);
+    activeThreads--;
+    if (activeThreads == 0){
+        sem_post(&catsem);
+    }
+    pthread_exit(0);
 }
 
 
 int main( int argc, char** argv ) 
 {
-    CURL *curl_handle;
-    char url[256];
+    //for not, let argv[2] be the number of threads input
+    // char fname[256];
+    // pid_t pid =getpid();
+    int numThreads;
+    
+    sem_init(&sem,1,1);
     
     if (argc == 1) {
         strcpy(url, IMG_URL); 
+        numThreads  = 3;
     } else {
         strcpy(url, argv[1]);
+        numThreads  = atoi(argv[2]);
     }
     printf("%s: URL is %s\n", argv[0], url);
+    pthread_t threadID[numThreads];
+    sem_init(&catsem,1,1);
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
     /* init a curl session */
-    curl_handle = curl_easy_init();
-
-    if (curl_handle == NULL) {
-        fprintf(stderr, "curl_easy_init: returned NULL\n");
-        return 1;
+    sem_wait(&catsem);
+    for (int i = 0; i<numThreads;i++){
+        pthread_create(&threadID[i],NULL,&getImages,(void *)&url);
+        activeThreads++;
     }
-
-    getImages(curl_handle, url);
+    sem_wait(&catsem);
     catpng(51);
 
     // /* specify URL to get */
@@ -505,7 +537,11 @@ int main( int argc, char** argv )
     // write_file(fname, recv_buf.buf, recv_buf.size);
 
     /* cleaning up */
-    curl_easy_cleanup(curl_handle);
+    int error;
+    for(int i = 0; i< numThreads; i++) {
+        error = pthread_join(threadID[i], NULL);
+        fprintf(stderr, "Thread %d terminated\n", i);
+    }
     curl_global_cleanup();
     return 0;
 }
