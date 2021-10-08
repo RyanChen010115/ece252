@@ -11,7 +11,7 @@
 #include <semaphore.h>
 
 
-#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=2"
+#define IMG_URL "http://ece252-1.uwaterloo.ca:2520/image?img=1"
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
@@ -33,6 +33,8 @@ sem_t sem;
 sem_t catsem;
 int activeThreads = 0;
 char url[256];
+int numThreads;
+int lim = 50;
 
 U32 swap(U32 value)
 {
@@ -73,9 +75,7 @@ U32 getIDAT(FILE *f, chunk_p res){
     res->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
     fread(res->type, sizeof(res->type), 1, f);
     res->p_data = (U8*)malloc(res->length);
-    // for(int i = 0; i < res->length; i++){
-    //     fread(res->p_data + i, sizeof(U8), 1, f);
-    // }
+
     fread(res->p_data, sizeof(U8)*res->length, 1, f);
     fread(crc_ptr, sizeof(U32), 1, f);
     res->crc = *crc_ptr;
@@ -158,13 +158,10 @@ int catpng(int argc){
         getDataIHDR(f, IHDRdata, IHDRwidth, IHDRheight);
         fread(IHDRCRC, sizeof(U32), 1, f);
         totalHeight += IHDRdata->height;
-        //printf("%d, %d, %x\n", IHDRdata->width, IHDRdata->height, *IHDRCRC);
-
 
         //Read IDAT
         totalLength += getIDAT(f, IDATchunk);
         totalLengthN += IDATchunk->length;
-        //printf("%d, %x\n", IDATchunk->length, IDATchunk->crc);
 
         //Uncompress data
         chunk_p tempChunk = malloc(sizeof(struct chunk));
@@ -175,21 +172,14 @@ int catpng(int argc){
         tempChunk->type[2] = IDATchunk->type[2];
         tempChunk->type[3] = IDATchunk->type[3];
         U64 decompLength = (U64)((IHDRdata->height)*(IHDRdata->width * 4 + 1));
-        //printf("%ld\n", decompLength);
         tempChunk->p_data = (U8*)malloc(decompLength);
         mem_inf(tempChunk->p_data, &decompLength, IDATchunk->p_data, (U64)IDATchunk->length);
         totalDecompLength += decompLength;
         lenArr[i - 1] = decompLength;
         chunkPTR[i - 1] = tempChunk;
-        //printf("%ld, %x\n", lenArr[i-1], chunkPTR[i-1]->crc);
-        // for(int j = 0; j < IDATchunk->length; j++){
-        //     printf("%x", chunkPTR[i-1]->p_data[j]);
-        // }
         
         //Read IEND
         fread(IEND, sizeof(IEND), 1, f);
-        //printf("%x\n", IEND[2]);
-
         free(IDATchunk->p_data);
         fclose(f);
     }
@@ -207,14 +197,9 @@ int catpng(int argc){
     U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
     U64 IDATcomplength = 0;
     mem_def(fIDATdata, &IDATcomplength, uIDATdata, totalDecompLength, Z_BEST_COMPRESSION);
-    //printf("%ld\n", IDATcomplength);
-    // for(int i = 0; i < IDATcomplength; i++){
-    //     printf("%x", fIDATdata[i]);
-    // }
+
     U32 tempHeight = (argc - 1) * STRIP_HEIGHT;
     U32 IHDRcrc = getIHDRcrc(IHDRdata, IHDRtype, IHDRwidth, &tempHeight);
-    //printf("%x\n", IHDRcrc);
-    //fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
     chunk_p fIDATchunk = malloc(sizeof(struct chunk));
 
@@ -225,7 +210,6 @@ int catpng(int argc){
     fIDATchunk->type[3] = chunkPTR[0]->type[3];
     fIDATchunk->p_data = fIDATdata;
     U32 IDATcrc = getIDATcrc(fIDATchunk, IDATcomplength);
-    //printf("%x\n", IDATcrc);
 
     //writing to file
     FILE *all = fopen("all.png", "wb+");
@@ -244,7 +228,6 @@ int catpng(int argc){
     fwrite(&IHDRdata->filter, sizeof(U8), 1, all);
     fwrite(&IHDRdata->interlace, sizeof(U8), 1, all);
     IHDRcrc = swap(IHDRcrc);
-    //printf("%x", IHDRcrc);
     fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
     //write IDAT
@@ -257,14 +240,10 @@ int catpng(int argc){
 
     //write IEND
     fwrite(IEND, sizeof(IEND), 1, all);
-
-
     fclose(all);
-
     for(int i = 0; i < NUM_FILES; i++){
         free(chunkPTR[i]);
     }
-
     free(IHDRwidth);
     free(IHDRheight);
     free(fIDATchunk);
@@ -340,7 +319,6 @@ size_t write_cb_curl3(char *p_recv, size_t size, size_t nmemb, void *p_userdata)
 int recv_buf_init(RECV_BUF *ptr, size_t max_size)
 {
     void *p = NULL;
-    
     if (ptr == NULL) {
         return 1;
     }
@@ -410,13 +388,11 @@ void * getImages(void *link){
     if (curl_handle == NULL) {
         return NULL;
     }
-    int lim = 50;
     while(imageRecvCount < lim){
         RECV_BUF recv_buf;
         recv_buf_init(&recv_buf, BUF_SIZE);
         CURLcode res;
         char fname[256];
-
 
         /* specify URL to get */
         curl_easy_setopt(curl_handle, CURLOPT_URL, url);
@@ -465,20 +441,96 @@ void * getImages(void *link){
 }
 
 
+void getImagesSingleThread(void *link){
+    char *url = (char*)link;
+    CURL *curl_handle = curl_easy_init();
+    if (curl_handle == NULL) {
+        return;
+    }
+    while(imageRecvCount < lim){
+        RECV_BUF recv_buf;
+        recv_buf_init(&recv_buf, BUF_SIZE);
+        CURLcode res;
+        char fname[256];
+
+        /* specify URL to get */
+        curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+
+        /* register write call back function to process received data */
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl3); 
+        /* user defined data structure passed to the call back function */
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&recv_buf);
+
+        /* register header call back function to process received header data */
+        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
+        /* user defined data structure passed to the call back function */
+        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)&recv_buf);
+
+        /* some servers requires a user-agent field */
+        curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+        res = curl_easy_perform(curl_handle);
+
+        if( res != CURLE_OK) {
+            return;
+        } 
+
+        sem_wait(&sem);
+        if(imageRecv[recv_buf.seq] == 0){
+            if (imageRecvCount > lim){
+                sem_post(&sem);
+                break;
+            }
+            imageRecv[recv_buf.seq] = 1;
+            imageRecvCount++;
+            sprintf(fname, "./output_%d.png", recv_buf.seq);
+            write_file(fname, recv_buf.buf, recv_buf.size);
+            imageName[recv_buf.seq] = fname;   
+        }
+        sem_post(&sem); 
+        recv_buf_cleanup(&recv_buf);
+        curl_easy_reset(curl_handle);
+    }
+    curl_easy_cleanup(curl_handle);
+    activeThreads--;
+    if (activeThreads == 0){
+        sem_post(&catsem);
+    }
+}
+
+void assignVal(int num, char** argv){
+    if(strcmp(argv[num],"-t") == 0){
+        numThreads = atoi(argv[num+1]);
+    }
+    else if(strcmp(argv[num],"-n") == 0){
+        if (atoi(argv[num+1])>3){
+            printf("not a valid image number, keeping default of 1\n");
+        }
+        else{
+            url[44] = *argv[num+1];
+        }
+    }
+    else{
+        printf("format invalid, using default settings\n");
+        return;
+    }
+}
+
 int main( int argc, char** argv ) 
 {
-    int numThreads;
-    
-    sem_init(&sem,1,1);
-    
-    if (argc == 1) {
-        strcpy(url, IMG_URL); 
-        numThreads  = 3;
-    } else {
-        strcpy(url, argv[1]);
-        numThreads  = atoi(argv[2]);
+    strcpy(url, IMG_URL); 
+    numThreads = 1;
+    if (argc >= 3){
+        assignVal(1,argv);
     }
+    if (argc == 5){
+        assignVal(3,argv);
+    }
+    printf("%s\n",url);
+    sem_init(&sem,1,1);
+
     printf("%s: URL is %s\n", argv[0], url);
+    printf("Using %d concurrent threads\n",numThreads);
     pthread_t threadID[numThreads];
     sem_init(&catsem,1,1);
 
@@ -486,17 +538,24 @@ int main( int argc, char** argv )
 
     /* init a curl session */
     sem_wait(&catsem);
-    for (int i = 0; i<numThreads;i++){
-        pthread_create(&threadID[i],NULL,&getImages,(void *)&url);
-        activeThreads++;
+    if (numThreads > 1){
+        for (int i = 1; i<numThreads;i++){
+            activeThreads++;
+            pthread_create(&threadID[i],NULL,&getImages,(void *)&url);
+        }
     }
+    activeThreads++;
+    getImagesSingleThread(&url);
+    
     sem_wait(&catsem);
     catpng(51);
-   
-    for(int i = 0; i< numThreads; i++) {
-        pthread_join(threadID[i], NULL);
-        fprintf(stderr, "Thread %d terminated\n", i);
+    if (numThreads > 1){
+        for(int i = 1; i< numThreads; i++) {
+            pthread_join(threadID[i], NULL);
+            fprintf(stderr, "Thread %d terminated\n", i);
+        }
     }
+    
     curl_global_cleanup();
     return 0;
 }
