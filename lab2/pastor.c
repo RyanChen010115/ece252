@@ -553,6 +553,7 @@ int main( int argc, char** argv )
             pthread_join(threadID[i], NULL);
         }
     }
+    printf("Proccess Finished");
     
     curl_global_cleanup();
     return 0;
