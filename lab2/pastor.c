@@ -49,9 +49,7 @@ void getDataIHDR(FILE *f, data_IHDR_p res, U32* IHDRwidth, U32* IHDRheight){
     *IHDRwidth = *width_ptr;
     fread(length_ptr, sizeof(U32), 1, f);
     res->height = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
-    printf("%x\n", *length_ptr);
     *IHDRheight += *length_ptr;
-    printf("%x\n", *IHDRheight);
     fread(temp_ptr, sizeof(U8), 1, f);
     res->bit_depth = *temp_ptr;
     fread(temp_ptr, sizeof(U8), 1, f);
@@ -147,7 +145,6 @@ int catpng(int argc){
     for(int i = 1; i < argc; i++){
         char fname[256];
         sprintf(fname, "./output_%d.png", i-1);
-        printf("%s\n", fname);
         FILE *f = fopen(fname, "rb");
         if(f == NULL){
             printf("File not found\n");
@@ -443,10 +440,8 @@ void * getImages(void *link){
 
         if( res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        } else {
-            printf("%lu bytes received in memory %p, seq=%d.\n", \
-                recv_buf.size, recv_buf.buf, recv_buf.seq);
-        }
+            return NULL;
+        } 
 
     
         if(imageRecv[recv_buf.seq] == 0){
@@ -460,7 +455,6 @@ void * getImages(void *link){
             sprintf(fname, "./output_%d.png", recv_buf.seq);
             write_file(fname, recv_buf.buf, recv_buf.size);
             imageName[recv_buf.seq] = fname;
-            printf("%s\n", imageName[recv_buf.seq]);
             sem_post(&sem);    
         }
         recv_buf_cleanup(&recv_buf);
