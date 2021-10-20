@@ -265,7 +265,7 @@ int main( int argc, char** argv )
         } else {
             printf("%lu bytes received in memory %p, seq=%d.\n",  \
                    p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
-            buffer[0] = *p_shm_recv_buf;
+            buffer[1] = *p_shm_recv_buf;
         }
         /* cleaning up */
         curl_easy_cleanup(curl_handle);
@@ -275,7 +275,7 @@ int main( int argc, char** argv )
     } else if ( cpid > 0 ) {    /* parent proc */
         int state;
         waitpid(cpid, &state, 0);
-        printf("Received ./output_%d_%d.png", buffer[0].seq, pid);
+        printf("Received ./output_%d_%d.png", buffer[1].seq, pid);
         //write_file(fname, p_shm_recv_buf->buf, p_shm_recv_buf->size);
         shmdt(buffer);
         shmctl(shmid, IPC_RMID, NULL);
