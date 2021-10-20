@@ -19,6 +19,14 @@
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 10240  /* 1024*10 = 10K */
+#define BUF_LENGTH 20
+
+sem_t *itemSem;
+sem_t *spaceSem;
+sem_t *bufferMutex;
+
+int pindex = 0;
+int cindex = 0;
 
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
@@ -110,6 +118,16 @@ int shm_recv_buf_init(RECV_BUF *ptr, size_t nbytes)
     ptr->seq = -1;              /* valid seq should be non-negative */
     
     return 0;
+    // if ( ptr == NULL ) {
+    //     return 1;
+    // }
+    // for(int i = 0; i < BUF_LENGTH; i++){
+    //     ptr[i].buf = (char *)(&ptr[i]) + sizeof(RECV_BUF);
+    //     ptr[i].size = 0;
+    //     ptr[i].max_size = nbytes;
+    //     ptr[i].seq = -1;              /* valid seq should be non-negative */
+    // }
+    // return 0;
 }
 
 int write_file(const char *path, const void *in, size_t len)
@@ -144,22 +162,20 @@ int main( int argc, char** argv )
     CURL *curl_handle;
     CURLcode res;
     char url[256];
-    RECV_BUF *p_shm_recv_buf;
+    RECV_BUF *buffer;
     int shmid;
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
-    char fname[256];
-    pid_t pid =getpid();
+    pid_t pid = getpid();
     pid_t cpid = 0;
     
     printf("shm_size = %d.\n", shm_size);
-    shmid = shmget(IPC_PRIVATE, shm_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     if ( shmid == -1 ) {
         perror("shmget");
         abort();
     }
 
-    p_shm_recv_buf = shmat(shmid, NULL, 0);
-    shm_recv_buf_init(p_shm_recv_buf, BUF_SIZE);
+    buffer = shmat(shmid, NULL, 0);
 
 
     if (argc == 1) {
@@ -169,10 +185,31 @@ int main( int argc, char** argv )
     }
     printf("%s: URL is %s\n", argv[0], url);
 
+    //Setting up semaphores for processes
+    int shmid_sem_items = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_sem_spaces = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_sem_buffer = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+
+    itemSem = shmat(shmid_sem_items, NULL, 0);
+    spaceSem = shmat(shmid_sem_spaces, NULL, 0);
+    bufferMutex = shmat(shmid_sem_buffer, NULL, 0);
+
+    if ( itemSem == (void *) -1 || spaceSem == (void *) -1 || bufferMutex == (void *) -1) {
+        perror("shmat");
+        abort();
+    }
+
+    sem_init(itemSem, 1, 0);
+    sem_init(spaceSem, 1, BUF_SIZE);
+    sem_init(bufferMutex, 1, 1);
+
     cpid = fork();
 
     if ( cpid == 0 ) {          /* child proc download */
-    
+
+        RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF));
+        //shm_recv_buf_init(p_shm_recv_buf, BUF_SIZE);
+
         curl_global_init(CURL_GLOBAL_DEFAULT);
 
         /* init a curl session */
@@ -208,18 +245,19 @@ int main( int argc, char** argv )
         } else {
             printf("%lu bytes received in memory %p, seq=%d.\n",  \
                    p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
-        
+            buffer[0] = *p_shm_recv_buf;
         }
         /* cleaning up */
         curl_easy_cleanup(curl_handle);
         curl_global_cleanup();
-        shmdt(p_shm_recv_buf);
+        shmdt(buffer);
+        free(p_shm_recv_buf);
     } else if ( cpid > 0 ) {    /* parent proc */
         int state;
         waitpid(cpid, &state, 0);
-        printf("Received ./output_%d_%d.png", p_shm_recv_buf->seq, pid);
+        printf("Received ./output_%d_%d.png", buffer[0].seq, pid);
         //write_file(fname, p_shm_recv_buf->buf, p_shm_recv_buf->size);
-        shmdt(p_shm_recv_buf);
+        shmdt(buffer);
         shmctl(shmid, IPC_RMID, NULL);
     } else {
         perror("fork");
