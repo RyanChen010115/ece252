@@ -91,7 +91,7 @@ size_t write_cb_curl(char *p_recv, size_t size, size_t nmemb, void *p_userdata)
  
     if (p->size + realsize + 1 > p->max_size) {/* hope this rarely happens */ 
         fprintf(stderr, "User buffer is too small, abort...\n");
-        abort();
+        //abort();
     }
 
     memcpy(p->buf + p->size, p_recv, realsize); /*copy data from libcurl*/
@@ -207,7 +207,7 @@ int main( int argc, char** argv )
 
     if ( cpid == 0 ) {          /* child proc download */
 
-        RECV_BUF *p_shm_recv_buf = malloc(1048576 + sizeof(RECV_BUF));
+        RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
         //shm_recv_buf_init(p_shm_recv_buf, BUF_SIZE);
 
         curl_global_init(CURL_GLOBAL_DEFAULT);
