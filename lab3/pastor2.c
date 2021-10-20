@@ -207,7 +207,7 @@ int main( int argc, char** argv )
 
     if ( cpid == 0 ) {          /* child proc download */
 
-        RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
+        RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE*10);
         //shm_recv_buf_init(p_shm_recv_buf, BUF_SIZE);
 
         curl_global_init(CURL_GLOBAL_DEFAULT);
