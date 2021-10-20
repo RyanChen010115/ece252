@@ -217,8 +217,8 @@ int main( int argc, char** argv )
     } else if ( cpid > 0 ) {    /* parent proc */
         int state;
         waitpid(cpid, &state, 0);
-        sprintf(fname, "./output_%d_%d.png", p_shm_recv_buf->seq, pid);
-        write_file(fname, p_shm_recv_buf->buf, p_shm_recv_buf->size);
+        printf("Received ./output_%d_%d.png", p_shm_recv_buf->seq, pid);
+        //write_file(fname, p_shm_recv_buf->buf, p_shm_recv_buf->size);
         shmdt(p_shm_recv_buf);
         shmctl(shmid, IPC_RMID, NULL);
     } else {
