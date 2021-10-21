@@ -29,6 +29,8 @@ sem_t *bufferMutex;
 int pindex = 0;
 int cindex = 0;
 
+int totalCount = 0;
+
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
    the last member field (i.e. seq) in the structure.
@@ -227,6 +229,8 @@ int main( int argc, char** argv )
 
     if ( cpid == 0 ) {          /* child proc download */
 
+        printf("%s\n", url);
+
         RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
         recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
 
@@ -273,6 +277,7 @@ int main( int argc, char** argv )
         shmdt(buffer);
         free(p_shm_recv_buf);
     } else if ( cpid > 0 ) {    /* parent proc */
+        printf("%s\n", url);
         int state;
         waitpid(cpid, &state, 0);
         printf("Received ./output_%d_%d.png", buffer[1].seq, pid);
