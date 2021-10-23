@@ -302,7 +302,7 @@ int main( int argc, char** argv )
     }
 
     sem_init(itemSem, 1, 0);
-    sem_init(spaceSem, 1, BUF_SIZE);
+    sem_init(spaceSem, 1, BUF_LENGTH);
     sem_init(bufferMutex, 1, 1);
     sem_init(countMutex, 1, 1);
 
