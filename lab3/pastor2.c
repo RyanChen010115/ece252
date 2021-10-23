@@ -196,6 +196,7 @@ void producer(RECV_BUF* buffer){
 
             //Checking if all images has been received
             int tc = totalCount;
+            printf("%d\n", tc);
             if(tc >= 50){
                 stay = 0;
                 break;
