@@ -25,6 +25,7 @@
 sem_t *itemSem;
 sem_t *spaceSem;
 sem_t *bufferMutex;
+sem_t *countMutex;
 
 int pindex = 0;
 int cindex = 0;
@@ -195,14 +196,14 @@ void producer(RECV_BUF* buffer){
         while(stay == 1){
 
             //Checking if all images has been received
+            sem_wait(countMutex);
             int tc = totalCount;
-            printf("%d\n", tc);
+            totalCount++;
+            sem_post(countMutex);
             if(tc >= 50){
-                printf("here\n");
+
                 stay = 0;
                 break;
-            }else{
-                totalCount++;
             }
 
             //Get URL
@@ -281,10 +282,12 @@ int main( int argc, char** argv )
     int shmid_sem_items = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_spaces = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_buffer = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_sem_count = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     itemSem = shmat(shmid_sem_items, NULL, 0);
     spaceSem = shmat(shmid_sem_spaces, NULL, 0);
     bufferMutex = shmat(shmid_sem_buffer, NULL, 0);
+    countMutex = shmat(shmid_sem_count, NULL, 0);
 
     if ( itemSem == (void *) -1 || spaceSem == (void *) -1 || bufferMutex == (void *) -1) {
         perror("shmat");
@@ -294,6 +297,7 @@ int main( int argc, char** argv )
     sem_init(itemSem, 1, 0);
     sem_init(spaceSem, 1, BUF_SIZE);
     sem_init(bufferMutex, 1, 1);
+    sem_init(countMutex, 1, 1);
 
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
