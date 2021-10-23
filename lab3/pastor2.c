@@ -240,11 +240,11 @@ void producer(RECV_BUF* buffer){
             } else {
                 printf("%lu bytes received in memory %p, seq=%d.\n",  \
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
+                sem_wait(bufferMutex);
                 buffer[tc] = *p_shm_recv_buf;
+                sem_post(bufferMutex);
             }
             /* cleaning up */
-            
-            
             free(p_shm_recv_buf);
             curl_easy_reset(curl_handle);
         }
@@ -306,6 +306,7 @@ int main( int argc, char** argv )
 
     if ( cpid == 0 ) {          /* child proc download */
 
+        producer(buffer);
         producer(buffer);
        
     } else if ( cpid > 0 ) {    /* parent proc */
