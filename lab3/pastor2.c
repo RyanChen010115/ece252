@@ -27,10 +27,10 @@ sem_t *spaceSem;
 sem_t *bufferMutex;
 sem_t *countMutex;
 
-int pindex = 0;
-int cindex = 0;
+int *pindex = 0;
+int *cindex = 0;
 
-int totalCount = 0;
+int *totalCount = 0;
 
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
@@ -197,8 +197,8 @@ void producer(RECV_BUF* buffer){
 
             //Checking if all images has been received
             sem_wait(countMutex);
-            int tc = totalCount;
-            totalCount++;
+            int tc = *totalCount;
+            (*totalCount)++;
             sem_post(countMutex);
             if(tc >= 50){
 
@@ -240,9 +240,12 @@ void producer(RECV_BUF* buffer){
             } else {
                 printf("%lu bytes received in memory %p, seq=%d.\n",  \
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
+                sem_wait(itemSem);
                 sem_wait(bufferMutex);
-                buffer[tc] = *p_shm_recv_buf;
+                buffer[*pindex] = *p_shm_recv_buf;
+                *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
+                sem_post(spaceSem);
             }
             /* cleaning up */
             free(p_shm_recv_buf);
@@ -302,6 +305,18 @@ int main( int argc, char** argv )
     sem_init(spaceSem, 1, BUF_SIZE);
     sem_init(bufferMutex, 1, 1);
     sem_init(countMutex, 1, 1);
+
+    //Setting up index
+    int shmid_pindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_cindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+
+    pindex = shmat(shmid_pindex, NULL, 0);
+    cindex = shmat(shmid_cindex, NULL, 0);
+
+    //Setting up total count
+    int shmid_count = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+
+    totalCount = shmat(shmid_count, NULL, 0);
 
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
