@@ -240,12 +240,12 @@ void producer(RECV_BUF* buffer){
             } else {
                 printf("%lu bytes received in memory %p, seq=%d.\n",  \
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
-                sem_wait(itemSem);
+                sem_wait(spaceSem);
                 sem_wait(bufferMutex);
                 buffer[*pindex] = *p_shm_recv_buf;
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
-                sem_post(spaceSem);
+                sem_post(itemSem);
             }
             /* cleaning up */
             free(p_shm_recv_buf);
