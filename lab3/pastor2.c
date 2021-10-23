@@ -252,13 +252,17 @@ void producer(RECV_BUF* buffer){
         curl_easy_cleanup(curl_handle);
 }
 
+void consumer(RECV_BUF* buffer){
+    printf("Received ./output_%d.png", buffer[1].seq);
+}
+
 int main( int argc, char** argv ) 
 {
     char url[256];
     RECV_BUF *buffer;
     int shmid;
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
-    pid_t pid = getpid();
+    // pid_t pid = getpid();
     pid_t cpid = 0;
     
     printf("shm_size = %d.\n", shm_size);
@@ -310,11 +314,9 @@ int main( int argc, char** argv )
         producer(buffer);
        
     } else if ( cpid > 0 ) {    /* parent proc */
-        printf("%s\n", url);
         int state;
         waitpid(cpid, &state, 0);
-        printf("Received ./output_%d_%d.png", buffer[1].seq, pid);
-        //write_file(fname, p_shm_recv_buf->buf, p_shm_recv_buf->size);
+        consumer(buffer);
         shmdt(buffer);
         shmctl(shmid, IPC_RMID, NULL);
     } else {
