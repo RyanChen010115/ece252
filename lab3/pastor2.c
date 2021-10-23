@@ -240,13 +240,12 @@ void producer(RECV_BUF* buffer){
                 buffer[tc] = *p_shm_recv_buf;
             }
             /* cleaning up */
-            curl_easy_reset(curl_handle);
-            curl_global_cleanup();
+            
             shmdt(buffer);
             free(p_shm_recv_buf);
-
+            curl_easy_reset(curl_handle);
         }
-        
+        curl_easy_cleanup(curl_handle);
 }
 
 int main( int argc, char** argv ) 
