@@ -179,16 +179,9 @@ int write_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
-void producer(char* url, RECV_BUF* buffer){
+void producer(RECV_BUF* buffer){
         CURL *curl_handle;
         CURLcode res;
-        printf("%s\n", url);
-
-        RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
-        recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
-
-        
-
         /* init a curl session */
         curl_handle = curl_easy_init();
 
@@ -197,38 +190,63 @@ void producer(char* url, RECV_BUF* buffer){
             return;
         }
 
-        /* specify URL to get */
-        curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+        int stay = 1;
 
-        /* register write call back function to process received data */
-        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl); 
-        /* user defined data structure passed to the call back function */
-        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)p_shm_recv_buf);
+        while(stay == 1){
 
-        /* register header call back function to process received header data */
-        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
-        /* user defined data structure passed to the call back function */
-        curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)p_shm_recv_buf);
+            //Checking if all images has been received
+            int tc = totalCount;
+            if(tc >= 50){
+                stay = 0;
+                break;
+            }else{
+                totalCount++;
+            }
 
-        /* some servers requires a user-agent field */
-        curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+            //Get URL
+            char url[256];
+            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
+            printf("%s\n", url);
 
-    
-        /* get it! */
-        res = curl_easy_perform(curl_handle);
 
-        if( res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        } else {
-            printf("%lu bytes received in memory %p, seq=%d.\n",  \
-                   p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
-            buffer[1] = *p_shm_recv_buf;
+            RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
+            recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
+
+            /* specify URL to get */
+            curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+
+            /* register write call back function to process received data */
+            curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl); 
+            /* user defined data structure passed to the call back function */
+            curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)p_shm_recv_buf);
+
+            /* register header call back function to process received header data */
+            curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
+            /* user defined data structure passed to the call back function */
+            curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)p_shm_recv_buf);
+
+            /* some servers requires a user-agent field */
+            curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+        
+            /* get it! */
+            res = curl_easy_perform(curl_handle);
+
+            if( res != CURLE_OK) {
+                fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            } else {
+                printf("%lu bytes received in memory %p, seq=%d.\n",  \
+                    p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
+                buffer[tc] = *p_shm_recv_buf;
+            }
+            /* cleaning up */
+            curl_easy_cleanup(curl_handle);
+            curl_global_cleanup();
+            shmdt(buffer);
+            free(p_shm_recv_buf);
+
         }
-        /* cleaning up */
-        curl_easy_cleanup(curl_handle);
-        curl_global_cleanup();
-        shmdt(buffer);
-        free(p_shm_recv_buf);
+        
 }
 
 int main( int argc, char** argv ) 
@@ -282,7 +300,7 @@ int main( int argc, char** argv )
 
     if ( cpid == 0 ) {          /* child proc download */
 
-        producer(url, buffer);
+        producer(buffer);
        
     } else if ( cpid > 0 ) {    /* parent proc */
         printf("%s\n", url);
