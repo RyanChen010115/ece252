@@ -198,6 +198,7 @@ void producer(RECV_BUF* buffer){
             int tc = totalCount;
             printf("%d\n", tc);
             if(tc >= 50){
+                printf("here\n");
                 stay = 0;
                 break;
             }else{
