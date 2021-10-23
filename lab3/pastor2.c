@@ -243,10 +243,11 @@ void producer(RECV_BUF* buffer){
             }
             /* cleaning up */
             
-            shmdt(buffer);
+            
             free(p_shm_recv_buf);
             curl_easy_reset(curl_handle);
         }
+        shmdt(buffer);
         curl_easy_cleanup(curl_handle);
 }
 
