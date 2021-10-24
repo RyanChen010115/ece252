@@ -251,6 +251,7 @@ void producer(RECV_BUF* buffer){
                 //memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 buffer[*pindex] = *p_shm_recv_buf;
                 printf("%d saved in %d\n", buffer[*pindex].seq, *pindex);
+                printf("%x\n", buffer[*pindex].buf[0]);
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
