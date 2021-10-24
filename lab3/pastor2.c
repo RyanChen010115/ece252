@@ -314,6 +314,7 @@ void consumer(RECV_BUF* buffer[]){
     read_file(fname, tempData, buffer[6]->size * 4);
     write_file("new.png", tempData, buffer[6]->size * 4);
     printf("%x\n", tempData[0]);
+    remove(fname);
     // chunk_p tempChunk = malloc(sizeof(struct chunk));
     // dataToChunk(tempChunk, buffer[6]->buf, buffer[6]->size);
     
