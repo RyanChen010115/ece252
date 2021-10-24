@@ -284,13 +284,14 @@ void consumer(RECV_BUF* buffer[]){
     //         break;
     //     }
     // }
+    char fname[256];
     printf("In Consumer\n");
     for(int i = 0; i < 5; i++){
         printf("Received: %d\n", buffer[i]->seq);
         printf("%x\n", buffer[i]->buf[0]);
     }
     //printf("Received ./output_%d.png", buffer[2].seq);
-    //sprintf(fname, "./output_%d.png", buffer[2]->seq);
+    sprintf(fname, "./output_%d.png", buffer[2]->seq);
     //printf("%x\n", buffer[1].buf[0]);
     write_file(fname, buffer[1]->buf, buffer[1]->size);
 }
