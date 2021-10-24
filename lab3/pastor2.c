@@ -248,7 +248,8 @@ void producer(RECV_BUF* buffer){
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
-                buffer[*pindex] = *p_shm_recv_buf;
+                memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
+                //buffer[*pindex] = *p_shm_recv_buf;
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
