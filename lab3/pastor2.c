@@ -206,7 +206,7 @@ void producer(RECV_BUF* buffer){
             int tc = *totalCount;
             (*totalCount)++;
             sem_post(countMutex);
-            if(tc >= 50){
+            if(tc >= 10){
 
                 stay = 0;
                 break;
