@@ -186,7 +186,7 @@ int write_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
-void producer(RECV_BUF* buffer){
+void producer(RECV_BUF* buffer[]){
         CURL *curl_handle;
         CURLcode res;
         /* init a curl session */
@@ -249,13 +249,13 @@ void producer(RECV_BUF* buffer){
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
                 
-                buffer[*pindex].max_size = p_shm_recv_buf->max_size;
-                buffer[*pindex].size = p_shm_recv_buf->size;
-                buffer[*pindex].seq = p_shm_recv_buf->seq;
-                //memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
-                printf("%d saved in %d\n", buffer[*pindex].seq, *pindex);
+                buffer[*pindex]->max_size = p_shm_recv_buf->max_size;
+                buffer[*pindex]->size = p_shm_recv_buf->size;
+                buffer[*pindex]->seq = p_shm_recv_buf->seq;
+                memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
+                printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
                 printf("%x\n", p_shm_recv_buf->buf[0]);
-                printf("%x\n", buffer[*pindex].buf[0]);
+                printf("%x\n", buffer[*pindex]->buf[0]);
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
@@ -268,7 +268,7 @@ void producer(RECV_BUF* buffer){
         curl_easy_cleanup(curl_handle);
 }
 
-void consumer(RECV_BUF* buffer){
+void consumer(RECV_BUF* buffer[]){
     // int stay = 1;
 
     // while(stay == 1){
@@ -285,13 +285,12 @@ void consumer(RECV_BUF* buffer){
     //     }
     // }
     printf("In Consumer\n");
-    char fname[256];
     for(int i = 0; i < 5; i++){
-        printf("Received: %d\n", buffer[i].seq);
-        printf("%x\n", buffer[i].buf[0]);
+        printf("Received: %d\n", buffer[i]->seq);
+        printf("%x\n", buffer[i]->buf[0]);
     }
     //printf("Received ./output_%d.png", buffer[2].seq);
-    sprintf(fname, "./output_%d.png", buffer[2].seq);
+    //sprintf(fname, "./output_%d.png", buffer[2]->seq);
     //printf("%x\n", buffer[1].buf[0]);
     //write_file(fname, buffer[1].buf, 100);
 }
@@ -299,22 +298,27 @@ void consumer(RECV_BUF* buffer){
 int main( int argc, char** argv ) 
 {
     char url[256];
-    RECV_BUF *buffer;
-    int shmid;
+    int test = BUF_LENGTH;
+    RECV_BUF* buffer[test];
+    int shm_buf_ids[test];
+    //int shmid;
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     // pid_t pid = getpid();
     pid_t cpid = 0;
     
     printf("shm_size = %d.\n", shm_size);
-    shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-    if ( shmid == -1 ) {
-        perror("shmget");
-        abort();
-    }
+    //shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    
 
-    buffer = shmat(shmid, NULL, 0);
+    // buffer = shmat(shmid, NULL, 0);
     for(int i = 0; i < BUF_LENGTH; i++){
-        shm_recv_buf_init(&buffer[i], BUF_SIZE);
+        shm_buf_ids[i] = shmget(IPC_PRIVATE, shm_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+        if ( shm_buf_ids[i] == -1 ) {
+            perror("shmget");
+            abort();
+        }
+        buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
+        shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
 
 
@@ -366,14 +370,13 @@ int main( int argc, char** argv )
     if ( cpid == 0 ) {          /* child proc download */
 
         producer(buffer);
-        producer(buffer);
        
     } else if ( cpid > 0 ) {    /* parent proc */
         int state;
         waitpid(cpid, &state, 0);
         consumer(buffer);
-        shmdt(buffer);
-        shmctl(shmid, IPC_RMID, NULL);
+        //shmdt(buffer);
+        //shmctl(shmid, IPC_RMID, NULL);
         shmctl(shmid_sem_items, IPC_RMID, NULL);
         shmctl(shmid_sem_spaces, IPC_RMID, NULL);
         shmctl(shmid_sem_buffer, IPC_RMID, NULL);
