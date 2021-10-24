@@ -73,6 +73,12 @@ int recv_buf_init(RECV_BUF *ptr, size_t max_size);
 int recv_buf_cleanup(RECV_BUF *ptr);
 int write_file(const char *path, const void *in, size_t len);
 
+void dataToChunk(chunk_p chunk, U8* data, size_t size){
+    chunk->p_data = malloc(sizeof(U8)*size);
+    memcpy(chunk->p_data, data + 33, size);
+    chunk->length = size;
+}
+
 int recv_buf_init(RECV_BUF *ptr, size_t max_size)
 {
     void *p = NULL;
@@ -256,7 +262,25 @@ void producer(RECV_BUF* buffer){
 }
 
 void consumer(RECV_BUF* buffer){
+    // int stay = 1;
+
+    // while(stay == 1){
+
+    //     //Checking if all images has been received
+    //     sem_wait(countMutex);
+    //     int tc = *totalCount;
+    //     (*totalCount)++;
+    //     sem_post(countMutex);
+    //     if(tc >= 50){
+
+    //         stay = 0;
+    //         break;
+    //     }
+    // }
+    char fname[256];
     printf("Received ./output_%d.png", buffer[1].seq);
+    sprintf(fname, "./output_%d.png", buffer[1].seq);
+    write_file(fname, buffer[1].buf, buffer[1].size);
 }
 
 int main( int argc, char** argv ) 
@@ -334,6 +358,13 @@ int main( int argc, char** argv )
         consumer(buffer);
         shmdt(buffer);
         shmctl(shmid, IPC_RMID, NULL);
+        shmctl(shmid_sem_items, IPC_RMID, NULL);
+        shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+        shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+        shmctl(shmid_sem_count, IPC_RMID, NULL);
+        shmctl(shmid_pindex, IPC_RMID, NULL);
+        shmctl(shmid_cindex, IPC_RMID, NULL);
+        shmctl(shmid_count, IPC_RMID, NULL);
     } else {
         perror("fork");
         abort();
