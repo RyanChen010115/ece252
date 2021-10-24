@@ -284,6 +284,7 @@ void consumer(RECV_BUF* buffer){
     char fname[256];
     for(int i = 0; i < 5; i++){
         printf("Received: %d\n", buffer[i].seq);
+        printf("%x\n", buffer[i].buf[0]);
     }
     //printf("Received ./output_%d.png", buffer[2].seq);
     sprintf(fname, "./output_%d.png", buffer[2].seq);
