@@ -84,8 +84,9 @@ void dataToChunk(chunk_p chunk, U8* data, size_t size){
     //U8 type[4];
     memcpy(length_ptr, data+33, 1);
     chunk->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
-    // chunk->p_data = malloc(sizeof(U8)*size);
-    // memcpy(chunk->p_data, data + 33, size);
+
+    chunk->p_data = malloc(*length_ptr);
+    memcpy(chunk->p_data, data + 33 + 8, *length_ptr);
     // chunk->length = size;
 }
 
@@ -325,7 +326,7 @@ void consumer(RECV_BUF* buffer[]){
     U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
     chunk_p tempChunk = malloc(sizeof(struct chunk));
     dataToChunk(tempChunk, imageData, buffer[6]->size* 4 - 45);
-    printf("%d\n", tempChunk->length);
+    printf("%x\n", tempChunk->p_data[tempChunk->length - 5]);
 
 
     remove(fname);
