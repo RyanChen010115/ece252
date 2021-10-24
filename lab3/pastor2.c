@@ -186,6 +186,22 @@ int write_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
+int read_file(const char *path, U8* read, size_t len){
+    FILE *fp = NULL;
+
+    if (path == NULL) {
+        fprintf(stderr, "write_file: file name is null!\n");
+        return -1;
+    }
+    fp = fopen(path, "rb");
+    if (fp == NULL) {
+        perror("fopen");
+        return -2;
+    }
+    fread(read, len, 1, fp);
+    return fclose(fp);
+}
+
 void producer(RECV_BUF* buffer[]){
         CURL *curl_handle;
         CURLcode res;
@@ -291,9 +307,15 @@ void consumer(RECV_BUF* buffer[]){
         printf("%x\n", buffer[i]->buf[0]);
     }
     //printf("Received ./output_%d.png", buffer[2].seq);
-    sprintf(fname, "./output_%d.png", buffer[2]->seq);
+    sprintf(fname, "temp.png");
     //printf("%x\n", buffer[1].buf[0]);
     write_file(fname, buffer[6]->buf, buffer[6]->size);
+    U8* tempData = (U8*)malloc(buffer[6]->size * 4);
+    read_file(fname, tempData, buffer[6]->size * 4);
+    printf("%x\n", tempData[0]);
+    // chunk_p tempChunk = malloc(sizeof(struct chunk));
+    // dataToChunk(tempChunk, buffer[6]->buf, buffer[6]->size);
+    
 }
 
 int main( int argc, char** argv ) 
