@@ -248,7 +248,6 @@ void producer(RECV_BUF* buffer){
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
-                buffer[*pindex].buf = malloc
                 //memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 buffer[*pindex] = *p_shm_recv_buf;
                 printf("%d saved in %d\n", buffer[*pindex].seq, *pindex);
