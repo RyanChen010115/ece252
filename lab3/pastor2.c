@@ -250,6 +250,7 @@ void producer(RECV_BUF* buffer){
                 sem_wait(bufferMutex);
                 //memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 buffer[*pindex] = *p_shm_recv_buf;
+                prinf("%d saved in %d", buffer[*pindex].seq, *pindex);
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
@@ -281,7 +282,7 @@ void consumer(RECV_BUF* buffer){
     char fname[256];
     printf("Received ./output_%d.png", buffer[2].seq);
     sprintf(fname, "./output_%d.png", buffer[2].seq);
-    printf("%x\n", buffer[1].buf[0]);
+    //printf("%x\n", buffer[1].buf[0]);
     //write_file(fname, buffer[1].buf, 100);
 }
 
