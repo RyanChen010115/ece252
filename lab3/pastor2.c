@@ -280,7 +280,7 @@ void consumer(RECV_BUF* buffer){
     char fname[256];
     printf("Received ./output_%d.png", buffer[1].seq);
     sprintf(fname, "./output_%d.png", buffer[1].seq);
-    write_file(fname, buffer[1].buf, buffer[1].size);
+    //write_file(fname, buffer[1].buf, buffer[1].size);
 }
 
 int main( int argc, char** argv ) 
