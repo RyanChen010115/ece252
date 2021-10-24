@@ -312,12 +312,12 @@ void consumer(RECV_BUF* buffer[]){
     write_file(fname, buffer[6]->buf, buffer[6]->size);
     U8* tempData = (U8*)malloc(buffer[6]->size * 4);
     read_file(fname, tempData, buffer[6]->size * 4);
-    write_file("new.png", tempData, buffer[6]->size * 4);
-    printf("%x\n", tempData[0]);
+    U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
+    chunk_p tempChunk = malloc(sizeof(struct chunk));
+    dataToChunk(tempChunk, imageData, buffer[6]->size* 4 - 45);
+    printf("%x\n", tempChunk->p_data[buffer[6]->size* 4 - 45]);
     remove(fname);
-    // chunk_p tempChunk = malloc(sizeof(struct chunk));
-    // dataToChunk(tempChunk, buffer[6]->buf, buffer[6]->size);
-    
+
 }
 
 int main( int argc, char** argv ) 
