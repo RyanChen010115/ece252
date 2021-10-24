@@ -249,9 +249,9 @@ void producer(RECV_BUF* buffer){
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
                 
-                buffer[*pindex].max_size = *p_shm_recv_buf->max_size;
-                buffer[*pindex].size = *p_shm_recv_buf->size;
-                buffer[*pindex].seq = *p_shm_recv_buf->seq;
+                buffer[*pindex].max_size = p_shm_recv_buf->max_size;
+                buffer[*pindex].size = p_shm_recv_buf->size;
+                buffer[*pindex].seq = p_shm_recv_buf->seq;
                 memcpy(buffer[*pindex].buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 printf("%d saved in %d\n", buffer[*pindex].seq, *pindex);
                 printf("%x\n", buffer[*pindex].buf[0]);
