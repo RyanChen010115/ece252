@@ -73,10 +73,20 @@ int recv_buf_init(RECV_BUF *ptr, size_t max_size);
 int recv_buf_cleanup(RECV_BUF *ptr);
 int write_file(const char *path, const void *in, size_t len);
 
+U32 swap(U32 value)
+{
+    value = ((value << 8) & 0xFF00FF00) | ((value >> 8) & 0xFF00FF);
+    return (value << 16) | (value >> 16);
+}
+
 void dataToChunk(chunk_p chunk, U8* data, size_t size){
-    chunk->p_data = malloc(sizeof(U8)*size);
-    memcpy(chunk->p_data, data + 33, size);
-    chunk->length = size;
+    U32 *length_ptr = malloc(sizeof(U32));
+    //U8 type[4];
+    memcpy(length_ptr, data+33, 1);
+    chunk->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
+    // chunk->p_data = malloc(sizeof(U8)*size);
+    // memcpy(chunk->p_data, data + 33, size);
+    // chunk->length = size;
 }
 
 int recv_buf_init(RECV_BUF *ptr, size_t max_size)
@@ -315,7 +325,9 @@ void consumer(RECV_BUF* buffer[]){
     U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
     chunk_p tempChunk = malloc(sizeof(struct chunk));
     dataToChunk(tempChunk, imageData, buffer[6]->size* 4 - 45);
-    printf("%x\n", tempChunk->p_data[buffer[6]->size* 4 - 45]);
+    printf("%d\n", tempChunk->length);
+
+
     remove(fname);
 
 }
