@@ -85,9 +85,9 @@ void dataToChunk(chunk_p chunk, U8* data, size_t size){
     U32 *length_ptr = malloc(sizeof(U32));
     //U8 type[4];
     memcpy(length_ptr, data+33, sizeof(U32));
-    printf("%x\n", *length_ptr);
+    //printf("%x\n", *length_ptr);
     chunk->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
-    printf("%d\n", chunk->length);
+    //printf("%d\n", chunk->length);
     chunk->p_data = malloc(chunk->length);
     memcpy(chunk->p_data, data + 33 + 8, chunk->length);
     // chunk->length = size;
@@ -230,7 +230,7 @@ void producer(RECV_BUF* buffer[]){
         int stay = 1;
 
         while(stay == 1){
-
+            printf("In Producer\n");
             //Checking if all images has been received
             sem_wait(countMutex);
             int tc = *totalCount;
@@ -284,8 +284,6 @@ void producer(RECV_BUF* buffer[]){
                 buffer[*pindex]->seq = p_shm_recv_buf->seq;
                 memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
-                printf("%x\n", p_shm_recv_buf->buf[0]);
-                printf("%x\n", buffer[*pindex]->buf[0]);
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
