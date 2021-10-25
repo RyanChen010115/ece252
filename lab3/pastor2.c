@@ -281,8 +281,7 @@ void producer(RECV_BUF* buffer[]){
             if( res != CURLE_OK) {
                 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             } else {
-                //printf("%lu bytes received in memory %p, seq=%d.\n",  \
-                    p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
+                //printf("%lu bytes received in memory %p, seq=%d.\n", p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
                 
@@ -359,6 +358,7 @@ void consumer(RECV_BUF* buffer[]){
 
 int main( int argc, char** argv ) 
 {
+    
     char url[256];
     int test = BUF_LENGTH;
     RECV_BUF* buffer[test];
@@ -368,6 +368,7 @@ int main( int argc, char** argv )
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
+    pid_t cpids[6];
     pid_t cpid = 0;
 
     //shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
@@ -383,15 +384,15 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    for(int i = 0; i < 40; i++){
-        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    //for(int i = 0; i < 40; i++){
+       // shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     //     if ( shm_chunk_ids[i] == -1 ) {
     //         perror("shmget");
     //         abort();
     //     }
     //     UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
     //     shm_chunk_init(UCChunks[i]);
-    }
+    //}
 
 
     if (argc == 1) {
@@ -442,30 +443,50 @@ int main( int argc, char** argv )
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
     
-
-    cpid = fork();
-
-    if ( cpid == 0 ) {          /* child proc download */
-
-        producer(buffer);
-       
-    } else if ( cpid > 0 ) {    /* parent proc */
-        //int state;
-        //waitpid(cpid, &state, 0);
-        consumer(buffer);
-        //shmdt(buffer);
-        //shmctl(shmid, IPC_RMID, NULL);
-        shmctl(shmid_sem_items, IPC_RMID, NULL);
-        shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-        shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-        shmctl(shmid_sem_count, IPC_RMID, NULL);
-        shmctl(shmid_pindex, IPC_RMID, NULL);
-        shmctl(shmid_cindex, IPC_RMID, NULL);
-        shmctl(shmid_count, IPC_RMID, NULL);
-    } else {
-        perror("fork");
-        abort();
+    for(int i = 0; i < 6; i++){
+        cpid = fork();
+        if(cpid > 0){
+            cpids[i] = cpid;
+        } else if( cpid == 0 && i < 4){
+           producer(buffer);
+        } else if(cpid == 0 && i >= 4 ){
+            consumer(buffer);
+            shmctl(shmid_sem_items, IPC_RMID, NULL);
+            shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+            shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+            shmctl(shmid_sem_count, IPC_RMID, NULL);
+            shmctl(shmid_pindex, IPC_RMID, NULL);
+            shmctl(shmid_cindex, IPC_RMID, NULL);
+            shmctl(shmid_count, IPC_RMID, NULL);
+        }else{
+            perror("fork");
+            abort();
+        }
     }
+
+    // cpid = fork();
+
+    // if ( cpid == 0 ) {          /* child proc download */
+
+    //     producer(buffer);
+       
+    // } else if ( cpid > 0 ) {    /* parent proc */
+    //     //int state;
+    //     //waitpid(cpid, &state, 0);
+    //     consumer(buffer);
+    //     //shmdt(buffer);
+    //     //shmctl(shmid, IPC_RMID, NULL);
+    //     shmctl(shmid_sem_items, IPC_RMID, NULL);
+    //     shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+    //     shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+    //     shmctl(shmid_sem_count, IPC_RMID, NULL);
+    //     shmctl(shmid_pindex, IPC_RMID, NULL);
+    //     shmctl(shmid_cindex, IPC_RMID, NULL);
+    //     shmctl(shmid_count, IPC_RMID, NULL);
+    // } else {
+    //     perror("fork");
+    //     abort();
+    // }
 
 
     return 0;
