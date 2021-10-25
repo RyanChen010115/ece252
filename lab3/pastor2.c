@@ -327,10 +327,13 @@ void consumer(RECV_BUF* buffer[]){
     //U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
     chunk_p tempChunk = malloc(sizeof(struct chunk));
     dataToChunk(tempChunk, tempData, buffer[6]->size* 4 - 45);
-    for(int i = 0; i < tempChunk->length; i++){
-        printf("%x\n", tempChunk->p_data[i]);
-    }
-    
+    // for(int i = 0; i < tempChunk->length; i++){
+    //     printf("%x\n", tempChunk->p_data[i]);
+    // }
+    U64 decompLength = (U64)(6*(400*4+1));
+    chunk_p uncompChunk = malloc(sizeof(struct chunk));
+    uncompChunk->p_data = (U8*)malloc(decompLength);
+    mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
     //remove(fname);
 
 }
