@@ -19,7 +19,7 @@
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 10240  /* 1024*10 = 10K */
-#define BUF_LENGTH 20
+#define BUF_LENGTH 40
 #define MAX_BUF_SIZE 1048576
 #define NUM_FILES 50
 
