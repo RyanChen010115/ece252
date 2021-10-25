@@ -324,9 +324,9 @@ void consumer(RECV_BUF* buffer[]){
     write_file(fname, buffer[6]->buf, buffer[6]->size);
     U8* tempData = (U8*)malloc(buffer[6]->size * 4);
     read_file(fname, tempData, buffer[6]->size * 4);
-    U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
+    //U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
     chunk_p tempChunk = malloc(sizeof(struct chunk));
-    dataToChunk(tempChunk, imageData, buffer[6]->size* 4 - 45);
+    dataToChunk(tempChunk, tempData, buffer[6]->size* 4 - 45);
     printf("%x\n", tempChunk->p_data[1000]);
 
 
