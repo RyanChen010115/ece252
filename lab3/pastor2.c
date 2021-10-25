@@ -366,7 +366,7 @@ int main( int argc, char** argv )
     int shm_buf_ids[test];
     int shm_chunk_ids[test];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
-    //int shm_chunk_size = sizeof_shm_chunk();
+    int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
     pid_t cpid = 0;
     
