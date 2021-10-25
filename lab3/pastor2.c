@@ -21,6 +21,7 @@
 #define BUF_SIZE 10240  /* 1024*10 = 10K */
 #define BUF_LENGTH 20
 #define MAX_BUF_SIZE 1048576
+#define NUM_FILES 50
 
 sem_t *itemSem;
 sem_t *spaceSem;
@@ -31,6 +32,7 @@ int *pindex = 0;
 int *cindex = 0;
 
 int *totalCount = 0;
+int *totalConsumed = 0;
 
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
@@ -297,44 +299,56 @@ void producer(RECV_BUF* buffer[]){
 }
 
 void consumer(RECV_BUF* buffer[]){
-    // int stay = 1;
+    int stay = 1;
 
-    // while(stay == 1){
+    while(stay == 1){
 
-    //     //Checking if all images has been received
-    //     sem_wait(countMutex);
-    //     int tc = *totalCount;
-    //     (*totalCount)++;
-    //     sem_post(countMutex);
-    //     if(tc >= 50){
+        //Checking if all images has been received
+        sem_wait(countMutex); //Might make a new mutex for this
+        int tc = *totalConsumed;
+        (*totalConsumed)++;
+        sem_post(countMutex);
+        if(tc >= 10){
+            stay = 0;
+            break;
+        }
 
-    //         stay = 0;
-    //         break;
-    //     }
-    // }
-    char fname[256];
-    printf("In Consumer\n");
-    for(int i = 0; i < 5; i++){
-        printf("Received: %d\n", buffer[i]->seq);
-        printf("%x\n", buffer[i]->buf[0]);
+        char fname[256];
+        int size = 0;
+        int seq = 0;
+        printf("In Consumer\n");
+
+        sem_wait(itemSem);
+        sem_wait(bufferMutex);
+        seq = buffer[*cindex]->seq;
+        size = buffer[*cindex]->size;
+        printf("Received: %d\n", seq);
+        sprintf(fname, "temp.png");
+        write_file(fname, buffer[*cindex]->buf, size);
+        *cindex = (*cindex + 1) % BUF_LENGTH;
+        sem_post(bufferMutex);
+        sem_post(spaceSem);
+
+        U8* tempData = (U8*)malloc(size * 4);
+        read_file(fname, tempData, size * 4);
+        chunk_p tempChunk = malloc(sizeof(struct chunk));
+        dataToChunk(tempChunk, tempData, size * 4 - 45);
+        // for(int i = 0; i < tempChunk->length; i++){
+        //     printf("%x\n", tempChunk->p_data[i]);
+        // }
+        U64 decompLength = (U64)(6*(400*4+1));
+        chunk_p uncompChunk = malloc(sizeof(struct chunk));
+        uncompChunk->p_data = (U8*)malloc(decompLength);
+        mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
+        
+        free(tempChunk);
+        free(uncompChunk);
+        free(tempData);
+        remove(fname);
+
+
     }
-    //printf("Received ./output_%d.png", buffer[2].seq);
-    sprintf(fname, "temp.png");
-    //printf("%x\n", buffer[1].buf[0]);
-    write_file(fname, buffer[6]->buf, buffer[6]->size);
-    U8* tempData = (U8*)malloc(buffer[6]->size * 4);
-    read_file(fname, tempData, buffer[6]->size * 4);
-    //U8* imageData = (U8*)malloc(buffer[6]->size * 4 - 45);
-    chunk_p tempChunk = malloc(sizeof(struct chunk));
-    dataToChunk(tempChunk, tempData, buffer[6]->size* 4 - 45);
-    // for(int i = 0; i < tempChunk->length; i++){
-    //     printf("%x\n", tempChunk->p_data[i]);
-    // }
-    U64 decompLength = (U64)(6*(400*4+1));
-    chunk_p uncompChunk = malloc(sizeof(struct chunk));
-    uncompChunk->p_data = (U8*)malloc(decompLength);
-    mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
-    //remove(fname);
+
 
 }
 
@@ -402,8 +416,10 @@ int main( int argc, char** argv )
 
     //Setting up total count
     int shmid_count = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_consumed = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     totalCount = shmat(shmid_count, NULL, 0);
+    totalConsumed = shmat(shmid_consumed, NULL, 0);
 
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
