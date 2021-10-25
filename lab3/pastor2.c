@@ -362,12 +362,11 @@ int main( int argc, char** argv )
     char url[256];
     int test = BUF_LENGTH;
     RECV_BUF* buffer[test];
-    chunk_p UCChunks[NUM_FILES];
+   // chunk_p UCChunks[NUM_FILES];
     int shm_buf_ids[test];
-    int shm_chunk_ids[test];
-    //int shmid;
+   // int shm_chunk_ids[test];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
-    int shm_chunk_size = sizeof_shm_chunk();
+    //int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
     pid_t cpid = 0;
     
