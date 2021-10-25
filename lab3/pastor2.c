@@ -252,7 +252,7 @@ void producer(RECV_BUF* buffer[]){
             //Get URL
             char url[256];
             sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
-            printf("%s\n", url);
+            //printf("%s\n", url);
 
 
             RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
@@ -281,7 +281,7 @@ void producer(RECV_BUF* buffer[]){
             if( res != CURLE_OK) {
                 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             } else {
-                printf("%lu bytes received in memory %p, seq=%d.\n",  \
+                //printf("%lu bytes received in memory %p, seq=%d.\n",  \
                     p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
@@ -290,7 +290,7 @@ void producer(RECV_BUF* buffer[]){
                 buffer[*pindex]->size = p_shm_recv_buf->size;
                 buffer[*pindex]->seq = p_shm_recv_buf->seq;
                 memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
-                printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
+                //printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
                 *pindex = (*pindex + 1) % BUF_LENGTH;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
@@ -334,7 +334,7 @@ void consumer(RECV_BUF* buffer[]){
         sem_post(bufferMutex);
         sem_post(spaceSem);
 
-        U8* tempData = (U8*)malloc(size * 4);
+        U8* tempData = malloc(sizeof(U8) * size * 4);
         read_file(fname, tempData, size * 4);
         chunk_p tempChunk = malloc(sizeof(struct chunk));
         dataToChunk(tempChunk, tempData, size * 4 - 45);
@@ -343,7 +343,7 @@ void consumer(RECV_BUF* buffer[]){
         // }
         U64 decompLength = (U64)(6*(400*4+1));
         chunk_p uncompChunk = malloc(sizeof(struct chunk));
-        uncompChunk->p_data = (U8*)malloc(decompLength);
+        uncompChunk->p_data = malloc(sizeof(U8) * decompLength);
         mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
         
         free(tempChunk);
@@ -369,8 +369,7 @@ int main( int argc, char** argv )
     int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
     pid_t cpid = 0;
-    
-    printf("shm_size = %d.\n", shm_size);
+
     //shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     
 
@@ -384,7 +383,7 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    for(int i = 0; i < NUM_FILES; i++){
+    for(int i = 0; i < 40; i++){
         shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     //     if ( shm_chunk_ids[i] == -1 ) {
     //         perror("shmget");
@@ -442,6 +441,7 @@ int main( int argc, char** argv )
 
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
+    
 
     cpid = fork();
 
