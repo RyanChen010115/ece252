@@ -27,6 +27,7 @@ sem_t *itemSem;
 sem_t *spaceSem;
 sem_t *bufferMutex;
 sem_t *countMutex;
+sem_t *chunkMutex;
 
 int *pindex = 0;
 int *cindex = 0;
@@ -149,6 +150,11 @@ int sizeof_shm_recv_buf(size_t nbytes)
     return (sizeof(RECV_BUF) + sizeof(char) * nbytes);
 }
 
+int sizeof_shm_chunk()
+{
+    return (sizeof(struct chunk) + sizeof(U8) * 300 * (400*4+1));
+}
+
 int shm_recv_buf_init(RECV_BUF *ptr, size_t nbytes)
 {
     if ( ptr == NULL ) {
@@ -161,16 +167,17 @@ int shm_recv_buf_init(RECV_BUF *ptr, size_t nbytes)
     ptr->seq = -1;              /* valid seq should be non-negative */
     
     return 0;
-    // if ( ptr == NULL ) {
-    //     return 1;
-    // }
-    // for(int i = 0; i < BUF_LENGTH; i++){
-    //     ptr[i].buf = (char *)(&ptr[i]) + sizeof(RECV_BUF);
-    //     ptr[i].size = 0;
-    //     ptr[i].max_size = nbytes;
-    //     ptr[i].seq = -1;              /* valid seq should be non-negative */
-    // }
-    // return 0;
+}
+
+int shm_chunk_init(chunk_p ptr)
+{
+    if ( ptr == NULL ) {
+        return 1;
+    }
+
+    ptr->p_data = (U8*)ptr + sizeof(struct chunk);
+    
+    return 0;
 }
 
 int write_file(const char *path, const void *in, size_t len)
@@ -321,7 +328,7 @@ void consumer(RECV_BUF* buffer[]){
         seq = buffer[*cindex]->seq;
         size = buffer[*cindex]->size;
         printf("Received: %d\n", seq);
-        sprintf(fname, "temp.png");
+        sprintf(fname, "temp.png"); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
         sem_post(bufferMutex);
@@ -355,9 +362,12 @@ int main( int argc, char** argv )
     char url[256];
     int test = BUF_LENGTH;
     RECV_BUF* buffer[test];
+    chunk_p UCChunks[NUM_FILES];
     int shm_buf_ids[test];
+    int shm_chunk_ids[test];
     //int shmid;
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
+    int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
     pid_t cpid = 0;
     
@@ -375,6 +385,15 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
+    for(int i = 0; i < NUM_FILES; i++){
+        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+        if ( shm_chunk_ids[i] == -1 ) {
+            perror("shmget");
+            abort();
+        }
+        UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
+        shm_chunk_init(UCChunks[i]);
+    }
 
 
     if (argc == 1) {
@@ -389,11 +408,13 @@ int main( int argc, char** argv )
     int shmid_sem_spaces = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_buffer = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_count = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_sem_chunk = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     itemSem = shmat(shmid_sem_items, NULL, 0);
     spaceSem = shmat(shmid_sem_spaces, NULL, 0);
     bufferMutex = shmat(shmid_sem_buffer, NULL, 0);
     countMutex = shmat(shmid_sem_count, NULL, 0);
+    chunkMutex = shmat(shmid_sem_chunk, NULL, 0);
 
     if ( itemSem == (void *) -1 || spaceSem == (void *) -1 || bufferMutex == (void *) -1) {
         perror("shmat");
@@ -404,6 +425,7 @@ int main( int argc, char** argv )
     sem_init(spaceSem, 1, BUF_LENGTH);
     sem_init(bufferMutex, 1, 1);
     sem_init(countMutex, 1, 1);
+    sem_init(chunkMutex, 1, 1);
 
     //Setting up index
     int shmid_pindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
