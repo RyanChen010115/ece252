@@ -243,10 +243,10 @@ void producer(RECV_BUF* buffer[]){
             sem_wait(countMutex);
             int tc = *totalCount;
             (*totalCount)++;
-            printf("In Producer: %d\n", tc);
+            
             sem_post(countMutex);
             if(tc >= 50){
-
+                printf("In Producer: %d\n", tc);
                 stay = 0;
                 break;
             }
