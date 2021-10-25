@@ -236,7 +236,7 @@ void producer(RECV_BUF* buffer[]){
             int tc = *totalCount;
             (*totalCount)++;
             sem_post(countMutex);
-            if(tc >= 10){
+            if(tc >= 50){
 
                 stay = 0;
                 break;
@@ -308,7 +308,7 @@ void consumer(RECV_BUF* buffer[]){
         int tc = *totalConsumed;
         (*totalConsumed)++;
         sem_post(countMutex);
-        if(tc >= 10){
+        if(tc >= 50){
             stay = 0;
             break;
         }
@@ -431,8 +431,8 @@ int main( int argc, char** argv )
         producer(buffer);
        
     } else if ( cpid > 0 ) {    /* parent proc */
-        int state;
-        waitpid(cpid, &state, 0);
+        //int state;
+        //waitpid(cpid, &state, 0);
         consumer(buffer);
         //shmdt(buffer);
         //shmctl(shmid, IPC_RMID, NULL);
