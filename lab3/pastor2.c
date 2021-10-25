@@ -85,7 +85,7 @@ void dataToChunk(chunk_p chunk, U8* data, size_t size){
     memcpy(length_ptr, data+33, sizeof(U32));
     printf("%x\n", *length_ptr);
     chunk->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
-
+    printf("%d\n", chunk->length);
     chunk->p_data = malloc(*length_ptr);
     memcpy(chunk->p_data, data + 33 + 8, *length_ptr);
     // chunk->length = size;
