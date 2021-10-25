@@ -385,15 +385,15 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    for(int i = 0; i < NUM_FILES; i++){
-        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-        if ( shm_chunk_ids[i] == -1 ) {
-            perror("shmget");
-            abort();
-        }
-        UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
-        shm_chunk_init(UCChunks[i]);
-    }
+    // for(int i = 0; i < NUM_FILES; i++){
+    //     shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    //     if ( shm_chunk_ids[i] == -1 ) {
+    //         perror("shmget");
+    //         abort();
+    //     }
+    //     UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
+    //     shm_chunk_init(UCChunks[i]);
+    // }
 
 
     if (argc == 1) {
