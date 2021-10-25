@@ -448,50 +448,50 @@ int main( int argc, char** argv )
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
     
-    for(int i = 0; i < 6; i++){
-        cpid = fork();
-        if(cpid > 0){
-            cpids[i] = cpid;
-        } else if( cpid == 0 && i < 4){
-           producer(buffer);
-        } else if(cpid == 0 && i >= 4 ){
-            consumer(buffer);
-            shmctl(shmid_sem_items, IPC_RMID, NULL);
-            shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-            shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-            shmctl(shmid_sem_count, IPC_RMID, NULL);
-            shmctl(shmid_pindex, IPC_RMID, NULL);
-            shmctl(shmid_cindex, IPC_RMID, NULL);
-            shmctl(shmid_count, IPC_RMID, NULL);
-        }else{
-            perror("fork");
-            abort();
-        }
-    }
-
-    // cpid = fork();
-
-    // if ( cpid == 0 ) {          /* child proc download */
-
-    //     producer(buffer);
-       
-    // } else if ( cpid > 0 ) {    /* parent proc */
-    //     //int state;
-    //     //waitpid(cpid, &state, 0);
-    //     consumer(buffer);
-    //     //shmdt(buffer);
-    //     //shmctl(shmid, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_items, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_count, IPC_RMID, NULL);
-    //     shmctl(shmid_pindex, IPC_RMID, NULL);
-    //     shmctl(shmid_cindex, IPC_RMID, NULL);
-    //     shmctl(shmid_count, IPC_RMID, NULL);
-    // } else {
-    //     perror("fork");
-    //     abort();
+    // for(int i = 0; i < 6; i++){
+    //     cpid = fork();
+    //     if(cpid > 0){
+    //         cpids[i] = cpid;
+    //     } else if( cpid == 0 && i < 4){
+    //        producer(buffer);
+    //     } else if(cpid == 0 && i >= 4 ){
+    //         consumer(buffer);
+    //         shmctl(shmid_sem_items, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_count, IPC_RMID, NULL);
+    //         shmctl(shmid_pindex, IPC_RMID, NULL);
+    //         shmctl(shmid_cindex, IPC_RMID, NULL);
+    //         shmctl(shmid_count, IPC_RMID, NULL);
+    //     }else{
+    //         perror("fork");
+    //         abort();
+    //     }
     // }
+
+    cpid = fork();
+
+    if ( cpid == 0 ) {          /* child proc download */
+
+        producer(buffer);
+       
+    } else if ( cpid > 0 ) {    /* parent proc */
+        //int state;
+        //waitpid(cpid, &state, 0);
+        consumer(buffer);
+        //shmdt(buffer);
+        //shmctl(shmid, IPC_RMID, NULL);
+        shmctl(shmid_sem_items, IPC_RMID, NULL);
+        shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+        shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+        shmctl(shmid_sem_count, IPC_RMID, NULL);
+        shmctl(shmid_pindex, IPC_RMID, NULL);
+        shmctl(shmid_cindex, IPC_RMID, NULL);
+        shmctl(shmid_count, IPC_RMID, NULL);
+    } else {
+        perror("fork");
+        abort();
+    }
 
 
     return 0;
