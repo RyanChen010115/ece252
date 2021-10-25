@@ -331,7 +331,7 @@ void consumer(RECV_BUF* buffer[]){
         printf("%x\n", tempChunk->p_data[i]);
     }
     
-    remove(fname);
+    //remove(fname);
 
 }
 
