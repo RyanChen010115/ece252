@@ -238,11 +238,12 @@ void producer(RECV_BUF* buffer[]){
         int stay = 1;
 
         while(stay == 1){
-            printf("In Producer\n");
+            
             //Checking if all images has been received
             sem_wait(countMutex);
             int tc = *totalCount;
             (*totalCount)++;
+            printf("In Producer: %d\n", tc);
             sem_post(countMutex);
             if(tc >= 50){
 
@@ -321,7 +322,7 @@ void consumer(RECV_BUF* buffer[]){
         char fname[256];
         int size = 0;
         int seq = 0;
-        printf("In Consumer\n");
+        printf("In Consumer: %d\n", tc);
 
         sem_wait(itemSem);
         sem_wait(bufferMutex);
