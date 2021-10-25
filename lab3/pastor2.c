@@ -248,57 +248,56 @@ void producer(RECV_BUF* buffer[]){
             if(tc >= 50){
                 printf("In Producer: %d\n", tc);
                 stay = 0;
-                break;
+            }else{    
+                //Get URL
+                char url[256];
+                sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
+                //printf("%s\n", url);
+
+
+                RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
+                recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
+
+                /* specify URL to get */
+                curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+
+                /* register write call back function to process received data */
+                curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl); 
+                /* user defined data structure passed to the call back function */
+                curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)p_shm_recv_buf);
+
+                /* register header call back function to process received header data */
+                curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
+                /* user defined data structure passed to the call back function */
+                curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)p_shm_recv_buf);
+
+                /* some servers requires a user-agent field */
+                curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+            
+                /* get it! */
+                res = curl_easy_perform(curl_handle);
+
+                if( res != CURLE_OK) {
+                    fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                } else {
+                    //printf("%lu bytes received in memory %p, seq=%d.\n", p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
+                    sem_wait(spaceSem);
+                    sem_wait(bufferMutex);
+                    
+                    buffer[*pindex]->max_size = p_shm_recv_buf->max_size;
+                    buffer[*pindex]->size = p_shm_recv_buf->size;
+                    buffer[*pindex]->seq = p_shm_recv_buf->seq;
+                    memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
+                    //printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
+                    *pindex = (*pindex + 1) % BUF_LENGTH;
+                    sem_post(bufferMutex);
+                    sem_post(itemSem);
+                }
+                /* cleaning up */
+                free(p_shm_recv_buf);
+                curl_easy_reset(curl_handle);
             }
-
-            //Get URL
-            char url[256];
-            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
-            //printf("%s\n", url);
-
-
-            RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
-            recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
-
-            /* specify URL to get */
-            curl_easy_setopt(curl_handle, CURLOPT_URL, url);
-
-            /* register write call back function to process received data */
-            curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_cb_curl); 
-            /* user defined data structure passed to the call back function */
-            curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)p_shm_recv_buf);
-
-            /* register header call back function to process received header data */
-            curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
-            /* user defined data structure passed to the call back function */
-            curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)p_shm_recv_buf);
-
-            /* some servers requires a user-agent field */
-            curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-
-        
-            /* get it! */
-            res = curl_easy_perform(curl_handle);
-
-            if( res != CURLE_OK) {
-                fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-            } else {
-                //printf("%lu bytes received in memory %p, seq=%d.\n", p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
-                sem_wait(spaceSem);
-                sem_wait(bufferMutex);
-                
-                buffer[*pindex]->max_size = p_shm_recv_buf->max_size;
-                buffer[*pindex]->size = p_shm_recv_buf->size;
-                buffer[*pindex]->seq = p_shm_recv_buf->seq;
-                memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
-                //printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
-                *pindex = (*pindex + 1) % BUF_LENGTH;
-                sem_post(bufferMutex);
-                sem_post(itemSem);
-            }
-            /* cleaning up */
-            free(p_shm_recv_buf);
-            curl_easy_reset(curl_handle);
         }
         shmdt(buffer);
         curl_easy_cleanup(curl_handle);
