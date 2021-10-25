@@ -19,7 +19,7 @@
 #define DUM_URL "https://example.com/"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 10240  /* 1024*10 = 10K */
-#define BUF_LENGTH 400
+#define BUF_LENGTH 20
 #define MAX_BUF_SIZE 1048576
 #define NUM_FILES 50
 
@@ -152,7 +152,7 @@ int sizeof_shm_recv_buf(size_t nbytes)
 
 int sizeof_shm_chunk()
 {
-    return (sizeof(struct chunk) + sizeof(U8) * 300 * (400*4+1));
+    return (sizeof(struct chunk) + sizeof(U8) * 6 * (400*4+1));
 }
 
 int shm_recv_buf_init(RECV_BUF *ptr, size_t nbytes)
@@ -384,7 +384,7 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < NUM_FILES; i++){
         shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     //     if ( shm_chunk_ids[i] == -1 ) {
     //         perror("shmget");
