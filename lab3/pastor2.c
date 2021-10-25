@@ -28,6 +28,7 @@ sem_t *spaceSem;
 sem_t *bufferMutex;
 sem_t *countMutex;
 sem_t *chunkMutex;
+sem_t *fileMutex;
 
 int *pindex = 0;
 int *cindex = 0;
@@ -330,11 +331,11 @@ void consumer(RECV_BUF* buffer[]){
         sprintf(fname, "temp.png"); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
-        sem_post(bufferMutex);
-        sem_post(spaceSem);
-
         U8* tempData = malloc(sizeof(U8) * size * 4);
         read_file(fname, tempData, size * 4);
+        remove(fname);
+        sem_post(bufferMutex);
+        sem_post(spaceSem);
         chunk_p tempChunk = malloc(sizeof(struct chunk));
         dataToChunk(tempChunk, tempData, size * 4 - 45);
         // for(int i = 0; i < tempChunk->length; i++){
@@ -348,7 +349,7 @@ void consumer(RECV_BUF* buffer[]){
         free(tempChunk);
         free(uncompChunk);
         free(tempData);
-        remove(fname);
+        
 
 
     }
@@ -408,12 +409,14 @@ int main( int argc, char** argv )
     int shmid_sem_buffer = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_count = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_chunk = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    int shmid_sem_file = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     itemSem = shmat(shmid_sem_items, NULL, 0);
     spaceSem = shmat(shmid_sem_spaces, NULL, 0);
     bufferMutex = shmat(shmid_sem_buffer, NULL, 0);
     countMutex = shmat(shmid_sem_count, NULL, 0);
     chunkMutex = shmat(shmid_sem_chunk, NULL, 0);
+    fileMutex = shmat(shmid_sem_file, NULL, 0);
 
     if ( itemSem == (void *) -1 || spaceSem == (void *) -1 || bufferMutex == (void *) -1) {
         perror("shmat");
@@ -425,6 +428,7 @@ int main( int argc, char** argv )
     sem_init(bufferMutex, 1, 1);
     sem_init(countMutex, 1, 1);
     sem_init(chunkMutex, 1, 1);
+    sem_init(fileMutex, 1, 1);
 
     //Setting up index
     int shmid_pindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
