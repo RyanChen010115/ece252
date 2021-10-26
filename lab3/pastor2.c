@@ -543,7 +543,6 @@ int main( int argc, char** argv )
     //     printf("%x\n", IHDRcrc);
         
     // }
-
     cpid = fork();
 
     if ( cpid == 0 ) {          /* child proc download */
@@ -551,9 +550,9 @@ int main( int argc, char** argv )
         producer(buffer);
         return 0;
     } else if ( cpid > 0 ) {    /* parent proc */
-        //int state;
-        //waitpid(cpid, &state, 0);
-        consumer(buffer);
+        int state;
+        waitpid(cpid, &state, 0);
+        consumer(buffer, UCChunks);
         //shmdt(buffer);
         //shmctl(shmid, IPC_RMID, NULL);
         shmctl(shmid_sem_items, IPC_RMID, NULL);
