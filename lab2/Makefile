@@ -9,7 +9,7 @@ LDLIBS = -lcurl -lz -lpthread# "curl-config --libs" output
 
 SRCS   = pastor.c
 OBJS   = pastor.o
-TARGETS= pastor
+TARGETS= paster
 
 all: ${TARGETS}
 
