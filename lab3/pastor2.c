@@ -483,90 +483,91 @@ int main( int argc, char** argv )
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
     
-    for(int i = 0; i < 6; i++){
-        cpid = fork();
-        printf("ran\n");
-        if(cpid > 0){
-            cpids[i] = cpid;
-        } else if( cpid == 0 && i < 4){
-           producer(buffer);
-        } else if(cpid == 0 && i >= 4 ){
-            consumer(buffer, UCChunks);
-            shmctl(shmid_sem_items, IPC_RMID, NULL);
-            shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-            shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-            shmctl(shmid_sem_count, IPC_RMID, NULL);
-            shmctl(shmid_pindex, IPC_RMID, NULL);
-            shmctl(shmid_cindex, IPC_RMID, NULL);
-            shmctl(shmid_count, IPC_RMID, NULL);
-        }else{
-            perror("fork");
-            abort();
-        }
-    }
-    int state;
-
-    if( cpid > 0){
-        for(int i = 0; i < 6; i++){
-            waitpid(cpids[i], &state, 0);
-        }
-        sleep(1); // fix after, this is running before child finishes
-        // for(int i = 0; i < 200; i++){
-        //     printf("%x", UCChunks[49]->p_data[i]);
-        // }
-        int k = 0;
-        int totalDecompLength = UCChunks[0]->length*NUM_FILES;
-        U8* AllUCData = malloc(sizeof(U8)*totalDecompLength);
-        for(int i = 0; i < NUM_FILES; i++){
-            for(int j = 0; j < UCChunks[i]->length; j++){
-                AllUCData[k] = UCChunks[i]->p_data[j];
-                k++;
-            }
-        }
-
-        U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
-        U64 IDATcomplength = 0;
-        mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
-        
-        
-        //Getting IDHR crc
-        U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
-        U32 tempWidth = STRIP_WIDTH;
-        U32 IHDRType = 0x49484452;
-        data_IHDR_p mockIDHR = malloc(sizeof(struct data_IHDR));
-        mockIDHR->bit_depth = 0x08;
-        mockIDHR->color_type = 0x06;
-        mockIDHR->compression = 0x00;
-        mockIDHR->filter = 0x00;
-        mockIDHR->interlace = 0x00;
-        U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
-        printf("%x\n", IHDRcrc);
-        
-    }
-
-    // cpid = fork();
-
-    // if ( cpid == 0 ) {          /* child proc download */
-
-    //     producer(buffer);
-       
-    // } else if ( cpid > 0 ) {    /* parent proc */
-    //     //int state;
-    //     //waitpid(cpid, &state, 0);
-    //     consumer(buffer);
-    //     //shmdt(buffer);
-    //     //shmctl(shmid, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_items, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-    //     shmctl(shmid_sem_count, IPC_RMID, NULL);
-    //     shmctl(shmid_pindex, IPC_RMID, NULL);
-    //     shmctl(shmid_cindex, IPC_RMID, NULL);
-    //     shmctl(shmid_count, IPC_RMID, NULL);
-    // } else {
-    //     perror("fork");
-    //     abort();
+    // for(int i = 0; i < 6; i++){
+    //     cpid = fork();
+    //     printf("ran\n");
+    //     if(cpid > 0){
+    //         cpids[i] = cpid;
+    //     } else if( cpid == 0 && i < 4){
+    //        producer(buffer);
+    //     } else if(cpid == 0 && i >= 4 ){
+    //         consumer(buffer, UCChunks);
+    //         shmctl(shmid_sem_items, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+    //         shmctl(shmid_sem_count, IPC_RMID, NULL);
+    //         shmctl(shmid_pindex, IPC_RMID, NULL);
+    //         shmctl(shmid_cindex, IPC_RMID, NULL);
+    //         shmctl(shmid_count, IPC_RMID, NULL);
+    //     }else{
+    //         perror("fork");
+    //         abort();
+    //     }
     // }
+    // int state;
+
+    // if( cpid > 0){
+    //     for(int i = 0; i < 6; i++){
+    //         waitpid(cpids[i], &state, 0);
+    //     }
+    //     sleep(1); // fix after, this is running before child finishes
+    //     // for(int i = 0; i < 200; i++){
+    //     //     printf("%x", UCChunks[49]->p_data[i]);
+    //     // }
+    //     int k = 0;
+    //     int totalDecompLength = UCChunks[0]->length*NUM_FILES;
+    //     U8* AllUCData = malloc(sizeof(U8)*totalDecompLength);
+    //     for(int i = 0; i < NUM_FILES; i++){
+    //         for(int j = 0; j < UCChunks[i]->length; j++){
+    //             AllUCData[k] = UCChunks[i]->p_data[j];
+    //             k++;
+    //         }
+    //     }
+
+    //     U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
+    //     U64 IDATcomplength = 0;
+    //     mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
+        
+        
+    //     //Getting IDHR crc
+    //     U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
+    //     U32 tempWidth = STRIP_WIDTH;
+    //     U32 IHDRType = 0x49484452;
+    //     data_IHDR_p mockIDHR = malloc(sizeof(struct data_IHDR));
+    //     mockIDHR->bit_depth = 0x08;
+    //     mockIDHR->color_type = 0x06;
+    //     mockIDHR->compression = 0x00;
+    //     mockIDHR->filter = 0x00;
+    //     mockIDHR->interlace = 0x00;
+    //     U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
+    //     printf("%x\n", IHDRcrc);
+        
+    // }
+
+    cpid = fork();
+
+    if ( cpid == 0 ) {          /* child proc download */
+
+        producer(buffer);
+        return 0;
+    } else if ( cpid > 0 ) {    /* parent proc */
+        //int state;
+        //waitpid(cpid, &state, 0);
+        consumer(buffer);
+        //shmdt(buffer);
+        //shmctl(shmid, IPC_RMID, NULL);
+        shmctl(shmid_sem_items, IPC_RMID, NULL);
+        shmctl(shmid_sem_spaces, IPC_RMID, NULL);
+        shmctl(shmid_sem_buffer, IPC_RMID, NULL);
+        shmctl(shmid_sem_count, IPC_RMID, NULL);
+        shmctl(shmid_pindex, IPC_RMID, NULL);
+        shmctl(shmid_cindex, IPC_RMID, NULL);
+        shmctl(shmid_count, IPC_RMID, NULL);
+    } else {
+        perror("fork");
+        abort();
+    }
+
     return 0;
 }
 
