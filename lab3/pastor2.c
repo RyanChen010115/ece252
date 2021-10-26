@@ -486,6 +486,14 @@ int main( int argc, char** argv )
         // for(int i = 0; i < 200; i++){
         //     printf("%x", UCChunks[49]->p_data[i]);
         // }
+        int k = 0;
+        U8* AllUCData = malloc(sizeof(U8)*9606*50);
+        for(int i = 0; i < NUM_FILES; i++){
+            for(int j = 0; j < UCChunks[i]->length; j++){
+                AllUCData[k] = UCChunks[i]->p_data[j];
+                k++
+            }
+        }
     }
 
     // cpid = fork();
