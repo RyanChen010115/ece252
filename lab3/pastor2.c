@@ -457,6 +457,7 @@ int main( int argc, char** argv )
     
     for(int i = 0; i < 6; i++){
         cpid = fork();
+        printf("ran\n");
         if(cpid > 0){
             cpids[i] = cpid;
         } else if( cpid == 0 && i < 4){
@@ -481,10 +482,10 @@ int main( int argc, char** argv )
         for(int i = 0; i < 6; i++){
             waitpid(cpids[i], &state, 0);
         }
-        sleep(1);
-        for(int i = 0; i < 200; i++){
-            printf("%x", UCChunks[49]->p_data[i]);
-        }
+        sleep(1); // fix after, this is running before child finishes
+        // for(int i = 0; i < 200; i++){
+        //     printf("%x", UCChunks[49]->p_data[i]);
+        // }
     }
 
     // cpid = fork();
