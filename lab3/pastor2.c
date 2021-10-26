@@ -567,6 +567,33 @@ int main( int argc, char** argv )
         abort();
     }
     waitpid(cpid, &state, 0);
+    int k = 0;
+    int totalDecompLength = UCChunks[0]->length*NUM_FILES;
+    U8* AllUCData = malloc(sizeof(U8)*totalDecompLength);
+    for(int i = 0; i < NUM_FILES; i++){
+        for(int j = 0; j < UCChunks[i]->length; j++){
+            AllUCData[k] = UCChunks[i]->p_data[j];
+            k++;
+        }
+    }
+
+    U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
+    U64 IDATcomplength = 0;
+    mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
+    
+    
+    //Getting IDHR crc
+    U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
+    U32 tempWidth = STRIP_WIDTH;
+    U32 IHDRType = 0x49484452;
+    data_IHDR_p mockIDHR = malloc(sizeof(struct data_IHDR));
+    mockIDHR->bit_depth = 0x08;
+    mockIDHR->color_type = 0x06;
+    mockIDHR->compression = 0x00;
+    mockIDHR->filter = 0x00;
+    mockIDHR->interlace = 0x00;
+    U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
+    printf("%x\n", IHDRcrc);
     return 0;
 }
 
