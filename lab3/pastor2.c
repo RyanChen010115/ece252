@@ -576,16 +576,18 @@ int main( int argc, char** argv )
             k++;
         }
     }
+    FILE *all = fopen("all.png", "wb+");
 
     U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
     U64 IDATcomplength = 0;
     mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
+    fwrite(fIDATdata, IDATcomplength, 1, all);
     
-    
-    //Getting IDHR crc
+    //Getting IDHR data
     U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
     U32 tempWidth = STRIP_WIDTH;
     U32 IHDRType = 0x49484452;
+    U32 IHDRLength = 0x0000000d;
     data_IHDR_p mockIDHR = malloc(sizeof(struct data_IHDR));
     mockIDHR->bit_depth = 0x08;
     mockIDHR->color_type = 0x06;
@@ -594,6 +596,10 @@ int main( int argc, char** argv )
     mockIDHR->interlace = 0x00;
     U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
     printf("%x\n", IHDRcrc);
+
+    //Getting IDAT data
+
+
     return 0;
 }
 
