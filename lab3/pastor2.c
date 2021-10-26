@@ -479,8 +479,8 @@ int main( int argc, char** argv )
         for(int i = 0; i < 6; i++){
             waitpid(cpids[i], &state, 0);
         }
-        for(int i = 0; i < 3606; i++){
-            printf("%d", UCChunks[40]->length);
+        for(int i = 0; i < 50; i++){
+            printf("%d", UCChunks[i]->length);
         }
     }
 
