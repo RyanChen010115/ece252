@@ -479,7 +479,7 @@ int main( int argc, char** argv )
         for(int i = 0; i < 6; i++){
             waitpid(cpids[i], &state, 0);
         }
-        for(int i = 0; i < 9606; i++){
+        for(int i = 0; i < 3606; i++){
             printf("%x", UCChunks[40]->p_data[i]);
         }
     }
