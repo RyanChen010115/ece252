@@ -329,7 +329,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         seq = buffer[*cindex]->seq;
         size = buffer[*cindex]->size;
         
-        sprintf(fname, "temp.png"); 
+        sprintf(fname, "temp%d.png", seq); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
         U8* tempData = malloc(sizeof(U8) * size * 4);
