@@ -334,7 +334,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         *cindex = (*cindex + 1) % BUF_LENGTH;
         U8* tempData = malloc(sizeof(U8) * size * 4);
         read_file(fname, tempData, size * 4);
-        remove(fname);
+        //remove(fname);
         sem_post(bufferMutex);
         sem_post(spaceSem);
         chunk_p tempChunk = malloc(sizeof(struct chunk));
