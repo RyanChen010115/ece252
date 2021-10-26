@@ -544,14 +544,14 @@ int main( int argc, char** argv )
         
     // }
     cpid = fork();
-
+    int state;
     if ( cpid == 0 ) {          /* child proc download */
 
         producer(buffer);
         return 0;
     } else if ( cpid > 0 ) {    /* parent proc */
-        int state;
-        waitpid(cpid, &state, 0);
+        
+        
         consumer(buffer, UCChunks);
         //shmdt(buffer);
         //shmctl(shmid, IPC_RMID, NULL);
@@ -566,7 +566,7 @@ int main( int argc, char** argv )
         perror("fork");
         abort();
     }
-
+    waitpid(cpid, &state, 0);
     return 0;
 }
 
