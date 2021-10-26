@@ -7,8 +7,8 @@ LD = gcc
 LDFLAGS = -std=c99 -g 
 LDLIBS = -lcurl -lz -lpthread# "curl-config --libs" output 
 
-SRCS   = pastor.c
-OBJS   = pastor.o
+SRCS   = paster.c
+OBJS   = paster.o
 TARGETS= paster
 
 all: ${TARGETS}
