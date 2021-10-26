@@ -208,8 +208,8 @@ int catpng(int argc){
     fIDATchunk->type[2] = chunkPTR[0]->type[2];
     fIDATchunk->type[3] = chunkPTR[0]->type[3];
     fIDATchunk->p_data = fIDATdata;
-    for(int i = 0; i < 4; i++){
-        printf("%x\n", fIDATchunk->type[i]);
+    for(int i = 0; i < 3; i++){
+        printf("%x\n", IEND[i]);
     }
     U32 IDATcrc = getIDATcrc(fIDATchunk, IDATcomplength);
 
