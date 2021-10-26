@@ -111,7 +111,19 @@ U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
     return crc_val;
 }
 
-
+U32 getIDATcrc(chunk_p IDATchunk, U64 length){
+    U8 *IDATall = malloc(sizeof(U8) * length + 4);
+    IDATall[0] = IDATchunk->type[0];
+    IDATall[1] = IDATchunk->type[1];
+    IDATall[2] = IDATchunk->type[2];
+    IDATall[3] = IDATchunk->type[3];
+    for(int i = 4; i < length + 4; i++){
+        IDATall[i] = IDATchunk->p_data[i-4];
+    }
+    U32 crc_val = crc(IDATall, length + 4);
+    free(IDATall);
+    return crc_val;
+}
 
 void dataToChunk(chunk_p chunk, U8* data, size_t size){
     U32 *length_ptr = malloc(sizeof(U32));
@@ -581,7 +593,6 @@ int main( int argc, char** argv )
     U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
     U64 IDATcomplength = 0;
     mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
-    fwrite(fIDATdata, IDATcomplength, 1, all);
     
     //Getting IDHR data
     U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
@@ -599,6 +610,16 @@ int main( int argc, char** argv )
 
     //Getting IDAT data
 
+    chunk_p fIDATchunk = malloc(sizeof(struct chunk));
+    fIDATchunk->length = IDATcomplength;
+    fIDATchunk->type[0] = 0x49;
+    fIDATchunk->type[1] = 0x44;
+    fIDATchunk->type[2] = 0x41;
+    fIDATchunk->type[3] = 0x54;
+    fIDATchunk->p_data = fIDATdata;
+
+    U32 IDATcrc = getIDATcrc(fIDATchunk, IDATcomplength);
+    printf("%x\n", IDATcrc);
 
     return 0;
 }
