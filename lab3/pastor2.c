@@ -391,12 +391,12 @@ int main( int argc, char** argv )
     //shm_chunk_id = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     for(int i = 0; i < 40; i++){
        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-    //     if ( shm_chunk_ids[i] == -1 ) {
-    //         perror("shmget");
-    //         abort();
-    //     }
-    //     UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
-    //     shm_chunk_init(UCChunks[i]);
+        if ( shm_chunk_ids[i] == -1 ) {
+            perror("shmget");
+            abort();
+        }
+        UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
+        shm_chunk_init(UCChunks[i]);
     }
 
 
