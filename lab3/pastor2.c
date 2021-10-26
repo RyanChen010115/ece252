@@ -24,6 +24,8 @@
 #define BUF_LENGTH 20
 #define MAX_BUF_SIZE 1048576
 #define NUM_FILES 50
+#define STRIP_HEIGHT 6
+#define STRIP_WIDTH 400
 
 sem_t *itemSem;
 sem_t *spaceSem;
@@ -84,6 +86,29 @@ U32 swap(U32 value)
     value = ((value << 8) & 0xFF00FF00) | ((value >> 8) & 0xFF00FF);
     return (value << 16) | (value >> 16);
 }
+
+U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
+    FILE *write = fopen("./IHDR.png", "wb+");
+    fwrite(IHDRtype, sizeof(U32), 1, write);
+    fwrite(width, sizeof(U32), 1, write);
+    fwrite(height, sizeof(U32), 1, write);
+    *height = swap(*height);
+    fwrite(&IDHRdata->bit_depth, sizeof(U8), 1, write);
+    fwrite(&IDHRdata->color_type, sizeof(U8), 1, write);
+    fwrite(&IDHRdata->compression, sizeof(U8), 1, write);
+    fwrite(&IDHRdata->filter, sizeof(U8), 1, write);
+    fwrite(&IDHRdata->interlace, sizeof(U8), 1, write);
+    fclose(write);
+    FILE *read = fopen("./IHDR.png", "rb");
+    U8 IHDRcrcdata[17];
+    fread(IHDRcrcdata, sizeof(IHDRcrcdata), 1, read);
+    U32 crc_val = crc(IHDRcrcdata, 17);
+    fclose(read);
+    //remove("./IHDR.png");
+    return crc_val;
+}
+
+
 
 void dataToChunk(chunk_p chunk, U8* data, size_t size){
     U32 *length_ptr = malloc(sizeof(U32));
@@ -487,13 +512,33 @@ int main( int argc, char** argv )
         //     printf("%x", UCChunks[49]->p_data[i]);
         // }
         int k = 0;
-        U8* AllUCData = malloc(sizeof(U8)*9606*50);
+        int totalDecompLength = UCChunks[0]->length*NUM_FILES;
+        U8* AllUCData = malloc(sizeof(U8)*totalDecompLength);
         for(int i = 0; i < NUM_FILES; i++){
             for(int j = 0; j < UCChunks[i]->length; j++){
                 AllUCData[k] = UCChunks[i]->p_data[j];
                 k++;
             }
         }
+
+        U8* fIDATdata = malloc(sizeof(U8)*totalDecompLength);
+        U64 IDATcomplength = 0;
+        mem_def(fIDATdata, &IDATcomplength, AllUCData, totalDecompLength, Z_BEST_COMPRESSION);
+        
+        
+        //Getting IDHR crc
+        U32 tempHeight = NUM_FILES * STRIP_HEIGHT;
+        U32 tempWidth = STRIP_WIDTH;
+        U32 IHDRType = 0x49484452;
+        data_IHDR_p mockIDHR = malloc(sizeof(struct data_IHDR));
+        mockIDHR->bit_depth = 0x08;
+        mockIDHR->color_type = 0x06;
+        mockIDHR->compression = 0x00;
+        mockIDHR->filter = 0x00;
+        mockIDHR->interlace = 0x00;
+        U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
+        printf("%x\n", IHDRcrc);
+        
     }
 
     // cpid = fork();
