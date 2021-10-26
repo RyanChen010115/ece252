@@ -479,7 +479,8 @@ int main( int argc, char** argv )
         for(int i = 0; i < 6; i++){
             waitpid(cpids[i], &state, 0);
         }
-        for(int i = 0; i < 500; i++){
+        usleep(1000);
+        for(int i = 0; i < 200; i++){
             printf("%x", UCChunks[49]->p_data[i]);
         }
     }
