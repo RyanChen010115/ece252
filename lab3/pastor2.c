@@ -329,12 +329,12 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         seq = buffer[*cindex]->seq;
         size = buffer[*cindex]->size;
         
-        sprintf(fname, "temp%d.png", seq); 
+        sprintf(fname, "temp.png", seq); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
         U8* tempData = malloc(sizeof(U8) * size * 4);
         read_file(fname, tempData, size * 4);
-        //remove(fname);
+        remove(fname);
         sem_post(bufferMutex);
         sem_post(spaceSem);
         chunk_p tempChunk = malloc(sizeof(struct chunk));
@@ -480,7 +480,7 @@ int main( int argc, char** argv )
             waitpid(cpids[i], &state, 0);
         }
         for(int i = 0; i < 3606; i++){
-            printf("%x", UCChunks[40]->p_data[i]);
+            printf("%d", UCChunks[40]->length);
         }
     }
 
