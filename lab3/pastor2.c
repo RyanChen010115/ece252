@@ -328,7 +328,7 @@ void consumer(RECV_BUF* buffer[]){
         sem_wait(bufferMutex);
         seq = buffer[*cindex]->seq;
         size = buffer[*cindex]->size;
-        printf("Received: %d\n", seq);
+        
         sprintf(fname, "temp.png"); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
@@ -346,7 +346,9 @@ void consumer(RECV_BUF* buffer[]){
         chunk_p uncompChunk = malloc(sizeof(struct chunk));
         uncompChunk->p_data = malloc(sizeof(U8) * decompLength);
         mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
-        
+        printf("Received: %d\n", seq);
+
+
         free(tempChunk);
         free(uncompChunk);
         free(tempData);
