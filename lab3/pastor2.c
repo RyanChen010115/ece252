@@ -153,7 +153,7 @@ int sizeof_shm_recv_buf(size_t nbytes)
 
 int sizeof_shm_chunk()
 {
-    return (sizeof(struct chunk) + sizeof(U8) * 300 * (400*4+1));
+    return (sizeof(struct chunk) + sizeof(U8) * 6 * (400*4+1));
 }
 
 int shm_recv_buf_init(RECV_BUF *ptr, size_t nbytes)
@@ -368,7 +368,7 @@ int main( int argc, char** argv )
     RECV_BUF* buffer[test];
    // chunk_p UCChunks[NUM_FILES];
     int shm_buf_ids[test];
-    int shm_chunk_id;
+    int shm_chunk_ids[test];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
@@ -388,16 +388,16 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    shm_chunk_id = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-    //for(int i = 0; i < 40; i++){
-       // shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    //shm_chunk_id = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
+    for(int i = 0; i < 40; i++){
+       shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     //     if ( shm_chunk_ids[i] == -1 ) {
     //         perror("shmget");
     //         abort();
     //     }
     //     UCChunks[i] = shmat(shm_chunk_ids[i], NULL, 0);
     //     shm_chunk_init(UCChunks[i]);
-    //}
+    }
 
 
     if (argc == 1) {
