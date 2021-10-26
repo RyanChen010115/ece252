@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <semaphore.h>
+#include <time.h>
+#include <sys/time.h>
 
 
 #define PNG_TOP_LENGTH 33
