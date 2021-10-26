@@ -329,7 +329,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         seq = buffer[*cindex]->seq;
         size = buffer[*cindex]->size;
         
-        sprintf(fname, "temp.png", seq); 
+        sprintf(fname, "temp.png"); 
         write_file(fname, buffer[*cindex]->buf, size);
         *cindex = (*cindex + 1) % BUF_LENGTH;
         U8* tempData = malloc(sizeof(U8) * size * 4);
@@ -370,7 +370,7 @@ int main( int argc, char** argv )
     RECV_BUF* buffer[test];
     chunk_p UCChunks[NUM_FILES];
     int shm_buf_ids[test];
-    int shm_chunk_ids[test];
+    int shm_chunk_ids[50];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
@@ -391,7 +391,7 @@ int main( int argc, char** argv )
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
     //shm_chunk_id = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-    for(int i = 0; i < 40; i++){
+    for(int i = 0; i < 50; i++){
        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
         if ( shm_chunk_ids[i] == -1 ) {
             perror("shmget");
