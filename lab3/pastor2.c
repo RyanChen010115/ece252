@@ -491,7 +491,7 @@ int main( int argc, char** argv )
         for(int i = 0; i < NUM_FILES; i++){
             for(int j = 0; j < UCChunks[i]->length; j++){
                 AllUCData[k] = UCChunks[i]->p_data[j];
-                k++
+                k++;
             }
         }
     }
