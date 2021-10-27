@@ -650,8 +650,15 @@ int main( int argc, char** argv )
     IHDRcrc = swap(IHDRcrc);
     fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
-    //Write IEND
+    //Write IDAT
+    U32 IDATlength = swap(fIDATchunk->length);
+    IDATcrc = swap(IDATcrc);
+    fwrite(&IDATlength, sizeof(U32), 1, all);
+    fwrite(fIDATchunk->type, sizeof(fIDATchunk->type), 1, all);
+    fwrite(fIDATchunk->p_data, IDATcomplength, 1, all);
+    fwrite(&IDATcrc, sizeof(U32), 1, all);
 
+    //Write IEND
     fwrite(IEND, sizeof(IEND), 1, all);
     fclose(all);
 
