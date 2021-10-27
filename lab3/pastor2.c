@@ -632,19 +632,19 @@ int main( int argc, char** argv )
     U32 header2 = 0x0d0a1a0a;
 
     //Writing header
-    fwrite(header1, sizeof(U32), 1, all);
-    fwrite(header2, sizeof(U32), 1, all);
+    fwrite(&header1, sizeof(U32), 1, all);
+    fwrite(&header2, sizeof(U32), 1, all);
 
     //Write IHDR
     fwrite(&IHDRLength, sizeof(U32), 1, all);
     fwrite(&IHDRType, sizeof(U32), 1, all);
     fwrite(&tempWidth, sizeof(U32), 1, all);
     fwrite(&tempHeight, sizeof(U32), 1, all);
-    fwrite(&IHDRdata->bit_depth, sizeof(U8), 1, all);
-    fwrite(&IHDRdata->color_type, sizeof(U8), 1, all);
-    fwrite(&IHDRdata->compression, sizeof(U8), 1, all);
-    fwrite(&IHDRdata->filter, sizeof(U8), 1, all);
-    fwrite(&IHDRdata->interlace, sizeof(U8), 1, all);
+    fwrite(&mockIDHR->bit_depth, sizeof(U8), 1, all);
+    fwrite(&mockIDHR->color_type, sizeof(U8), 1, all);
+    fwrite(&mockIDHR->compression, sizeof(U8), 1, all);
+    fwrite(&mockIDHR->filter, sizeof(U8), 1, all);
+    fwrite(&mockIDHR->interlace, sizeof(U8), 1, all);
     IHDRcrc = swap(IHDRcrc);
     fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
