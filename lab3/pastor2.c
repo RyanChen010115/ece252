@@ -295,7 +295,7 @@ void producer(RECV_BUF* buffer[]){
             printf("In Producer: %d\n", tc);
             //Get URL
             char url[256];
-            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=3&part=%d", tc);
+            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
             //printf("%s\n", url);
 
 
@@ -416,11 +416,11 @@ int main( int argc, char** argv )
         printf("Not enough arguements\n");
         return 0;
     }
-    buffer_size = argv[1];
-    num_producers = argv[2];
-    num_consumers = argv[3];
-    time_sleep = argv[4];
-    image_num = argv[5];
+    buffer_size = (int)argv[1];
+    num_producers = (int)argv[2];
+    num_consumers = (int)argv[3];
+    time_sleep = (int)argv[4];
+    image_num = (int)argv[5];
     printf("%d %d %d %d %d\n", buffer_size, num_producers, num_consumers, time_sleep, image_num);
 
     
