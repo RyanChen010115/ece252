@@ -406,6 +406,23 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
 int main( int argc, char** argv ) 
 {
+    int buffer_size = 0;
+    int num_producers = 0;
+    int num_consumers = 0;
+    int time_sleep = 0;
+    int image_num = 0;
+
+    if(argc - 1 != 5){
+        printf("Not enough arguements\n");
+        return 0;
+    }
+    buffer_size = argv[1];
+    num_producers = argv[2];
+    num_consumers = argv[3];
+    time_sleep = argv[4];
+    image_num = argv[5];
+    printf("%d %d %d %d %d\n", buffer_size, num_producers, num_consumers, time_sleep, image_num);
+
     
     char url[256];
     int test = BUF_LENGTH;
