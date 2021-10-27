@@ -638,6 +638,7 @@ int main( int argc, char** argv )
     fwrite(&header2, sizeof(U32), 1, all);
 
     //Write IHDR
+    IHDRLength = swap(IHDRLength);
     fwrite(&IHDRLength, sizeof(U32), 1, all);
     fwrite(&IHDRType, sizeof(U32), 1, all);
     fwrite(&tempWidth, sizeof(U32), 1, all);
