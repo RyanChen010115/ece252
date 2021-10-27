@@ -444,12 +444,13 @@ void * getImages(void *link){
 
 
 void getImagesSingleThread(void *link){
-    char *url = (char*)link;
     CURL *curl_handle = curl_easy_init();
     if (curl_handle == NULL) {
         return;
     }
     while(imageRecvCount < lim){
+        char url[256];
+        sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", imageRecvCount);
         RECV_BUF recv_buf;
         recv_buf_init(&recv_buf, BUF_SIZE);
         CURLcode res;
