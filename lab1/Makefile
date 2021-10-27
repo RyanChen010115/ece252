@@ -13,10 +13,8 @@ b_OBJS=findpng.o
 c_SRCS=catpng.c
 c_OBJS=catpng.o
 
-d_SRCS=catpng2.c
-d_OBJS=catpng2.o
 
-all: pnginfo findpng catpng catpng2
+all: pnginfo findpng catpng 
 
 pnginfo.out: $(a_OBJS) 
 	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^
@@ -26,9 +24,6 @@ findpng.out: $(b_OBJS)
 
 catpng.out: $(c_OBJS) 
 	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^
-
-catpng2.out: $(d_OBJS) 
-	$(LD) $(LDLIBS) $(LDFLAGS) -o $@ $^	
 
 
 .c.o:
@@ -45,7 +40,7 @@ catpng2.out: $(d_OBJS)
 .PHONY: clean
 clean:
 	rm -f *.d *.o *.out *.png
-	rm catpng catpng2 findpng pnginfo
+	rm catpng findpng pnginfo
 
 
 # CC=gcc
