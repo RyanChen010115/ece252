@@ -651,9 +651,7 @@ int main( int argc, char** argv )
     fwrite(&IHDRcrc, sizeof(U32), 1, all);
 
     //Write IEND
-    IEND[0] = swap(IEND[0]);
-    IEND[1] = swap(IEND[1]);
-    IEND[2] = swap(IEND[2]);
+
     fwrite(IEND, sizeof(IEND), 1, all);
     fclose(all);
 
