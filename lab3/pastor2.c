@@ -629,7 +629,9 @@ int main( int argc, char** argv )
 
     //Getting header
     U32 header1 = 0x89504e47;
+    header1 = swap(header1);
     U32 header2 = 0x0d0a1a0a;
+    header2 = swap(header2);
 
     //Writing header
     fwrite(&header1, sizeof(U32), 1, all);
