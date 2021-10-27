@@ -295,7 +295,7 @@ void producer(RECV_BUF* buffer[]){
             printf("In Producer: %d\n", tc);
             //Get URL
             char url[256];
-            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=2&part=%d", tc);
+            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=3&part=%d", tc);
             //printf("%s\n", url);
 
 
