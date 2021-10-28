@@ -420,10 +420,10 @@ int main( int argc, char** argv )
         return 0;
     }
     buffer_size = strtol(argv[1], &p, 10);
-    num_producers = strtol(argv[1], &p, 10);
-    num_consumers = strtol(argv[1], &p, 10);
-    time_sleep = strtol(argv[1], &p, 10);
-    image_num = strtol(argv[1], &p, 10);
+    num_producers = strtol(argv[2], &p, 10);
+    num_consumers = strtol(argv[3], &p, 10);
+    time_sleep = strtol(argv[4], &p, 10);
+    image_num = strtol(argv[5], &p, 10);
     printf("%d %d %d %d %d\n", buffer_size, num_producers, num_consumers, time_sleep, image_num);
 
     
