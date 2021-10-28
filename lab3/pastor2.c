@@ -383,7 +383,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         remove(fname);
         sem_post(bufferMutex);
         sem_post(spaceSem);
-        usleep(200);
+        usleep(time_sleep*1000);
         chunk_p tempChunk = malloc(sizeof(struct chunk));
         dataToChunk(tempChunk, tempData, size * 4 - 45);
         // for(int i = 0; i < tempChunk->length; i++){
