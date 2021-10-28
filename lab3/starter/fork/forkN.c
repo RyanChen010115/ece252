@@ -30,7 +30,7 @@ int worker(int n);
  */
 int worker(int n)
 {
-    usleep((n+1)*1000);
+    usleep((n+1)*10000);
     printf("Worker ID=%d, pid = %d, ppid = %d.\n", n, getpid(), getppid());
 
     return 0;
@@ -68,7 +68,7 @@ int main()
     }
 
     if ( pid > 0 ) {            /* parent process */
-    printf("ran");
+    printf("ran\n");
         for ( i = 0; i < NUM_CHILD; i++ ) {
             waitpid(cpids[i], &state, 0);
             if (WIFEXITED(state)) {
