@@ -68,6 +68,7 @@ int main()
     }
 
     if ( pid > 0 ) {            /* parent process */
+    printf("ran");
         for ( i = 0; i < NUM_CHILD; i++ ) {
             waitpid(cpids[i], &state, 0);
             if (WIFEXITED(state)) {
