@@ -411,6 +411,16 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
 int main( int argc, char** argv ) 
 {
+    double times[2];
+    struct timeval tv;
+
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
+
+
     char *p = NULL;
 
     if(argc - 1 != 5){
@@ -679,6 +689,13 @@ int main( int argc, char** argv )
     //Write IEND
     fwrite(IEND, sizeof(IEND), 1, all);
     fclose(all);
+
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    printf("Parent pid = %d: total execution time is %.6lf seconds\n", getpid(),  times[1] - times[0]);
 
     return 0;
 }
