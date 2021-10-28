@@ -81,7 +81,7 @@ int main()
             abort();
         }
         times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-        printf("Parent pid = %d: total execution time is %.6lf seconds\n", getpid(),  times[1] - times[0]);
+        printf("total execution time is %.6lf seconds\n", times[1] - times[0]);
     }
     return 0;
 }
