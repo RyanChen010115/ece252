@@ -406,6 +406,9 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
 int main( int argc, char** argv ) 
 {
+    char *p = NULL;
+
+
     int buffer_size = 0;
     int num_producers = 0;
     int num_consumers = 0;
@@ -416,11 +419,11 @@ int main( int argc, char** argv )
         printf("Not enough arguements\n");
         return 0;
     }
-    buffer_size = (int)argv[1];
-    num_producers = (int)argv[2];
-    num_consumers = (int)argv[3];
-    time_sleep = (int)argv[4];
-    image_num = (int)argv[5];
+    buffer_size = strtol(argv[1], &p, 10);
+    num_producers = strtol(argv[1], &p, 10);
+    num_consumers = strtol(argv[1], &p, 10);
+    time_sleep = strtol(argv[1], &p, 10);
+    image_num = strtol(argv[1], &p, 10);
     printf("%d %d %d %d %d\n", buffer_size, num_producers, num_consumers, time_sleep, image_num);
 
     
