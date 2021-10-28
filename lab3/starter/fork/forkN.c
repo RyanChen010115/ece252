@@ -30,7 +30,7 @@ int worker(int n);
  */
 int worker(int n)
 {
-    usleep((n+1)*10000);
+    usleep((n+1)*1000000);
     printf("Worker ID=%d, pid = %d, ppid = %d.\n", n, getpid(), getppid());
 
     return 0;
