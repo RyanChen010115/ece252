@@ -40,6 +40,8 @@ int *cindex = 0;
 int *totalCount = 0;
 int *totalConsumed = 0;
 
+int image_num = 0;
+
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
    the last member field (i.e. seq) in the structure.
@@ -295,9 +297,7 @@ void producer(RECV_BUF* buffer[]){
             printf("In Producer: %d\n", tc);
             //Get URL
             char url[256];
-            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=1&part=%d", tc);
-            //printf("%s\n", url);
-
+            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=%d&part=%d", image_num, tc);
 
             RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
             recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
@@ -413,7 +413,6 @@ int main( int argc, char** argv )
     int num_producers = 0;
     int num_consumers = 0;
     int time_sleep = 0;
-    int image_num = 0;
 
     if(argc - 1 != 5){
         printf("Not enough arguements\n");
@@ -428,10 +427,9 @@ int main( int argc, char** argv )
 
     
     char url[256];
-    int test = BUF_LENGTH;
-    RECV_BUF* buffer[test];
+    RECV_BUF* buffer[buffer_size];
     chunk_p UCChunks[NUM_FILES];
-    int shm_buf_ids[test];
+    int shm_buf_ids[buffer_size];
     int shm_chunk_ids[50];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
