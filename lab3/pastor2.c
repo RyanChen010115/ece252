@@ -41,6 +41,10 @@ int *totalCount = 0;
 int *totalConsumed = 0;
 
 int image_num = 0;
+int buffer_size = 0;
+int num_producers = 0;
+int num_consumers = 0;
+int time_sleep = 0;
 
 /* This is a flattened structure, buf points to 
    the memory address immediately after 
@@ -334,7 +338,7 @@ void producer(RECV_BUF* buffer[]){
                 buffer[*pindex]->seq = p_shm_recv_buf->seq;
                 memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
                 //printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
-                *pindex = (*pindex + 1) % BUF_LENGTH;
+                *pindex = (*pindex + 1) % buffer_size;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
             }
@@ -373,7 +377,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         
         sprintf(fname, "temp.png"); 
         write_file(fname, buffer[*cindex]->buf, size);
-        *cindex = (*cindex + 1) % BUF_LENGTH;
+        *cindex = (*cindex + 1) % buffer_size;
         U8* tempData = malloc(sizeof(U8) * size * 4);
         read_file(fname, tempData, size * 4);
         remove(fname);
@@ -408,12 +412,6 @@ int main( int argc, char** argv )
 {
     char *p = NULL;
 
-
-    int buffer_size = 0;
-    int num_producers = 0;
-    int num_consumers = 0;
-    int time_sleep = 0;
-
     if(argc - 1 != 5){
         printf("Not enough arguements\n");
         return 0;
@@ -441,7 +439,7 @@ int main( int argc, char** argv )
     
 
     // buffer = shmat(shmid, NULL, 0);
-    for(int i = 0; i < BUF_LENGTH; i++){
+    for(int i = 0; i < buffer_size; i++){
         shm_buf_ids[i] = shmget(IPC_PRIVATE, shm_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
         if ( shm_buf_ids[i] == -1 ) {
             perror("shmget");
@@ -490,7 +488,7 @@ int main( int argc, char** argv )
     }
 
     sem_init(itemSem, 1, 0);
-    sem_init(spaceSem, 1, BUF_LENGTH);
+    sem_init(spaceSem, 1, buffer_size);
     sem_init(bufferMutex, 1, 1);
     sem_init(countMutex, 1, 1);
     sem_init(chunkMutex, 1, 1);
