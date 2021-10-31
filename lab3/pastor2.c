@@ -1,3 +1,5 @@
+#define _DEFAULT_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +28,7 @@
 #define NUM_FILES 50
 #define STRIP_HEIGHT 6
 #define STRIP_WIDTH 400
+
 
 sem_t *itemSem;
 sem_t *spaceSem;
@@ -141,6 +144,7 @@ void dataToChunk(chunk_p chunk, U8* data, size_t size){
     chunk->p_data = malloc(chunk->length);
     memcpy(chunk->p_data, data + 33 + 8, chunk->length);
     // chunk->length = size;
+    free(length_ptr);
 }
 
 int recv_buf_init(RECV_BUF *ptr, size_t max_size)
@@ -343,6 +347,7 @@ void producer(RECV_BUF* buffer[]){
                 sem_post(itemSem);
             }
             /* cleaning up */
+            free(p_shm_recv_buf->buf);
             free(p_shm_recv_buf);
             curl_easy_reset(curl_handle);
         }
@@ -384,7 +389,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         sem_post(bufferMutex);
         sem_post(spaceSem);
         usleep(time_sleep*1000);
-        chunk_p tempChunk = malloc(sizeof(struct chunk));
+        chunk_p tempChunk = malloc(sizeof(struct chunk)); // mayeb dont need to malloc
         dataToChunk(tempChunk, tempData, size * 4 - 45);
         // for(int i = 0; i < tempChunk->length; i++){
         //     printf("%x\n", tempChunk->p_data[i]);
@@ -398,7 +403,9 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         chunks[seq]->length = (U32)decompLength;
         memcpy(chunks[seq]->p_data, uncompChunk->p_data, decompLength);
 
+        free(tempChunk->p_data);
         free(tempChunk);
+        free(uncompChunk->p_data);
         free(uncompChunk);
         free(tempData);
         
@@ -587,6 +594,62 @@ int main( int argc, char** argv )
     if ( cpid == 0 ) {          /* child proc download */
 
         producer(buffer);
+
+
+        if ( shmdt(itemSem) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(spaceSem) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(bufferMutex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(countMutex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(chunkMutex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(fileMutex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(pindex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(cindex) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(totalCount) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        if ( shmdt(totalConsumed) != 0 ) {
+            perror("shmdt");
+            abort();
+        }
+        for(int i = 0; i < buffer_size; i++){
+            if ( shmdt(buffer[i]) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+        }
+        for(int i = 0; i < 50; i++){
+            if ( shmdt(UCChunks[i]) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+        }
+        
+
         return 0;
     } else if ( cpid > 0 ) {    /* parent proc */
         
@@ -696,6 +759,73 @@ int main( int argc, char** argv )
     }
     times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
     printf("Parent pid = %d: total execution time is %.6lf seconds\n", getpid(),  times[1] - times[0]);
+
+    //clean up
+    free(AllUCData);
+    free(fIDATdata);
+    free(fIDATchunk);
+    free(mockIDHR);
+
+    //clean up shm
+    if ( shmctl(shmid_sem_items, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_sem_spaces, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_sem_buffer, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_sem_count, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_sem_file, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_pindex, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_cindex, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_count, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    if ( shmctl(shmid_consumed, IPC_RMID, NULL) == -1 ) {
+        perror("shmctl");
+        abort();
+    }
+    for(int i = 0; i < buffer_size; i++){
+        if ( shmctl(shm_buf_ids[i], IPC_RMID, NULL) == -1 ) {
+            perror("shmctl");
+            abort();
+        }
+    }
+    for(int i = 0; i < 50; i++){
+        if ( shmctl(shm_chunk_ids[i], IPC_RMID, NULL) == -1 ) {
+            perror("shmctl");
+            abort();
+        }
+    }
+
+
+
+
+    //destroy sems
+    sem_destroy(itemSem);
+    sem_destroy(spaceSem);
+    sem_destroy(bufferMutex);
+    sem_destroy(countMutex);
+    sem_destroy(chunkMutex);
+    sem_destroy(fileMutex);
 
     return 0;
 }
