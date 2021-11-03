@@ -526,7 +526,6 @@ int main( int argc, char** argv )
 
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    cpid = fork();
 
 
     pid_t f = 0;
