@@ -115,7 +115,6 @@ U32 getIHDRcrc(data_IHDR_p IDHRdata, U32* IHDRtype, U32* width, U32* height){
     fread(IHDRcrcdata, sizeof(IHDRcrcdata), 1, read);
     U32 crc_val = crc(IHDRcrcdata, 17);
     fclose(read);
-    //remove("./IHDR.png");
     return crc_val;
 }
 
@@ -135,14 +134,10 @@ U32 getIDATcrc(chunk_p IDATchunk, U64 length){
 
 void dataToChunk(chunk_p chunk, U8* data, size_t size){
     U32 *length_ptr = malloc(sizeof(U32));
-    //U8 type[4];
     memcpy(length_ptr, data+33, sizeof(U32));
-    //printf("%x\n", *length_ptr);
     chunk->length = ((*length_ptr>>24)&0xff) | ((*length_ptr<<8)&0xff0000) | ((*length_ptr>>8)&0xff00) | ((*length_ptr<<24)&0xff000000);
-    //printf("%d\n", chunk->length);
     chunk->p_data = malloc(chunk->length);
     memcpy(chunk->p_data, data + 33 + 8, chunk->length);
-    // chunk->length = size;
     free(length_ptr);
 }
 
@@ -290,7 +285,6 @@ void producer(RECV_BUF* buffer[], int siteNum){
 
         while(stay == 1){
             
-            //Checking if all images has been received
             sem_wait(countMutex);
             int tc = *totalCount;
             (*totalCount)++;
@@ -301,8 +295,6 @@ void producer(RECV_BUF* buffer[], int siteNum){
                 stay = 0;
                 break;
             }
-            printf("In Producer: %d\n", tc);
-            //Get URL
             char url[256];
             sprintf(url, "http://ece252-%d.uwaterloo.ca:2530/image?img=%d&part=%d", siteNum, image_num, tc);
 
@@ -332,7 +324,6 @@ void producer(RECV_BUF* buffer[], int siteNum){
             if( res != CURLE_OK) {
                 fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             } else {
-                //printf("%lu bytes received in memory %p, seq=%d.\n", p_shm_recv_buf->size, p_shm_recv_buf->buf, p_shm_recv_buf->seq);
                 sem_wait(spaceSem);
                 sem_wait(bufferMutex);
                 
@@ -340,7 +331,6 @@ void producer(RECV_BUF* buffer[], int siteNum){
                 buffer[*pindex]->size = p_shm_recv_buf->size;
                 buffer[*pindex]->seq = p_shm_recv_buf->seq;
                 memcpy(buffer[*pindex]->buf, p_shm_recv_buf->buf, p_shm_recv_buf->size);
-                //printf("%d saved in %d\n", buffer[*pindex]->seq, *pindex);
                 *pindex = (*pindex + 1) % buffer_size;
                 sem_post(bufferMutex);
                 sem_post(itemSem);
@@ -359,8 +349,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
     while(stay == 1){
 
-        //Checking if all images has been received
-        sem_wait(countMutex); //Might make a new mutex for this
+        sem_wait(countMutex);
         int tc = *totalConsumed;
         (*totalConsumed)++;
         sem_post(countMutex);
@@ -372,7 +361,6 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         char fname[256];
         int size = 0;
         int seq = 0;
-        printf("In Consumer: %d\n", tc);
 
         sem_wait(itemSem);
         sem_wait(bufferMutex);
@@ -388,17 +376,13 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
         sem_post(bufferMutex);
         sem_post(spaceSem);
         usleep(time_sleep*1000);
-        chunk_p tempChunk = malloc(sizeof(struct chunk)); // mayeb dont need to malloc
+        chunk_p tempChunk = malloc(sizeof(struct chunk));
         dataToChunk(tempChunk, tempData, size * 4 - 45);
-        // for(int i = 0; i < tempChunk->length; i++){
-        //     printf("%x\n", tempChunk->p_data[i]);
-        // }
+
         U64 decompLength = (U64)(6*(400*4+1));
         chunk_p uncompChunk = malloc(sizeof(struct chunk));
         uncompChunk->p_data = malloc(sizeof(U8) * decompLength);
         mem_inf(uncompChunk->p_data, &decompLength, tempChunk->p_data, (U64)tempChunk->length);
-        printf("Received: %d in %dc\n", seq, tc);
-        printf("Size: %ld\n", decompLength);
         chunks[seq]->length = (U32)decompLength;
         memcpy(chunks[seq]->p_data, uncompChunk->p_data, decompLength);
 
@@ -418,7 +402,6 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
 int main( int argc, char** argv ) 
 {
-    printf("this one has forks \n");
     double times[2];
     struct timeval tv;
 
@@ -450,12 +433,7 @@ int main( int argc, char** argv )
     int shm_chunk_ids[50];
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
-    // pid_t pid = getpid();
 
-    //shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
-    
-
-    // buffer = shmat(shmid, NULL, 0);
     for(int i = 0; i < buffer_size; i++){
         shm_buf_ids[i] = shmget(IPC_PRIVATE, shm_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
         if ( shm_buf_ids[i] == -1 ) {
@@ -465,7 +443,6 @@ int main( int argc, char** argv )
         buffer[i] = shmat(shm_buf_ids[i], NULL, 0);
         shm_recv_buf_init(buffer[i], BUF_SIZE);
     }
-    //shm_chunk_id = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     for(int i = 0; i < 50; i++){
        shm_chunk_ids[i] = shmget(IPC_PRIVATE, shm_chunk_size, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
         if ( shm_chunk_ids[i] == -1 ) {
@@ -482,9 +459,7 @@ int main( int argc, char** argv )
     } else {
         strcpy(url, argv[1]);
     }
-    printf("%s: URL is %s\n", argv[0], url);
 
-    //Setting up semaphores for processes
     int shmid_sem_items = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_spaces = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_sem_buffer = shmget(IPC_PRIVATE, sizeof(sem_t), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
@@ -511,23 +486,19 @@ int main( int argc, char** argv )
     sem_init(chunkMutex, 1, 1);
     sem_init(fileMutex, 1, 1);
 
-    //Setting up index
     int shmid_pindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_cindex = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     pindex = shmat(shmid_pindex, NULL, 0);
     cindex = shmat(shmid_cindex, NULL, 0);
 
-    //Setting up total count
     int shmid_count = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     int shmid_consumed = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
 
     totalCount = shmat(shmid_count, NULL, 0);
     totalConsumed = shmat(shmid_consumed, NULL, 0);
 
-    //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
-
 
     pid_t f = 0;
     for (int i = 0; i < num_producers; i++){
