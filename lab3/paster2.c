@@ -450,8 +450,6 @@ int main( int argc, char** argv )
     int shm_size = sizeof_shm_recv_buf(BUF_SIZE);
     int shm_chunk_size = sizeof_shm_chunk();
     // pid_t pid = getpid();
-    pid_t cpids[6];
-    pid_t cpid = 0;
 
     //shmid = shmget(IPC_PRIVATE, shm_size*BUF_LENGTH, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     
@@ -529,8 +527,6 @@ int main( int argc, char** argv )
     //Curl set up
     curl_global_init(CURL_GLOBAL_DEFAULT);
     cpid = fork();
-    int state;
-
 
 
     pid_t f = 0;
@@ -604,7 +600,7 @@ int main( int argc, char** argv )
             shmctl(shmid_pindex, IPC_RMID, NULL);
             shmctl(shmid_cindex, IPC_RMID, NULL);
             shmctl(shmid_count, IPC_RMID, NULL);
-            exit(0)
+            exit(0);
         }
     }
     while (wait(NULL)>0){}
