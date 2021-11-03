@@ -7,13 +7,13 @@ LD = gcc
 LDFLAGS = -std=c99 -g 
 LDLIBS = -lz -lcurl -lpthread# "curl-config --libs" output 
 
-SRCS   = pastor2.c
-OBJS   = pastor2.o
-TARGETS= pastor2
+SRCS   = paster2.c
+OBJS   = paster2.o
+TARGETS= paster2
 
 all: ${TARGETS}
 
-pastor2.out: $(OBJS) 
+paster2.out: $(OBJS) 
 	$(LD) -o $@ $^ $(LDLIBS) $(LDFLAGS) 
 
 %.o: %.c 
