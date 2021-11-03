@@ -89,7 +89,9 @@ gen_data ()
                     if [ $c -gt $(($b+1)) ]; then
                         break
                     fi
-                    exec_producer $PROG $b $p $c $x $1 $NN
+                    for x in range(5)
+                        exec_producer $PROG $b $p $c $x $1 $NN
+                    done
                 done
             done
         done
