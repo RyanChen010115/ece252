@@ -601,7 +601,6 @@ int main( int argc, char** argv )
     mockIDHR->filter = 0x00;
     mockIDHR->interlace = 0x00;
     U32 IHDRcrc = getIHDRcrc(mockIDHR, &IHDRType, &tempWidth, &tempHeight);
-    printf("%x\n", IHDRcrc);
 
     //Getting IDAT data
 
@@ -614,7 +613,6 @@ int main( int argc, char** argv )
     fIDATchunk->p_data = fIDATdata;
 
     U32 IDATcrc = getIDATcrc(fIDATchunk, IDATcomplength);
-    printf("%x\n", IDATcrc);
 
     //Getting IEND Data
     U32 IEND[3];
