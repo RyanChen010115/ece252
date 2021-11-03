@@ -275,7 +275,7 @@ int read_file(const char *path, U8* read, size_t len){
     return fclose(fp);
 }
 
-void producer(RECV_BUF* buffer[]){
+void producer(RECV_BUF* buffer[], int siteNum){
         CURL *curl_handle;
         CURLcode res;
         /* init a curl session */
@@ -304,7 +304,7 @@ void producer(RECV_BUF* buffer[]){
             printf("In Producer: %d\n", tc);
             //Get URL
             char url[256];
-            sprintf(url, "http://ece252-1.uwaterloo.ca:2530/image?img=%d&part=%d", image_num, tc);
+            sprintf(url, "http://ece252-%d.uwaterloo.ca:2530/image?img=%d&part=%d", siteNum, image_num, tc);
 
             RECV_BUF *p_shm_recv_buf = malloc(sizeof(RECV_BUF) + sizeof(char)*BUF_SIZE);
             recv_buf_init(p_shm_recv_buf, MAX_BUF_SIZE);
@@ -418,6 +418,7 @@ void consumer(RECV_BUF* buffer[], chunk_p chunks[]){
 
 int main( int argc, char** argv ) 
 {
+    printf("this one has forks \n");
     double times[2];
     struct timeval tv;
 
@@ -532,7 +533,7 @@ int main( int argc, char** argv )
     for (int i = 0; i < num_producers; i++){
         f = fork();
         if (f == 0){
-            producer(buffer);
+            producer(buffer, i%3+1);
             if ( shmdt(itemSem) != 0 ) {
                 perror("shmdt");
                 abort();
