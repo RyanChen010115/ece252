@@ -563,13 +563,58 @@ int main( int argc, char** argv )
         f = fork();
         if (f == 0){
             consumer(buffer, UCChunks);
-            shmctl(shmid_sem_items, IPC_RMID, NULL);
-            shmctl(shmid_sem_spaces, IPC_RMID, NULL);
-            shmctl(shmid_sem_buffer, IPC_RMID, NULL);
-            shmctl(shmid_sem_count, IPC_RMID, NULL);
-            shmctl(shmid_pindex, IPC_RMID, NULL);
-            shmctl(shmid_cindex, IPC_RMID, NULL);
-            shmctl(shmid_count, IPC_RMID, NULL);
+            if ( shmdt(itemSem) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(spaceSem) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(bufferMutex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(countMutex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(chunkMutex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(fileMutex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(pindex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(cindex) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(totalCount) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            if ( shmdt(totalConsumed) != 0 ) {
+                perror("shmdt");
+                abort();
+            }
+            for(int i = 0; i < buffer_size; i++){
+                if ( shmdt(buffer[i]) != 0 ) {
+                    perror("shmdt");
+                    abort();
+                }
+            }
+            for(int i = 0; i < 50; i++){
+                if ( shmdt(UCChunks[i]) != 0 ) {
+                    perror("shmdt");
+                    abort();
+                }
+            }
             exit(0);
         }
     }
@@ -661,7 +706,7 @@ int main( int argc, char** argv )
         abort();
     }
     times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-    printf("Paster2 execution time: %.6lf seconds\n", getpid(),  times[1] - times[0]);
+    printf("Paster2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     //clean up
     free(AllUCData);
