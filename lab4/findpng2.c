@@ -150,9 +150,11 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
                 printf("href: %s\n", href);
-                // char path[256];
-
-                // write_file()
+                char data[256];
+                char path[256];
+                strcpy(path, LOGFILE);
+                sprintf(data, "%s", href); // must be in mutex!
+                append_file(path, &data, strlen(data));
             }
             xmlFree(href);
         }
@@ -290,6 +292,33 @@ int write_file(const char *path, const void *in, size_t len)
     }
 
     fp = fopen(path, "wb");
+    if (fp == NULL) {
+        perror("fopen");
+        return -2;
+    }
+
+    if (fwrite(in, 1, len, fp) != len) {
+        fprintf(stderr, "write_file: imcomplete write!\n");
+        return -3; 
+    }
+    return fclose(fp);
+}
+
+int append_file(const char *path, const void *in, size_t len)
+{
+    FILE *fp = NULL;
+
+    if (path == NULL) {
+        fprintf(stderr, "write_file: file name is null!\n");
+        return -1;
+    }
+
+    if (in == NULL) {
+        fprintf(stderr, "write_file: input data is null!\n");
+        return -1;
+    }
+
+    fp = fopen(path, "a");
     if (fp == NULL) {
         perror("fopen");
         return -2;
