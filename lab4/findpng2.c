@@ -73,7 +73,7 @@ typedef struct linkedList {
 int uniqueLinkNum = 0;
 int uniquePNGNum = 0;
 
-linkedList_t* toVisitURLList;
+linkedList_t* toVisitURLList = {.size = 0, .head = NULL};
 linkedList_t* visitedURLList;
 linkedList_t* visitedPNGList;
 
@@ -490,7 +490,6 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-    toVisitURLList = {.size = 0, .head = NULL};
     char url[256];
     if (argc == 1) {
         strcpy(url, SEED_URL); 
