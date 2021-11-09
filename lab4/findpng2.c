@@ -425,8 +425,8 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         printf("The PNG url is: %s\n", eurl);
     }
 
-    sprintf(fname, "./output_%d_%d.png", p_recv_buf->seq, pid);
-    return append_file(fname, p_recv_buf->buf, p_recv_buf->size);
+    sprintf(fname, "%s\n", PNGFILE);
+    return append_file(fname, eurl, strlen(eurl));
 }
 /**
  * @brief process teh download data by curl
