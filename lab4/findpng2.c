@@ -150,9 +150,9 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
                 printf("href: %s\n", href);
-                char path[256];
+                // char path[256];
 
-                write_file()
+                // write_file()
             }
             xmlFree(href);
         }
