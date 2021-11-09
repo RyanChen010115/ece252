@@ -39,7 +39,7 @@
 #include <libxml/uri.h>
 
 
-#define SEED_URL "http://ece252-1.uwaterloo.ca/lab4/"
+#define SEED_URL "http://ece252-1.uwaterloo.ca/~yqhuang/lab4/Disguised.png"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
 #define BUF_INC  524288   /* 1024*512  = 0.5M */
