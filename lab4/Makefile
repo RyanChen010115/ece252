@@ -13,7 +13,7 @@ LDLIBS = $(LDLIBS_XML2) $(LDLIBS_CURL)
 
 SRCS   = findpng2.c
 OBJS3  = findpng2.o
-TARGETS= findpng2.out
+TARGETS= findpng2
 
 all: ${TARGETS}
 
@@ -30,4 +30,4 @@ findpng2.out: $(OBJS3)
 
 .PHONY: clean
 clean:
-	rm -f *~ *.d *.o $(TARGETS) *.png *.html
+	rm -f *~ *.d *.o $(TARGETS) *.png *.html *.txt
