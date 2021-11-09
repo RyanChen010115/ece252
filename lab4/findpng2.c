@@ -154,7 +154,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 char data[256];
                 char path[256];
                 strcpy(path, LOGFILE);
-                sprintf(data, "%s", href); // must be in mutex!
+                sprintf(data, "%s\n", href); // must be in mutex!
                 append_file(path, &data, strlen(data));
             }
             xmlFree(href);
