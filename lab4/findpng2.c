@@ -73,9 +73,9 @@ typedef struct linkedList {
 int uniqueLinkNum = 0;
 int uniquePNGNum = 0;
 
-linkedList_t* toVisitURLList = {.size = 0, .head = NULL};
-linkedList_t* visitedURLList;
-linkedList_t* visitedPNGList;
+linkedList_t toVisitURLList = {.size = 0, .head = NULL};
+linkedList_t visitedURLList;
+linkedList_t visitedPNGList;
 
 
 typedef struct recv_buf2 {
