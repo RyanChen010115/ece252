@@ -26,6 +26,9 @@
  * @see https://ec.haxx.se/callback-write.html
  */ 
 
+// Linked List to keep track of list of URLs to visit
+// Linked List to keep track of already visited URLs
+// Linked List to keep track of already visited PNGs
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +40,7 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/uri.h>
+#include <map>
 
 
 #define SEED_URL "http://ece252-1.uwaterloo.ca/lab4"
@@ -53,6 +57,12 @@
    ({ __typeof__ (a) _a = (a); \
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
+
+#define LOGFILE "log.txt"
+#define PNGFILE "png_urls.txt"
+
+int uniqueLinkNum = 0;
+int maxUniqueLinkNum = 0;
 
 typedef struct recv_buf2 {
     char *buf;       /* memory to hold a copy of received data */
@@ -141,6 +151,9 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
                 printf("href: %s\n", href);
+                char path[256];
+
+                write_file()
             }
             xmlFree(href);
         }
@@ -441,6 +454,12 @@ int main( int argc, char** argv )
     }
     printf("%s: URL is %s\n", argv[0], url);
 
+    //initializing files
+    char pngfile[256];
+    strcpy(pngfile, PNGFILE);
+    FILE *fp = NULL;
+    fp = fopen(pngfile, "a");
+    fclose(fp);
 
     for(int i = 0; i < 2; i++){
         CURL *curl_handle;
