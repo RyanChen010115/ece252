@@ -42,7 +42,7 @@
 #include <libxml/uri.h>
 
 
-#define SEED_URL "http://ece252-1.uwaterloo.ca/lab4"
+#define SEED_URL "http://ece252-1.uwaterloo.ca/~yqhuang/lab4/Disguised.png"
 #define ECE252_HEADER "X-Ece252-Fragment: "
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
 #define BUF_INC  524288   /* 1024*512  = 0.5M */
@@ -426,7 +426,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
 
     sprintf(fname, "./output_%d_%d.png", p_recv_buf->seq, pid);
-    return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
+    return append_file(fname, p_recv_buf->buf, p_recv_buf->size);
 }
 /**
  * @brief process teh download data by curl
