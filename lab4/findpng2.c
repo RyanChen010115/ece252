@@ -417,8 +417,8 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    pid_t pid =getpid();
     char fname[256];
+    char pngName[256];
     char *eurl = NULL;          /* effective URL */
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &eurl);
     if ( eurl != NULL) {
@@ -426,7 +426,8 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
 
     sprintf(fname, "%s", PNGFILE);
-    return append_file(fname, eurl, strlen(eurl));
+    sprintf(pngName, "%s\n", *eurl);
+    return append_file(fname, pngName, strlen(eurl));
 }
 /**
  * @brief process teh download data by curl
