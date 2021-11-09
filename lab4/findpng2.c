@@ -61,7 +61,7 @@
 #define PNGFILE "png_urls.txt"
 
 typedef struct node {
-    char[256] val;
+    char val[256];
     struct node* next;
 } node_t;
 
