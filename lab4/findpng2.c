@@ -490,7 +490,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-    toVisitURLList = struct linkedList{.size = 0, .head = NULL};
+    toVisitURLList = {.size = 0, .head = NULL};
     char url[256];
     if (argc == 1) {
         strcpy(url, SEED_URL); 
