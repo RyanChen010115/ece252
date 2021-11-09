@@ -60,8 +60,23 @@
 #define LOGFILE "log.txt"
 #define PNGFILE "png_urls.txt"
 
+typedef struct node {
+    char[256] val;
+    struct node* next;
+} node_t;
+
+typedef struct linkedList {
+    int size;
+    struct node* head;
+} linkedList_t;
+
 int uniqueLinkNum = 0;
-int maxUniqueLinkNum = 0;
+int uniquePNGNum = 0;
+
+linkedList_t* toVisitURLList;
+linkedList_t* visitedURLList;
+linkedList_t* visitedPNGList;
+
 
 typedef struct recv_buf2 {
     char *buf;       /* memory to hold a copy of received data */
@@ -475,7 +490,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-
+    toVisitURLList = struct linkedList{.size = 0, .head = NULL};
     char url[256];
     if (argc == 1) {
         strcpy(url, SEED_URL); 
