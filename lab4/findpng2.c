@@ -118,10 +118,9 @@ int isInList(linkedList_t* list, char* find){
 void printList(linkedList_t* list){
     node_t* cur = list->head;
     while(cur != NULL){
-        printf("Node is: %s ", cur->val);
+        printf("Node is: %s \n", cur->val);
         cur = cur->next;
     }
-    printf("\n");
 }
 
 
@@ -566,7 +565,9 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    for(int i = 0; i < 2; i++){
+    int cont = 0;
+
+    while(cont < 10)
         CURL *curl_handle;
         CURLcode res;
         
@@ -601,6 +602,9 @@ int main( int argc, char** argv )
         // get next url
         if(toVisitURLList.size > 0){
             removeFromList(&toVisitURLList);
+            cont++;
+        } else {
+            cont = 0;
         }
     }
 
