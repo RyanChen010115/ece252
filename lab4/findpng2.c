@@ -221,7 +221,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 node_t* temp = malloc(sizeof(node_t));
                 temp->next = NULL;
                 strcpy(temp->val, data);
-                if(isInList(&toVisitURLList, temp) == 0){
+                if(isInList(&toVisitURLList, data) == 0){
                     addToList(&toVisitURLList, temp);
                 }
                 
