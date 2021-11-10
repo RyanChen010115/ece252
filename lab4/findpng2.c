@@ -597,9 +597,9 @@ int main( int argc, char** argv )
         cleanup(curl_handle, &recv_buf);
 
         // get next url
-        if(toVisitURLList.size > 0){
-            removeFromList(&toVisitURLList);
-        }
+        // if(toVisitURLList.size > 0){
+        //     removeFromList(&toVisitURLList);
+        // }
     }
 
     printList(&toVisitURLList);
