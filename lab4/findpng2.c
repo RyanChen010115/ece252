@@ -68,14 +68,61 @@ typedef struct node {
 typedef struct linkedList {
     int size;
     struct node* head;
+    struct node* tail;
 } linkedList_t;
 
 int uniqueLinkNum = 0;
 int uniquePNGNum = 0;
 
-linkedList_t toVisitURLList = {.size = 0, .head = NULL};
-linkedList_t visitedURLList;
-linkedList_t visitedPNGList;
+linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
+linkedList_t visitedURLList = {.size = 0, .head = NULL, .tail = NULL};
+linkedList_t visitedPNGList = {.size = 0, .head = NULL, .tail = NULL};
+
+void addToList(linkedList_t* list, node_t* node){
+    if(list->size == 0){
+        list->head = node;
+    } else{
+        list->tail->next = node;
+    }
+    list->tail = node;
+    list->size++;
+}
+
+void removeFromList (linkedList_t* list){
+    if(list->size == 0){
+        return;
+    } else if(list->size == 1){
+        list->tail = NULL;
+        free(list->head);
+        list->head = NULL;
+    } else{
+        node_t* temp = list->head->next;
+        free(list->head);
+        list->head = temp;
+    }
+    list->size--;
+}
+
+int isInList(linkedList_t* list, char* find){
+    node_t* cur = list->head;
+    int res = 0;
+    while(cur != NULL && res == 0){
+        if(strcmp(cur, find) == 0){
+            res = 1;
+        }
+        cur = cur->next;
+    }
+    return res;
+}
+
+void printList(linkedList_t* list){
+    node_t* cur = list->head;
+    while(cur != NULL){
+        printf("Node is: %s ", cur->val);
+        cur = cur->next;
+    }
+    printf("\n");
+}
 
 
 typedef struct recv_buf2 {
@@ -171,6 +218,10 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 strcpy(path, LOGFILE);
                 sprintf(data, "%s\n", href); // must be in mutex!
                 append_file(path, &data, strlen(data));
+                node_t* temp = malloc(sizeof(node_t));
+                temp->next = NULL;
+                strcpy(temp->val, &data);
+                addToList(toVisitURLList, temp);
             }
             xmlFree(href);
         }
@@ -537,6 +588,8 @@ int main( int argc, char** argv )
         /* cleaning up */
         cleanup(curl_handle, &recv_buf);
     }
+
+    printList(toVisitURLList);
 
     return 0;
 }
