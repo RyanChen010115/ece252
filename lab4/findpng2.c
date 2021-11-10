@@ -551,7 +551,11 @@ int main( int argc, char** argv )
     } else {
         strcpy(url, argv[1]);
     }
-    printf("%s: URL is %s\n", argv[0], url);
+
+    node_t* temp = malloc(sizeof(node_t));
+    temp->next = NULL;
+    strcpy(temp->val, url);
+    addToList(&toVisitURLList, temp);
 
     //initializing files
     char pngfile[256];
@@ -567,7 +571,7 @@ int main( int argc, char** argv )
         RECV_BUF recv_buf;
         printf("URL: %s \n", url);
         curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl_handle = easy_handle_init(&recv_buf, url);
+        curl_handle = easy_handle_init(&recv_buf, toVisitURLList.head->val);
 
         if ( curl_handle == NULL ) {
             fprintf(stderr, "Curl initialization failed. Exiting...\n");
@@ -594,8 +598,6 @@ int main( int argc, char** argv )
 
         // get next url
         if(toVisitURLList.size > 0){
-            strcpy(url, toVisitURLList.head->val);
-            printf("URL: %s \n", toVisitURLList.head->val);
             removeFromList(&toVisitURLList);
         }
     }
