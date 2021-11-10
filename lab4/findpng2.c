@@ -591,6 +591,12 @@ int main( int argc, char** argv )
 
         /* cleaning up */
         cleanup(curl_handle, &recv_buf);
+
+        // get next url
+        if(toVisitURLList.size > 0){
+            strcpy(url, toVisitURLList.head->val);
+            removeFromList(toVisitURLList);
+        }
     }
 
     printList(&toVisitURLList);
