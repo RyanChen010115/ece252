@@ -587,7 +587,7 @@ int main( int argc, char** argv )
         if( res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             cleanup(curl_handle, &recv_buf);
-            exit(1);
+            break;
         } else {
         printf("%lu bytes received in memory %p, seq=%d.\n", \
                 recv_buf.size, recv_buf.buf, recv_buf.seq);
