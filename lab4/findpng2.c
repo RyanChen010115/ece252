@@ -572,7 +572,7 @@ int main( int argc, char** argv )
         CURLcode res;
         
         RECV_BUF recv_buf;
-        printf("URL: %s \n", url);
+        printf("URL: %s \n", toVisitURLList.head->val);
         curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, toVisitURLList.head->val);
 
@@ -601,7 +601,7 @@ int main( int argc, char** argv )
 
         // get next url
         if(toVisitURLList.size > 0){
-            //removeFromList(&toVisitURLList);
+            removeFromList(&toVisitURLList);
             cont++;
         } else {
             cont = 0;
