@@ -587,17 +587,15 @@ int main( int argc, char** argv )
         if( res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             cleanup(curl_handle, &recv_buf);
-            break;
         } else {
-        printf("%lu bytes received in memory %p, seq=%d.\n", \
+            printf("%lu bytes received in memory %p, seq=%d.\n", \
                 recv_buf.size, recv_buf.buf, recv_buf.seq);
+                        /* process the download data */
+            process_data(curl_handle, &recv_buf);
+
+            /* cleaning up */
+            cleanup(curl_handle, &recv_buf);    
         }
-
-        /* process the download data */
-        process_data(curl_handle, &recv_buf);
-
-        /* cleaning up */
-        cleanup(curl_handle, &recv_buf);
 
         // get next url
         if(toVisitURLList.size > 0){
