@@ -601,7 +601,7 @@ int main( int argc, char** argv )
 
         // get next url
         if(toVisitURLList.size > 0){
-            removeFromList(&toVisitURLList);
+            //removeFromList(&toVisitURLList);
             cont++;
         } else {
             cont = 0;
