@@ -107,7 +107,7 @@ int isInList(linkedList_t* list, char* find){
     node_t* cur = list->head;
     int res = 0;
     while(cur != NULL && res == 0){
-        if(strcmp(cur, find) == 0){
+        if(strcmp(cur->val, find) == 0){
             res = 1;
         }
         cur = cur->next;
@@ -220,8 +220,8 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 append_file(path, &data, strlen(data));
                 node_t* temp = malloc(sizeof(node_t));
                 temp->next = NULL;
-                strcpy(temp->val, &data);
-                addToList(toVisitURLList, temp);
+                strcpy(temp->val, data);
+                addToList(&toVisitURLList, temp);
             }
             xmlFree(href);
         }
@@ -589,7 +589,7 @@ int main( int argc, char** argv )
         cleanup(curl_handle, &recv_buf);
     }
 
-    printList(toVisitURLList);
+    printList(&toVisitURLList);
 
     return 0;
 }
