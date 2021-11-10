@@ -218,7 +218,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 strcpy(path, LOGFILE);
                 sprintf(data, "%s\n", href); // must be in mutex!
                 sprintf(data2, "%s", href); // must be in mutex!
-                append_file(path, &data, strlen(data));
+                append_file(path, data, strlen(data));
                 node_t* temp = malloc(sizeof(node_t));
                 temp->next = NULL;
                 strcpy(temp->val, data2);
