@@ -595,7 +595,7 @@ int main( int argc, char** argv )
         // get next url
         if(toVisitURLList.size > 0){
             strcpy(url, toVisitURLList.head->val);
-            removeFromList(toVisitURLList);
+            removeFromList(&toVisitURLList);
         }
     }
 
