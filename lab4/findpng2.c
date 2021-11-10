@@ -214,14 +214,16 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
                 printf("href: %s\n", href);
                 char data[256];
+                char data2[256];
                 char path[256];
                 strcpy(path, LOGFILE);
                 sprintf(data, "%s\n", href); // must be in mutex!
+                sprintf(data2, "%s", href); // must be in mutex!
                 append_file(path, &data, strlen(data));
                 node_t* temp = malloc(sizeof(node_t));
                 temp->next = NULL;
-                strcpy(temp->val, data);
-                if(isInList(&toVisitURLList, data) == 0){
+                strcpy(temp->val, data2);
+                if(isInList(&toVisitURLList, data2) == 0){
                     addToList(&toVisitURLList, temp);
                 }
                 
@@ -597,9 +599,9 @@ int main( int argc, char** argv )
         cleanup(curl_handle, &recv_buf);
 
         // get next url
-        // if(toVisitURLList.size > 0){
-        //     removeFromList(&toVisitURLList);
-        // }
+        if(toVisitURLList.size > 0){
+            removeFromList(&toVisitURLList);
+        }
     }
 
     printList(&toVisitURLList);
