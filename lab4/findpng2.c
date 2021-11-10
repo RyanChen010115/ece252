@@ -567,7 +567,7 @@ int main( int argc, char** argv )
 
     int cont = 0;
 
-    while(cont < 10)
+    while(cont < 10){
         CURL *curl_handle;
         CURLcode res;
         
