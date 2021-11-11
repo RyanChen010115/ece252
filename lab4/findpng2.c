@@ -541,7 +541,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
     sprintf(fname, "%s", PNGFILE); // need mutex
     sprintf(pngName, "%s", eurl); // need mutex
-    // uniquePNGNum++; // need mutex
+    uniquePNGNum++; // need mutex
     return append_file(fname, pngName, strlen(pngName));
 }
 /**
@@ -610,7 +610,6 @@ int main( int argc, char** argv )
     fclose(fp);
 
     while(uniquePNGNum < 10){
-        uniquePNGNum++;
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
