@@ -609,7 +609,7 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 10){
+    while(uniquePNGNum < 30){
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
