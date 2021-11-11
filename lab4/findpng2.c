@@ -533,8 +533,6 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     if(is_png(header) == 0){
         return 0;
     }
-    char fname[256];
-    char pngName[256];
     char *eurl = NULL;          /* effective URL */
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &eurl);
     if ( eurl != NULL) {
@@ -625,7 +623,7 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 4){
+    while(uniquePNGNum < 50){
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
@@ -675,7 +673,7 @@ int main( int argc, char** argv )
         
     }
 
-    printList(&visitedURLList);
+    printList(&toVisitURLList);
     appendList(&visitedURLList, LOGFILE);
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
