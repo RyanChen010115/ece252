@@ -388,7 +388,7 @@ int append_file(const char *path, const void *in, size_t len)
 {
     FILE *fp = NULL;
 
-    char line[8] = "\n";
+    char line[4] = "\n";
 
     if (path == NULL) {
         fprintf(stderr, "write_file: file name is null!\n");
@@ -410,7 +410,7 @@ int append_file(const char *path, const void *in, size_t len)
         fprintf(stderr, "write_file: imcomplete write!\n");
         return -3; 
     }
-    fwrite(line, 1, 8, fp);
+    fwrite(line, 1, 4, fp);
     return fclose(fp);
 }
 
