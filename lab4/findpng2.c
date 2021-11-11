@@ -60,6 +60,9 @@
 #define LOGFILE "log.txt"
 #define PNGFILE "png_urls.txt"
 
+typedef unsigned char U8;
+typedef unsigned int  U32;
+
 typedef struct node {
     char val[256];
     struct node* next;
