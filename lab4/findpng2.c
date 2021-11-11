@@ -126,7 +126,7 @@ void printList(linkedList_t* list){
 }
 
 int is_png(char *buf){
-    if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
+    if((buf[0] == 0x89 || buf[0] == 0xffffffff89) && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
         return 1;
     }
     return 0;
@@ -497,8 +497,8 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    for(int i = 0; i < 8; i++){
-        printf("%x ", p_recv_buf->buf[i]);
+    if(is_png(p_recv_buf->buf) == 0){
+        return 0;
     }
     char fname[256];
     char pngName[256];
