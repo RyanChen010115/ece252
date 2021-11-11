@@ -550,10 +550,15 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedURLList, temp);
 
     }
-    sprintf(fname, "%s", PNGFILE); // need mutex
-    sprintf(pngName, "%s", eurl); // need mutex
+
+    if(isInList(&visitedPNGList, eurl) == 0){
+        node_t* temp = malloc(sizeof(node_t));
+        temp->next = NULL;
+        strcpy(temp->val, eurl);
+        addToList(&visitedPNGList, temp);
+    }
     uniquePNGNum++; // need mutex
-    return append_file(fname, pngName, strlen(pngName));
+    return 0;
 }
 /**
  * @brief process teh download data by curl
@@ -672,6 +677,7 @@ int main( int argc, char** argv )
 
     printList(&visitedURLList);
     appendList(&visitedURLList, LOGFILE);
+    appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
 
