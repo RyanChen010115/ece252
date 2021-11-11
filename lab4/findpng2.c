@@ -173,6 +173,7 @@ void appendList(linkedList_t* list, char* fname){
     node_t* cur = list->head;
     while(cur != NULL){
         append_file(fname, cur->val, strlen(cur->val));
+        cur = cur->next;
     }
 }
 
