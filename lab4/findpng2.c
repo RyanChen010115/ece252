@@ -123,6 +123,13 @@ void printList(linkedList_t* list){
     }
 }
 
+int is_png(U8 *buf, size_t n){
+    if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
+        return 1;
+    }
+    return 0;
+}
+
 
 typedef struct recv_buf2 {
     char *buf;       /* memory to hold a copy of received data */
@@ -215,16 +222,23 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 char data[256];
                 char data2[256];
                 char path[256];
-                strcpy(path, LOGFILE);
-                sprintf(data, "%s\n", href); // must be in mutex!
-                sprintf(data2, "%s", href); // must be in mutex!
-                append_file(path, data, strlen(data));
-                node_t* temp = malloc(sizeof(node_t));
-                temp->next = NULL;
-                strcpy(temp->val, data2);
+                
+                
+                strcpy(data2, href);
+                
+
                 if(isInList(&toVisitURLList, data2) == 0){
+
+                    sprintf(data, "%s\n", href); // must be in mutex!
+                    
+                    node_t* temp = malloc(sizeof(node_t));
+                    temp->next = NULL;
+                    strcpy(temp->val, data2);
                     addToList(&toVisitURLList, temp);
+                    strcpy(path, LOGFILE);
+                    append_file(path, data, strlen(data));
                 }
+
                 
 
             }
@@ -626,7 +640,7 @@ int main( int argc, char** argv )
         
     }
 
-    printList(&toVisitURLList);
+    printList(&visitedURLList);
 
     return 0;
 }
