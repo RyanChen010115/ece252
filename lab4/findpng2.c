@@ -487,8 +487,23 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     int follow_relative_link = 1;
     char *url = NULL; 
     pid_t pid =getpid();
-    // visit eURL
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
+    // need mutex
+    if(isInList(&visitedURLList, url) == 0){
+        printf("ADDED EXTRA!!!\n");
+        // Add to visited List
+        node_t* temp = malloc(sizeof(node_t));
+        temp->next = NULL;
+        strcpy(temp->val, url);
+        addToList(&visitedURLList, temp);
+        // Add to log
+        char path[256];
+        char data[256];
+        strcpy(path, LOGFILE);
+        strcpy(data, url);
+        append_file(path, data, strlen(data));
+
+    }
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
     sprintf(fname, "./output_%d.html", pid);
     
@@ -497,9 +512,10 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    if(is_png(p_recv_buf->buf) == 0){
-        return 0;
-    }
+    // Fix is_png
+    // if(is_png(p_recv_buf->buf) == 0){
+    //     return 0;
+    // }
     char fname[256];
     char pngName[256];
     char *eurl = NULL;          /* effective URL */
@@ -507,9 +523,25 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     if ( eurl != NULL) {
         printf("The PNG url is: %s\n", eurl);
     }
+        // need mutex
+    if(isInList(&visitedURLList, eurl) == 0){
+        printf("ADDED EXTRA!!!\n");
+        // Add to visited List
+        node_t* temp = malloc(sizeof(node_t));
+        temp->next = NULL;
+        strcpy(temp->val, eurl);
+        addToList(&visitedURLList, temp);
+        // Add to log
+        char path[256];
+        char data[256];
+        strcpy(path, LOGFILE);
+        strcpy(data, eurl);
+        append_file(path, data, strlen(data));
+
+    }
     sprintf(fname, "%s", PNGFILE); // need mutex
     sprintf(pngName, "%s", eurl); // need mutex
-    uniquePNGNum++; // need mutex
+    // uniquePNGNum++; // need mutex
     return append_file(fname, pngName, strlen(pngName));
 }
 /**
@@ -578,7 +610,7 @@ int main( int argc, char** argv )
     fclose(fp);
 
     while(uniquePNGNum < 10){
-
+        uniquePNGNum++;
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
