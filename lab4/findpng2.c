@@ -581,11 +581,11 @@ int main( int argc, char** argv )
             cont = 0;
         }
 
-        if(isInList(visitedURLList, initURL) == 0){
+        if(isInList(&visitedURLList, initURL) == 0){
             // Add to visited List, need mutex
             node_t* temp = malloc(sizeof(node_t));
             temp->next = NULL;
-            strcpy(temp->next, initURL);
+            strcpy(temp->val, initURL);
             addToList(&visitedURLList, temp);
         } else {
             continue;
