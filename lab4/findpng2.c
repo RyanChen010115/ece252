@@ -568,13 +568,39 @@ int main( int argc, char** argv )
     int cont = 0;
 
     while(cont < 10){
+
+        //need mutex
+        char initURL[256];
+        strcpy(initURL, toVisitURLList.head->val);
+
+        // get next url
+        if(toVisitURLList.size > 0){
+            removeFromList(&toVisitURLList);
+            cont++;
+        } else {
+            cont = 0;
+        }
+
+        if(isInList(visitedURLList, initURL) == 0){
+            // Add to visited List, need mutex
+            node_t* temp = malloc(sizeof(node_t));
+            temp->next = NULL;
+            strcpy(temp->next, initURL);
+            addToList(&visitedURLList, temp);
+        } else {
+            continue;
+        }
+
+    
         CURL *curl_handle;
         CURLcode res;
         
         RECV_BUF recv_buf;
-        printf("URL: %s \n", toVisitURLList.head->val);
+        printf("URL: %s \n", initURL);
         curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl_handle = easy_handle_init(&recv_buf, toVisitURLList.head->val);
+        curl_handle = easy_handle_init(&recv_buf, initURL);
+
+        
 
         if ( curl_handle == NULL ) {
             fprintf(stderr, "Curl initialization failed. Exiting...\n");
@@ -597,13 +623,7 @@ int main( int argc, char** argv )
             cleanup(curl_handle, &recv_buf);    
         }
 
-        // get next url
-        if(toVisitURLList.size > 0){
-            removeFromList(&toVisitURLList);
-            cont++;
-        } else {
-            cont = 0;
-        }
+        
     }
 
     printList(&toVisitURLList);
