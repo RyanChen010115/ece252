@@ -524,6 +524,8 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
+    U8 header[8];
+    memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
     // Fix is_png
     // if(is_png(p_recv_buf->buf) == 0){
     //     return 0;
@@ -653,8 +655,6 @@ int main( int argc, char** argv )
         printf("URL: %s \n", initURL);
         curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
-
-        
 
         if ( curl_handle == NULL ) {
             fprintf(stderr, "Curl initialization failed. Exiting...\n");
