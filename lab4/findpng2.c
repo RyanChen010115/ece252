@@ -74,7 +74,6 @@ typedef struct linkedList {
     struct node* tail;
 } linkedList_t;
 
-int uniqueLinkNum = 0;
 int uniquePNGNum = 0;
 
 linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
@@ -126,7 +125,7 @@ void printList(linkedList_t* list){
     }
 }
 
-int is_png(U8 *buf, size_t n){
+int is_png(char *buf){
     if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
         return 1;
     }
@@ -498,6 +497,9 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
+    if(is_png(p_recv_buf->buf) == 0){
+        return 0;
+    }
     char fname[256];
     char pngName[256];
     char *eurl = NULL;          /* effective URL */
@@ -505,9 +507,9 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     if ( eurl != NULL) {
         printf("The PNG url is: %s\n", eurl);
     }
-
-    sprintf(fname, "%s", PNGFILE);
-    sprintf(pngName, "%s", eurl);
+    sprintf(fname, "%s", PNGFILE); // need mutex
+    sprintf(pngName, "%s", eurl); // need mutex
+    uniquePNGNum++; // need mutex
     return append_file(fname, pngName, strlen(pngName));
 }
 /**
@@ -569,15 +571,13 @@ int main( int argc, char** argv )
     addToList(&toVisitURLList, temp);
 
     //initializing files
-    // char pngfile[256];
-    // strcpy(pngfile, PNGFILE);
-    // FILE *fp = NULL;
-    // fp = fopen(pngfile, "a");
-    // fclose(fp);
+    char pngfile[256];
+    strcpy(pngfile, PNGFILE);
+    FILE *fp = NULL;
+    fp = fopen(pngfile, "a");
+    fclose(fp);
 
-    int cont = 0;
-
-    while(cont < 50){
+    while(uniquePNGNum < 10){
 
         //need mutex
         char initURL[256];
@@ -586,7 +586,6 @@ int main( int argc, char** argv )
         // get next url
         if(toVisitURLList.size > 0){
             removeFromList(&toVisitURLList);
-            cont++;
         } else {
             break;
         }
