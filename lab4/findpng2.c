@@ -526,6 +526,9 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
     U8 header[8];
     memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
+    for(int i = 0; i < 8; i++){
+        printf("%x\n", header[i]);
+    }
     // Fix is_png
     // if(is_png(p_recv_buf->buf) == 0){
     //     return 0;
