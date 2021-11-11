@@ -498,7 +498,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
     sprintf(fname, "%s", PNGFILE);
     sprintf(pngName, "%s\n", eurl);
-    return append_file(fname, pngName, strlen(eurl));
+    return append_file(fname, pngName, strlen(pngName));
 }
 /**
  * @brief process teh download data by curl
