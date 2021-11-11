@@ -136,12 +136,6 @@ void freeList(linkedList_t* list){
     list->tail = NULL;
 }
 
-void appendList(linkedList_t* list, char* fname){
-    node_t* cur = list->head;
-    while(cur != NULL){
-        append_file(fname, cur->val, strlen(cur->val));
-    }
-}
 
 
 int is_png(U8 *buf){
@@ -173,6 +167,14 @@ int write_file(const char *path, const void *in, size_t len);
 int append_file(const char *path, const void *in, size_t len);
 CURL *easy_handle_init(RECV_BUF *ptr, const char *url);
 int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf);
+
+
+void appendList(linkedList_t* list, char* fname){
+    node_t* cur = list->head;
+    while(cur != NULL){
+        append_file(fname, cur->val, strlen(cur->val));
+    }
+}
 
 
 htmlDocPtr mem_getdoc(char *buf, int size, const char *url)
