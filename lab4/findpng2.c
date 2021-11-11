@@ -497,8 +497,8 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    if(is_png(p_recv_buf->buf) == 0){
-        return 0;
+    for(int i = 0; i < 8; i++){
+        printf("%x ", p_recv_buf->buf[i]);
     }
     char fname[256];
     char pngName[256];
