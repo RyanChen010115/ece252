@@ -136,6 +136,13 @@ void freeList(linkedList_t* list){
     list->tail = NULL;
 }
 
+void appendList(linkedList_t* list, char* fname){
+    node_t* cur = list->head;
+    while(cur != NULL){
+        append_file(fname, cur->val, strlen(data));
+    }
+}
+
 
 int is_png(U8 *buf){
     if(buf[0] == 0x89 && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
@@ -508,12 +515,6 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
         temp->next = NULL;
         strcpy(temp->val, url);
         addToList(&visitedURLList, temp);
-        // Add to log
-        char path[256];
-        char data[256];
-        strcpy(path, LOGFILE);
-        strcpy(data, url);
-        append_file(path, data, strlen(data));
 
     }
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
@@ -544,12 +545,6 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         temp->next = NULL;
         strcpy(temp->val, eurl);
         addToList(&visitedURLList, temp);
-        // Add to log
-        char path[256];
-        char data[256];
-        strcpy(path, LOGFILE);
-        strcpy(data, eurl);
-        append_file(path, data, strlen(data));
 
     }
     sprintf(fname, "%s", PNGFILE); // need mutex
@@ -640,13 +635,6 @@ int main( int argc, char** argv )
         strcpy(temp->val, initURL);
         addToList(&visitedURLList, temp);
 
-        // Write to log file
-        char path[256];
-        char data[256];
-        strcpy(path, LOGFILE);
-        strcpy(data, initURL);
-        append_file(path, data, strlen(data));
-
         CURL *curl_handle;
         CURLcode res;
         
@@ -680,6 +668,7 @@ int main( int argc, char** argv )
     }
 
     printList(&visitedURLList);
+    appendList(&visitedURLList, LOGFILE);
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
 
