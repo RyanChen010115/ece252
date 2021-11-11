@@ -390,7 +390,7 @@ int append_file(const char *path, const void *in, size_t len)
         return -1;
     }
 
-    fp = fopen(path, "a");
+    fp = fopen(path, "a+");
     if (fp == NULL) {
         perror("fopen");
         return -2;
