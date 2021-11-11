@@ -601,7 +601,7 @@ int main( int argc, char** argv )
         char path[256];
         char data[256];
         strcpy(path, LOGFILE);
-        strcpy(data, url);
+        strcpy(data, initURL);
         append_file(path, data, strlen(data));
 
         CURL *curl_handle;
