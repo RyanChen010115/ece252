@@ -681,8 +681,8 @@ int main( int argc, char** argv )
     }
 
     printList(&visitedURLList);
-    freeList(visitedURLList);
-    freeList(toVisitURLList);
+    freeList(&visitedURLList);
+    freeList(&toVisitURLList);
 
     return 0;
 }
