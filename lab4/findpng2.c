@@ -231,9 +231,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
-                }
-
-                
+                } 
 
             }
             xmlFree(href);
@@ -487,18 +485,14 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
 int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
     char fname[256];
-    char path[256];
-    char data[256];
     int follow_relative_link = 1;
     char *url = NULL; 
     pid_t pid =getpid();
-
+    // visit eURL
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
-    strcpy(path, LOGFILE);
-    strcpy(data, url);
-    append_file(path, data, strlen(data));
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
     sprintf(fname, "./output_%d.html", pid);
+    
     return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
 }
 
@@ -594,20 +588,22 @@ int main( int argc, char** argv )
             removeFromList(&toVisitURLList);
             cont++;
         } else {
-            cont = 0;
+            break;
         }
 
-        if(isInList(&visitedURLList, initURL) == 0){
-            // Add to visited List, need mutex
-            node_t* temp = malloc(sizeof(node_t));
-            temp->next = NULL;
-            strcpy(temp->val, initURL);
-            addToList(&visitedURLList, temp);
-        } else {
-            continue;
-        }
+        // Add to visited List, need mutex
+        node_t* temp = malloc(sizeof(node_t));
+        temp->next = NULL;
+        strcpy(temp->val, initURL);
+        addToList(&visitedURLList, temp);
 
-    
+        // Write to log file
+        char path[256];
+        char data[256];
+        strcpy(path, LOGFILE);
+        strcpy(data, url);
+        append_file(path, data, strlen(data));
+
         CURL *curl_handle;
         CURLcode res;
         
