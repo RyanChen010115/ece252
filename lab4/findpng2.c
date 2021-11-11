@@ -489,21 +489,21 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     pid_t pid =getpid();
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
     // need mutex
-    if(isInList(&visitedURLList, url) == 0){
-        printf("ADDED EXTRA!!!\n");
-        // Add to visited List
-        node_t* temp = malloc(sizeof(node_t));
-        temp->next = NULL;
-        strcpy(temp->val, url);
-        addToList(&visitedURLList, temp);
-        // Add to log
-        char path[256];
-        char data[256];
-        strcpy(path, LOGFILE);
-        strcpy(data, url);
-        append_file(path, data, strlen(data));
+    // if(isInList(&visitedURLList, url) == 0){
+    //     printf("ADDED EXTRA!!!\n");
+    //     // Add to visited List
+    //     node_t* temp = malloc(sizeof(node_t));
+    //     temp->next = NULL;
+    //     strcpy(temp->val, url);
+    //     addToList(&visitedURLList, temp);
+    //     // Add to log
+    //     char path[256];
+    //     char data[256];
+    //     strcpy(path, LOGFILE);
+    //     strcpy(data, url);
+    //     append_file(path, data, strlen(data));
 
-    }
+    // }
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
     sprintf(fname, "./output_%d.html", pid);
     
@@ -524,21 +524,21 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         printf("The PNG url is: %s\n", eurl);
     }
         // need mutex
-    if(isInList(&visitedURLList, eurl) == 0){
-        printf("ADDED EXTRA!!!\n");
-        // Add to visited List
-        node_t* temp = malloc(sizeof(node_t));
-        temp->next = NULL;
-        strcpy(temp->val, eurl);
-        addToList(&visitedURLList, temp);
-        // Add to log
-        char path[256];
-        char data[256];
-        strcpy(path, LOGFILE);
-        strcpy(data, eurl);
-        append_file(path, data, strlen(data));
+    // if(isInList(&visitedURLList, eurl) == 0){
+    //     printf("ADDED EXTRA!!!\n");
+    //     // Add to visited List
+    //     node_t* temp = malloc(sizeof(node_t));
+    //     temp->next = NULL;
+    //     strcpy(temp->val, eurl);
+    //     addToList(&visitedURLList, temp);
+    //     // Add to log
+    //     char path[256];
+    //     char data[256];
+    //     strcpy(path, LOGFILE);
+    //     strcpy(data, eurl);
+    //     append_file(path, data, strlen(data));
 
-    }
+    // }
     sprintf(fname, "%s", PNGFILE); // need mutex
     sprintf(pngName, "%s", eurl); // need mutex
     // uniquePNGNum++; // need mutex
