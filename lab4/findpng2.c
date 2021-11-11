@@ -513,7 +513,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
 
     sprintf(fname, "%s", PNGFILE);
-    sprintf(pngName, "%s\n", eurl);
+    sprintf(pngName, "%s", eurl);
     return append_file(fname, pngName, strlen(pngName));
 }
 /**
@@ -583,7 +583,7 @@ int main( int argc, char** argv )
 
     int cont = 0;
 
-    while(cont < 10){
+    while(cont < 50){
 
         //need mutex
         char initURL[256];
