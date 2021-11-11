@@ -498,7 +498,6 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
     sprintf(fname, "%s", PNGFILE);
     sprintf(pngName, "%s\n", eurl);
-    sprintf(pngName, "%s\n", pngName);
     return append_file(fname, pngName, strlen(eurl));
 }
 /**
@@ -560,11 +559,11 @@ int main( int argc, char** argv )
     addToList(&toVisitURLList, temp);
 
     //initializing files
-    char pngfile[256];
-    strcpy(pngfile, PNGFILE);
-    FILE *fp = NULL;
-    fp = fopen(pngfile, "a");
-    fclose(fp);
+    // char pngfile[256];
+    // strcpy(pngfile, PNGFILE);
+    // FILE *fp = NULL;
+    // fp = fopen(pngfile, "a");
+    // fclose(fp);
 
     int cont = 0;
 
