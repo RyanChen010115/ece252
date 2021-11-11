@@ -125,6 +125,18 @@ void printList(linkedList_t* list){
     }
 }
 
+void freeList(linkedList_t* list){
+    node_t* cur = list->head;
+    while(cur != NULL){
+        node_t* temp = cur;
+        cur = cur->next;
+        free(temp);
+    }
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+
 int is_png(char *buf){
     if((buf[0] == 0x89 || buf[0] == 0xffffffff89) && buf[1] == 0x50 && buf[2] == 0x4E && buf[3] == 0x47 && buf[4] == 0x0D && buf[5] == 0x0A && buf[6] == 0x1A && buf[7] == 0x0A){
         return 1;
@@ -609,7 +621,7 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 30){
+    while(uniquePNGNum < 40){
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
@@ -669,6 +681,8 @@ int main( int argc, char** argv )
     }
 
     printList(&visitedURLList);
+    freeList(visitedURLList);
+    freeList(toVisitURLList);
 
     return 0;
 }
