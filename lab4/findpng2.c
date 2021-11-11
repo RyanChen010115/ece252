@@ -223,14 +223,10 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 char data2[256];
                 char path[256];
                 
+                sprintf(data, "%s\n", href); // must be in mutex!
+                sprintf(data2, "%s", href); // must be in mutex!
                 
-                strcpy(data2, href);
-                
-
-                if(isInList(&toVisitURLList, data2) == 0){
-
-                    sprintf(data, "%s\n", href); // must be in mutex!
-                    
+                if(isInList(&toVisitURLList, data2) == 0 && isInList(&visitedURLList, data2) == 0){   
                     node_t* temp = malloc(sizeof(node_t));
                     temp->next = NULL;
                     strcpy(temp->val, data2);
