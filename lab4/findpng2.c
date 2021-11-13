@@ -534,6 +534,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
+    printf("PNG NUM: %d\n", uniquePNGNum);
     U8 header[8];
     memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
     if(is_png(header) == 0){
@@ -554,13 +555,10 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedURLList, temp);
 
     }
-    printf("MIDDLE OF PNG PROC\n");
     if(isInList(&visitedPNGList, eurl) == 0){
-        
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, eurl);
-        printf("ADDING TO PNG LIST\n");
         addToList(&visitedPNGList, temp);
     }
     printf("END OF PNG PROC");
