@@ -556,6 +556,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedPNGList, temp);
     }
     uniquePNGNum++; // need mutex
+    printf("END OF PNG PROC");
     return 0;
 }
 /**
