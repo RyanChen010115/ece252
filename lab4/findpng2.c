@@ -623,11 +623,11 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 50){
+    while(uniquePNGNum < 52){
         //need mutex
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
-
+        printf("SIZE: %d", toVisitURLList.size);
         // get next url
         if(toVisitURLList.size > 0){
             removeFromList(&toVisitURLList);
