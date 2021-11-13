@@ -632,18 +632,17 @@ int main( int argc, char** argv )
     fclose(fp);
 
     while(uniquePNGNum < 55){
-        
-        // get next url
-        if(toVisitURLList.size > 0){
-            removeFromList(&toVisitURLList);
-        } else {
-            break;
-        }
 
         //need mutex
+        if(toVisitURLList.head == NULL){
+            break;
+        }
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
         printf("SIZE: %d", toVisitURLList.size);
+        
+        // get next url
+        removeFromList(&toVisitURLList);
 
         // Add to visited List, need mutex
         node_t* temp = malloc(sizeof(node_t));
