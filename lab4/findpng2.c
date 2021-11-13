@@ -548,7 +548,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedURLList, temp);
 
     }
-
+    printf("MIDDLE OF PNG PROC");
     if(isInList(&visitedPNGList, eurl) == 0){
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
