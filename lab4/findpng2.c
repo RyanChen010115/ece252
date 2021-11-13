@@ -90,9 +90,9 @@ void addToList(linkedList_t* list, node_t* node){
         }
         list->tail->next = node;
     }
-    printf("FINISHED ADDING\n");
     list->tail = node;
     list->size++;
+    printf("FINISHED ADDING\n");
 }
 
 void removeFromList (linkedList_t* list){
