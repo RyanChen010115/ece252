@@ -81,18 +81,13 @@ linkedList_t visitedURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedPNGList = {.size = 0, .head = NULL, .tail = NULL};
 
 void addToList(linkedList_t* list, node_t* node){
-    printf("ADD TO LIST\n");
     if(list->size == 0){
         list->head = node;
     } else{
-        if(list->tail == NULL){
-            printf("IS NULL");
-        }
         list->tail->next = node;
     }
     list->tail = node;
     list->size++;
-    printf("FINISHED ADDING\n");
 }
 
 void removeFromList (linkedList_t* list){
@@ -111,7 +106,6 @@ void removeFromList (linkedList_t* list){
 }
 
 int isInList(linkedList_t* list, char* find){
-    printf("LOOKING IN LIST\n");
     node_t* cur = list->head;
     int res = 0;
     while(cur != NULL && res == 0){
@@ -639,7 +633,6 @@ int main( int argc, char** argv )
         }
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
-        printf("SIZE: %d", toVisitURLList.size);
         
         // get next url
         removeFromList(&toVisitURLList);
