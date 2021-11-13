@@ -40,8 +40,6 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/uri.h>
-#include <pthread.h>
-#include <semaphore.h>
 
 
 #define SEED_URL "http://ece252-1.uwaterloo.ca/lab4"
@@ -59,6 +57,7 @@
        __typeof__ (b) _b = (b); \
      _a > _b ? _a : _b; })
 
+#define LOGFILE "log.txt"
 #define PNGFILE "png_urls.txt"
 
 typedef unsigned char U8;
@@ -75,16 +74,7 @@ typedef struct linkedList {
     struct node* tail;
 } linkedList_t;
 
-int numThreads = 0;
 int uniquePNGNum = 0;
-int neededPNG = 0;
-char LOGFILE[256];
-
-sem_t foundSem;
-pthread_mutex_t vistedMutex;
-pthread_mutex_t pngMutex;
-pthread_mutex_t toVisitMutex;
-pthread_cond_t maxPNG;
 
 linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedURLList = {.size = 0, .head = NULL, .tail = NULL};
@@ -522,14 +512,12 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
     // need mutex
     if(isInList(&visitedURLList, url) == 0){
-        pthread_mutex_lock(&visitedMutex);
         printf("ADDED EXTRA!!!\n");
         // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, url);
         addToList(&visitedURLList, temp);
-        pthread_mutex_unlock(&visitedMutex);
 
     }
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
@@ -551,9 +539,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     if ( eurl != NULL) {
         printf("The PNG url is: %s\n", eurl);
     }
-    
         // need mutex
-    pthread_mutex_lock(&visitedMutex);
     if(isInList(&visitedURLList, eurl) == 0){
         printf("ADDED EXTRA!!!\n");
         // Add to visited List
@@ -563,26 +549,15 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedURLList, temp);
 
     }
-    pthread_mutex_unlock(&visitedMutex);
-
-    sem_wait(&foundSem);
-    if (uniquePNGNum == neededPNG){
-        return 0;
-    }
     if(isInList(&visitedPNGList, eurl) == 0){
-        pthread_mutex_lock(&pngMutex);
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
-        uniquePNGNum++;
-        if (uniquePNGNum == neededPNG){
-            pthread_cond_signal(&maxPNG);
-            printf("signal send\n");
-        }
-        pthread_mutex_unlock(&pngMutex);
     }
-    sem_post(&foundSem);
+    printf("END OF PNG PROC");
+    uniquePNGNum++; // need mutex
+    
     return 0;
 }
 /**
@@ -629,21 +604,33 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
 }
 
-void * crawler(void* variable){
-    while (uniquePNGNum < neededPNG){
+int main( int argc, char** argv ) 
+{
+    char url[256];
+    if (argc == 1) {
+        strcpy(url, SEED_URL); 
+    } else {
+        strcpy(url, argv[1]);
+    }
 
-        sem_wait(&foundSem);
-        if (neededPNG == uniquePNGNum){
-            pthread_exit(0);
-        }
-        sem_post(&foundSem);
+    node_t* temp = malloc(sizeof(node_t));
+    temp->next = NULL;
+    strcpy(temp->val, url);
+    addToList(&toVisitURLList, temp);
 
-        pthread_mutex_lock(&toVisitMutex);
+    //initializing files
+    char pngfile[256];
+    strcpy(pngfile, PNGFILE);
+    FILE *fp = NULL;
+    fp = fopen(pngfile, "a");
+    fclose(fp);
 
-        if (toVisitURLList.head == NULL){
+    while(uniquePNGNum < 55){
+
+        //need mutex
+        if(toVisitURLList.head == NULL){
             break;
         }
-        
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
         
@@ -684,74 +671,11 @@ void * crawler(void* variable){
             /* cleaning up */
             cleanup(curl_handle, &recv_buf);    
         }
-    }
-    pthread_exit(0);
-    
-}
 
-int main( int argc, char** argv ) 
-{
-    char url[256];
-    int log = 0;
-    if (argc == 1) {
-        strcpy(url, SEED_URL); 
-    } else {
-        for (int i = 1; i < argc; i+=2){
-            if (argc[i] == "-t"){
-                numThreads = atoi[i+1];
-            }
-            else if (argv[i] == "-m"){
-                neededPNG = atoi[i+1];
-            }
-            else if (argv[i] == "-v"){
-                strcpy(LOGFILE,argv[i+1]);
-                log = 1;
-            }
-        }
-        strcpy(url, argv[argc]);
+        
     }
 
-    node_t* temp = malloc(sizeof(node_t));
-    temp->next = NULL;
-    strcpy(temp->val, url);
-    addToList(&toVisitURLList, temp);
-
-    //initializing files
-    char pngfile[256];
-    strcpy(pngfile, PNGFILE);
-    FILE *fp = NULL;
-    fp = fopen(pngfile, "a");
-    fclose(fp);
-
-    if (log == 1){
-        FILE *logfile = NULL;
-        logfile = fopen(LOGFILE,"a");
-        fclose(logfile);
-    }
-
-    sem_init(&foundSem,1,1);
-    pthread_mutex_init(&visitedMutex,NULL);
-    pthread_mutex_init(&pngMutex,NULL);
-    pthread_mutex_init(&toVisitMutex,NULL);
-    pthread_cond_init(&maxPNG,NULL);
-
-    pthread_t pid[numThreads];
-
-    for (int i = 0; i < numThreads; i++){
-        pthread_create(&pid[i],NULL,crawler,NULL);
-    }
-    
-    pthread_mutex_lock(&pngMutex);
-    if (uniquePNGNum < neededPNG){
-        pthread_cond_wait(&maxPNG,&pngMutex);
-        for (int i = 0; i < numThreads; i++){
-            pthread_join(pid[i],NULL);
-        }
-    }
-    pthread_mutex_unlock(&pngMutex);
-    
-
-    printList(&toVisitURLList);
+    //printList(&toVisitURLList);
     appendList(&visitedURLList, LOGFILE);
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
