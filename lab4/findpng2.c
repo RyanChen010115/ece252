@@ -631,17 +631,19 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 50){
-        //need mutex
-        char initURL[256];
-        strcpy(initURL, toVisitURLList.head->val);
-        printf("SIZE: %d", toVisitURLList.size);
+    while(uniquePNGNum < 55){
+        
         // get next url
         if(toVisitURLList.size > 0){
             removeFromList(&toVisitURLList);
         } else {
             break;
         }
+
+        //need mutex
+        char initURL[256];
+        strcpy(initURL, toVisitURLList.head->val);
+        printf("SIZE: %d", toVisitURLList.size);
 
         // Add to visited List, need mutex
         node_t* temp = malloc(sizeof(node_t));
