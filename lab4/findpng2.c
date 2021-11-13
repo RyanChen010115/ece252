@@ -106,6 +106,7 @@ void removeFromList (linkedList_t* list){
 }
 
 int isInList(linkedList_t* list, char* find){
+    printf("LOOKING IN LIST\n");
     node_t* cur = list->head;
     int res = 0;
     while(cur != NULL && res == 0){
