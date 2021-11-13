@@ -85,8 +85,12 @@ void addToList(linkedList_t* list, node_t* node){
     if(list->size == 0){
         list->head = node;
     } else{
+        if(list->tail == NULL){
+            printf("IS NULL");
+        }
         list->tail->next = node;
     }
+    printf("FINISHED ADDING\n");
     list->tail = node;
     list->size++;
 }
