@@ -673,7 +673,7 @@ int main( int argc, char** argv )
         
     }
 
-    printList(&toVisitURLList);
+    //printList(&toVisitURLList);
     appendList(&visitedURLList, LOGFILE);
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
