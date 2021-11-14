@@ -53,6 +53,7 @@
 #define CT_HTML "text/html"
 #define CT_PNG_LEN  9
 #define CT_HTML_LEN 9
+#define MAXPNG 50
 
 #define max(a, b) \
    ({ __typeof__ (a) _a = (a); \
@@ -711,6 +712,9 @@ int main( int argc, char** argv )
             }
             else if (strcmp(argv[i],"-m") == 0){
                 neededPNG = atoi(argv[i+1]);
+                if (neededPNG > MAXPNG){
+                    neededPNG = MAXPNG;
+                }
             }
             else if (strcmp(argv[i],"-v") == 0){
                 strcpy(LOGFILE,argv[i+1]);
