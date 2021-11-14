@@ -637,9 +637,11 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 }
 
 void * crawler(void* variable){
-    printf("\n");
+    
     while (uniquePNGNum < neededPNG){
-        
+        if(uniquePNGNum == 0){
+           printf(""); 
+        }
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
