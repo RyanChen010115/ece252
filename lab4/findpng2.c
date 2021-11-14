@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <curl/curl.h>
 #include <libxml/HTMLparser.h>
@@ -641,14 +642,14 @@ void * crawler(void* variable){
 int main( int argc, char** argv ) 
 {
 
-    // double times[2];
-    // struct timeval tv;
+    double times[2];
+    struct timeval tv;
 
-    // if (gettimeofday(&tv, NULL) != 0) {
-    //     perror("gettimeofday");
-    //     abort();
-    // }
-    // times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
 
     char url[256];
     int log = 0;
