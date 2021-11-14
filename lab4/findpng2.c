@@ -260,12 +260,12 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 
                 
                 if(isInList(&toVisitURLList, data) == 0 && isInList(&visitedURLList, data) == 0){   
-                    //pthread_mutex_lock(&toVisitMutex);
+                    pthread_mutex_lock(&toVisitMutex);
                     node_t* temp = malloc(sizeof(node_t));
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
-                    //pthread_mutex_unlock(&toVisitMutex);
+                    pthread_mutex_unlock(&toVisitMutex);
                 } 
 
             }
@@ -517,13 +517,16 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     char *url = NULL; 
     pid_t pid =getpid();
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
+    // need mutex
     if(isInList(&visitedURLList, url) == 0){
-        //pthread_mutex_lock(&visitedMutex);
+        pthread_mutex_lock(&visitedMutex);
+        //printf("ADDED EXTRA!!!\n");
+        // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, url);
         addToList(&visitedURLList, temp);
-        //pthread_mutex_unlock(&visitedMutex);
+        pthread_mutex_unlock(&visitedMutex);
 
     }
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
@@ -547,7 +550,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
     
         // need mutex
-    //pthread_mutex_lock(&visitedMutex);
+    pthread_mutex_lock(&visitedMutex);
     if(isInList(&visitedURLList, eurl) == 0){
         //printf("ADDED EXTRA!!!\n");
         // Add to visited List
@@ -557,26 +560,26 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedURLList, temp);
 
     }
-    //pthread_mutex_unlock(&visitedMutex);
+    pthread_mutex_unlock(&visitedMutex);
 
     if(isInList(&visitedPNGList, eurl) == 0){
-        //pthread_mutex_lock(&pngMutex);
+        pthread_mutex_lock(&pngMutex);
         if (uniquePNGNum == neededPNG){
-            //pthread_mutex_unlock(&pngMutex);
+            pthread_mutex_unlock(&pngMutex);
             return 1;
         }
-        //pthread_mutex_lock(&conMutex);
+        pthread_mutex_lock(&conMutex);
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
         uniquePNGNum++;
         if (uniquePNGNum == neededPNG){
-            //pthread_cond_signal(&maxPNG);
+            pthread_cond_signal(&maxPNG);
             //printf("signal send, %d pngs\n",uniquePNGNum);
         }
-        //pthread_mutex_unlock(&conMutex);
-        //pthread_mutex_unlock(&pngMutex);
+        pthread_mutex_unlock(&conMutex);
+        pthread_mutex_unlock(&pngMutex);
     }
     //printf("END OF PNG PROC");
     return 0;
@@ -624,17 +627,17 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 void * crawler(void* variable){
     
     while (uniquePNGNum < neededPNG){
-        //sem_wait(&foundSem);
+        sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
             pthread_exit(0);
         }
-        //sem_post(&foundSem);
+        sem_post(&foundSem);
 
-        //pthread_mutex_lock(&toVisitMutex);
+        pthread_mutex_lock(&toVisitMutex);
         //need mutex
         if(toVisitURLList.head == NULL){
-            //pthread_mutex_unlock(&toVisitMutex);
+            pthread_mutex_unlock(&toVisitMutex);
             if (neededPNG > uniquePNGNum){
                 continue;
             }
@@ -647,15 +650,15 @@ void * crawler(void* variable){
         
         // get next url
         removeFromList(&toVisitURLList);
-        //pthread_mutex_unlock(&toVisitMutex);
+        pthread_mutex_unlock(&toVisitMutex);
 
         // Add to visited List, need mutex
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, initURL);
-        //pthread_mutex_lock(&visitedMutex);
+        pthread_mutex_lock(&visitedMutex);
         addToList(&visitedURLList, temp);
-        //pthread_mutex_unlock(&visitedMutex);
+        pthread_mutex_unlock(&visitedMutex);
 
         CURL *curl_handle;
         CURLcode res;
@@ -730,12 +733,12 @@ int main( int argc, char** argv )
         //printf("using %s as logfile\n", LOGFILE);
     }
 
-    // sem_init(&foundSem,1,1);
-    // pthread_mutex_init(&visitedMutex,NULL);
-    // pthread_mutex_init(&pngMutex,NULL);
-    // pthread_mutex_init(&toVisitMutex,NULL);
-    // pthread_mutex_init(&conMutex,NULL);
-    // pthread_cond_init(&maxPNG,NULL);
+    sem_init(&foundSem,1,1);
+    pthread_mutex_init(&visitedMutex,NULL);
+    pthread_mutex_init(&pngMutex,NULL);
+    pthread_mutex_init(&toVisitMutex,NULL);
+    pthread_mutex_init(&conMutex,NULL);
+    pthread_cond_init(&maxPNG,NULL);
 
     pthread_t pid[numThreads];
 
@@ -743,14 +746,14 @@ int main( int argc, char** argv )
         pthread_create(&pid[i],NULL,&crawler,NULL);
     }
     
-    //pthread_mutex_lock(&conMutex);
+    pthread_mutex_lock(&conMutex);
     if (uniquePNGNum < neededPNG){
-        //pthread_cond_wait(&maxPNG,&conMutex);
+        pthread_cond_wait(&maxPNG,&conMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
         }
     }
-    //pthread_mutex_unlock(&conMutex);
+    pthread_mutex_unlock(&conMutex);
     
 
     //printList(&toVisitURLList);
