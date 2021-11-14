@@ -702,13 +702,9 @@ int main( int argc, char** argv )
 {
     char url[256];
     int log = 0;
-    if (argc == 1) {
-        strcpy(url, SEED_URL); 
-        numThreads = 30;
-        neededPNG = 50;
-        strcpy(LOGFILE, "log.txt");
-        log = 1;
-    } else {
+    numThreads = 1;
+    neededPNG = 50;
+    if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 numThreads = atoi(argv[i+1]);
@@ -721,8 +717,10 @@ int main( int argc, char** argv )
                 log = 1;
             }
         }
+        if (argc%2 == )
         strcpy(url, argv[argc]);
     }
+    printf("test: %s"argv[0]);
     printf("using %d threads\n",numThreads);
     printf("gathering %d pngs\n",neededPNG);
 
