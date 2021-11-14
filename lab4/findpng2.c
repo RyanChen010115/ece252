@@ -587,9 +587,9 @@ void * crawler(void* variable){
         //need mutex
         if(toVisitURLList.head == NULL){
             pthread_mutex_unlock(&toVisitMutex);
-            if (neededPNG > uniquePNGNum){
-                continue;
-            }
+            // if (neededPNG > uniquePNGNum){
+            //     continue;
+            // }
             else{
                 break;
             }
