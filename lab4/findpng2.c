@@ -643,7 +643,12 @@ void * crawler(void* variable){
         //need mutex
         if(toVisitURLList.head == NULL){
             pthread_mutex_unlock(&toVisitMutex);
-            break;
+            if (neededPNG == uniquePNGNum){
+                pthread_exit(0);
+            }
+            else{
+                continue;
+            }
         }
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
