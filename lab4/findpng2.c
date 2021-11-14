@@ -584,10 +584,10 @@ void * crawler(void* variable){
         }
         sem_post(&foundSem);
         //printf("2\n");
-        
+        pthread_mutex_lock(&toVisitMutex);
         //need mutex
         if(toVisitURLList.head == NULL){
-            //pthread_mutex_unlock(&toVisitMutex);
+            pthread_mutex_unlock(&toVisitMutex);
             if (neededPNG > uniquePNGNum){
                 continue;
             }
@@ -596,7 +596,6 @@ void * crawler(void* variable){
             }
         }
         char initURL[256];
-        pthread_mutex_lock(&toVisitMutex);
         strcpy(initURL, toVisitURLList.head->val);
         
         // get next url
