@@ -704,8 +704,8 @@ int main( int argc, char** argv )
     int log = 0;
     if (argc == 1) {
         strcpy(url, SEED_URL); 
-        numThreads = 10;
-        neededPNG = 30;
+        numThreads = 30;
+        neededPNG = 50;
         strcpy(LOGFILE, "log.txt");
         log = 1;
     } else {
