@@ -640,7 +640,7 @@ void * crawler(void* variable){
     
     while (uniquePNGNum < neededPNG){
         if(uniquePNGNum == 0){
-           printf(""); 
+           printf("\n"); 
         }
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
