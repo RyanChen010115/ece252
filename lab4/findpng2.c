@@ -784,5 +784,12 @@ int main( int argc, char** argv )
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
 
+    sem_destroy(&foundSem);
+    pthread_mutex_destroy(&visitedMutex);
+    pthread_mutex_destroy(&pngMutex);
+    pthread_mutex_destroy(&toVisitMutex);
+    pthread_mutex_destroy(&conMutex);
+    pthread_cond_destroy(&maxPNG);
+
     return 0;
 }
