@@ -709,7 +709,7 @@ int main( int argc, char** argv )
         strcpy(LOGFILE, "log.txt");
         log = 1;
     } else {
-        for (int i = 1; i < argc; i+=2){
+        for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 numThreads = atoi(argv[i+1]);
             }
