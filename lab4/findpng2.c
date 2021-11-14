@@ -256,12 +256,16 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 char data[256];
                 
                 sprintf(data, "%s", href); // must be in mutex!
+
+                
                 
                 if(isInList(&toVisitURLList, data) == 0 && isInList(&visitedURLList, data) == 0){   
+                    pthread_mutex_lock(&toVisitMutex);
                     node_t* temp = malloc(sizeof(node_t));
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
+                    pthread_mutex_unlock(&toVisitURLList);
                 } 
 
             }
@@ -565,10 +569,6 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
     pthread_mutex_unlock(&visitedMutex);
 
-    sem_wait(&foundSem);
-    if (uniquePNGNum == neededPNG){
-        return 0;
-    }
     if(isInList(&visitedPNGList, eurl) == 0){
         pthread_mutex_lock(&pngMutex);
         node_t* temp = malloc(sizeof(node_t));
@@ -582,7 +582,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         }
         pthread_mutex_unlock(&pngMutex);
     }
-    sem_post(&foundSem);
+    printf("END OF PNG PROC");
     return 0;
 }
 /**
@@ -639,22 +639,24 @@ void * crawler(void* variable){
         sem_post(&foundSem);
 
         pthread_mutex_lock(&toVisitMutex);
-
-        if (toVisitURLList.head == NULL){
+        //need mutex
+        if(toVisitURLList.head == NULL){
             break;
         }
-        
         char initURL[256];
         strcpy(initURL, toVisitURLList.head->val);
         
         // get next url
         removeFromList(&toVisitURLList);
+        pthread_mutex_unlock(&toVisitMutex);
 
         // Add to visited List, need mutex
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, initURL);
+        pthread_mutex_lock(&visitedMutex);
         addToList(&visitedURLList, temp);
+        pthread_mutex_unlock(&visitedMutex);
 
         CURL *curl_handle;
         CURLcode res;
