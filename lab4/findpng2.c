@@ -641,14 +641,14 @@ void * crawler(void* variable){
 int main( int argc, char** argv ) 
 {
 
-    double times[2];
-    struct timeval tv;
+    // double times[2];
+    // struct timeval tv;
 
-    if (gettimeofday(&tv, NULL) != 0) {
-        perror("gettimeofday");
-        abort();
-    }
-    times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    // if (gettimeofday(&tv, NULL) != 0) {
+    //     perror("gettimeofday");
+    //     abort();
+    // }
+    // times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
 
     char url[256];
     int log = 0;
@@ -716,12 +716,12 @@ int main( int argc, char** argv )
         appendList(&visitedURLList, LOGFILE);
     }
     appendList(&visitedPNGList, PNGFILE);
-    if (gettimeofday(&tv, NULL) != 0) {
-        perror("gettimeofday");
-        abort();
-    }
-    times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-    printf("paster2 execution time: %.6lf seconds\n", times[1] - times[0]);
+    // if (gettimeofday(&tv, NULL) != 0) {
+    //     perror("gettimeofday");
+    //     abort();
+    // }
+    // times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    // printf("paster2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     
     freeList(&visitedURLList);
