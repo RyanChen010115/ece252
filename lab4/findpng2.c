@@ -755,13 +755,13 @@ int main( int argc, char** argv )
     }
     
     pthread_mutex_lock(&pngMutex);
-    if (uniquePNGNum < neededPNG){
+    
         pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
             printf("Thread %ld exited\n", pid[i]);
         }
-    }
+    
     pthread_mutex_unlock(&pngMutex);
     
 
