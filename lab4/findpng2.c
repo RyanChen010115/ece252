@@ -634,7 +634,7 @@ void * crawler(void* variable){
     while (uniquePNGNum < neededPNG){
 
         sem_wait(&foundSem);
-        if (neededPNG == uniquePNGNum){
+        if (neededPNG <= uniquePNGNum){
             pthread_exit(0);
         }
         sem_post(&foundSem);
@@ -693,6 +693,11 @@ void * crawler(void* variable){
             /* cleaning up */
             cleanup(curl_handle, &recv_buf);    
         }
+        sem_wait(&foundSem);
+        if (neededPNG <= uniquePNGNum){
+            pthread_exit(0);
+        }
+        sem_post(&foundSem);
     }
     pthread_exit(0);
 }
