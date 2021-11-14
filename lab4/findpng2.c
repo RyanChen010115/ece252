@@ -277,6 +277,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
         xmlXPathFreeObject (result);
     }
     xmlFreeDoc(doc);
+    xmlCleanupParser();
     return 0;
 }
 /**
@@ -614,6 +615,7 @@ void * crawler(void* variable){
         CURLcode res;
         
         RECV_BUF recv_buf;
+        curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
@@ -637,9 +639,6 @@ void * crawler(void* variable){
 
 int main( int argc, char** argv ) 
 {
-
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-
 
     double times[2];
     struct timeval tv;
@@ -724,8 +723,7 @@ int main( int argc, char** argv )
     times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
     printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
-    xmlCleanupParser();
-    curl_global_cleanup();
+    
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
