@@ -277,7 +277,6 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
         xmlXPathFreeObject (result);
     }
     xmlFreeDoc(doc);
-    xmlCleanupParser();
     return 0;
 }
 /**
@@ -373,7 +372,6 @@ int recv_buf_cleanup(RECV_BUF *ptr)
 void cleanup(CURL *curl, RECV_BUF *ptr)
 {
         curl_easy_cleanup(curl);
-        curl_global_cleanup();
         recv_buf_cleanup(ptr);
 }
 
@@ -615,7 +613,6 @@ void * crawler(void* variable){
         CURLcode res;
         
         RECV_BUF recv_buf;
-        curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
@@ -639,6 +636,8 @@ void * crawler(void* variable){
 
 int main( int argc, char** argv ) 
 {
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
 
     double times[2];
     struct timeval tv;
@@ -734,6 +733,9 @@ int main( int argc, char** argv )
     pthread_mutex_destroy(&toVisitMutex);
     pthread_mutex_destroy(&conMutex);
     pthread_cond_destroy(&maxPNG);
+
+    xmlCleanupParser();
+    curl_global_cleanup();
 
     return 0;
 }
