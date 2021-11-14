@@ -85,6 +85,7 @@ sem_t foundSem;
 pthread_mutex_t visitedMutex;
 pthread_mutex_t pngMutex;
 pthread_mutex_t toVisitMutex;
+pthread_mutex_t conMutex;
 pthread_cond_t maxPNG;
 
 linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
@@ -572,15 +573,21 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
     if(isInList(&visitedPNGList, eurl) == 0){
         pthread_mutex_lock(&pngMutex);
+        if (uniquePNGNum == neededPNG){
+            pthread_mutex_unlock(&pngMutex);
+            return 1;
+        }
+        pthread_mutex_lock(&conMutex);
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
         uniquePNGNum++;
         if (uniquePNGNum == neededPNG){
-            //pthread_cond_signal(&maxPNG);
+            pthread_cond_signal(&maxPNG);
             //printf("signal send, %d pngs\n",uniquePNGNum);
         }
+        pthread_mutex_unlock(&conMutex);
         pthread_mutex_unlock(&pngMutex);
     }
     //printf("END OF PNG PROC");
@@ -749,6 +756,7 @@ int main( int argc, char** argv )
     pthread_mutex_init(&visitedMutex,NULL);
     pthread_mutex_init(&pngMutex,NULL);
     pthread_mutex_init(&toVisitMutex,NULL);
+    pthread_mutex_init(&conMutex,NULL);
     pthread_cond_init(&maxPNG,NULL);
 
     pthread_t pid[numThreads];
@@ -757,14 +765,14 @@ int main( int argc, char** argv )
         pthread_create(&pid[i],NULL,crawler,NULL);
     }
     
-    //pthread_mutex_lock(&pngMutex);
+    pthread_mutex_lock(&conMutex);
     if (uniquePNGNum < neededPNG){
-        //pthread_cond_wait(&maxPNG,&pngMutex);
+        pthread_cond_wait(&maxPNG,&conMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
         }
     }
-    //pthread_mutex_unlock(&pngMutex);
+    pthread_mutex_unlock(&conMutex);
     
 
     //printList(&toVisitURLList);
