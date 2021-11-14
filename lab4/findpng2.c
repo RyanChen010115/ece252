@@ -703,6 +703,7 @@ int main( int argc, char** argv )
     int log = 0;
     numThreads = 1;
     neededPNG = 50;
+    strcpy(url,SEED_URL);
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
@@ -719,9 +720,6 @@ int main( int argc, char** argv )
         if (argc%2 == 0){
             strcpy(url, argv[argc-1]);
         }
-    }
-    else{
-        strcpy(url,SEED_URL);
     }
 
     node_t* temp = malloc(sizeof(node_t));
