@@ -197,7 +197,6 @@ htmlDocPtr mem_getdoc(char *buf, int size, const char *url)
     htmlDocPtr doc = htmlReadMemory(buf, size, url, NULL, opts);
     
     if ( doc == NULL ) {
-        fprintf(stderr, "Document not parsed successfully.\n");
         return NULL;
     }
     return doc;
@@ -396,12 +395,10 @@ int write_file(const char *path, const void *in, size_t len)
     FILE *fp = NULL;
 
     if (path == NULL) {
-        fprintf(stderr, "write_file: file name is null!\n");
         return -1;
     }
 
     if (in == NULL) {
-        fprintf(stderr, "write_file: input data is null!\n");
         return -1;
     }
 
@@ -412,7 +409,6 @@ int write_file(const char *path, const void *in, size_t len)
     }
 
     if (fwrite(in, 1, len, fp) != len) {
-        fprintf(stderr, "write_file: imcomplete write!\n");
         return -3; 
     }
     return fclose(fp);
@@ -425,12 +421,10 @@ int append_file(const char *path, const void *in, size_t len)
     char line[1] = "\n";
 
     if (path == NULL) {
-        fprintf(stderr, "write_file: file name is null!\n");
         return -1;
     }
 
     if (in == NULL) {
-        fprintf(stderr, "write_file: input data is null!\n");
         return -1;
     }
 
@@ -441,7 +435,6 @@ int append_file(const char *path, const void *in, size_t len)
     }
 
     if (fwrite(in, 1, len, fp) != len) {
-        fprintf(stderr, "write_file: imcomplete write!\n");
         return -3; 
     }
     fwrite(line, 1, 1, fp);
@@ -472,7 +465,6 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
     curl_handle = curl_easy_init();
 
     if (curl_handle == NULL) {
-        fprintf(stderr, "curl_easy_init: returned NULL\n");
         return NULL;
     }
 
@@ -620,7 +612,6 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     if ( res == CURLE_OK && ct != NULL ) {
     	//printf("Content-Type: %s, len=%ld\n", ct, strlen(ct));
     } else {
-        fprintf(stderr, "Failed obtain Content-Type\n");
         return 2;
     }
 
@@ -677,7 +668,6 @@ void * crawler(void* variable){
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
-            fprintf(stderr, "Curl initialization failed. Exiting...\n");
             curl_global_cleanup();
             abort();
         }
