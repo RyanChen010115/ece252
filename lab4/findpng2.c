@@ -699,7 +699,7 @@ int main( int argc, char** argv )
         strcpy(url, SEED_URL); 
         numThreads = 10;
         neededPNG = 30;
-        strcpy("log.txt");
+        strcpy(LOGFILE, "log.txt");
         log = 1;
     } else {
         for (int i = 1; i < argc; i+=2){
