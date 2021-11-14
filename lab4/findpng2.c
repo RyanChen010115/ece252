@@ -702,8 +702,7 @@ int main( int argc, char** argv )
 {
     char url[256];
     int log = 0;
-    numThreads = 1;
-    neededPNG = 50;
+    
     strcpy(url,SEED_URL);
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
@@ -712,6 +711,9 @@ int main( int argc, char** argv )
             }
             else if (strcmp(argv[i],"-m") == 0){
                 neededPNG = atoi(argv[i+1]);
+                if (neededPNG > MAXPNG){
+                    neededPNG = MAXPNG;
+                }
             }
             else if (strcmp(argv[i],"-v") == 0){
                 strcpy(LOGFILE,argv[i+1]);
@@ -722,10 +724,8 @@ int main( int argc, char** argv )
             strcpy(url, argv[argc-1]);
         }
     }
-
-    numThreads = 1;
+    numThreads = 20;
     neededPNG = 40;
-
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
     strcpy(temp->val, url);
@@ -758,13 +758,13 @@ int main( int argc, char** argv )
     }
     
     pthread_mutex_lock(&pngMutex);
-    
+    if (uniquePNGNum < neededPNG){
         pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
             printf("Thread %ld exited\n", pid[i]);
         }
-    
+    }
     pthread_mutex_unlock(&pngMutex);
     
 
