@@ -265,7 +265,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
-                    pthread_mutex_unlock(&toVisitURLList);
+                    pthread_mutex_unlock(&toVisitMutex);
                 } 
 
             }
@@ -699,13 +699,13 @@ int main( int argc, char** argv )
         strcpy(url, SEED_URL); 
     } else {
         for (int i = 1; i < argc; i+=2){
-            if (argc[i] == "-t"){
-                numThreads = atoi[i+1];
+            if (strcmp(argv[i],"-t") == 0){
+                numThreads = atoi(argv[i+1]);
             }
-            else if (argv[i] == "-m"){
-                neededPNG = atoi[i+1];
+            else if (strcmp(argv[i],"-m") == 0){
+                neededPNG = atoi(argv[i+1]);
             }
-            else if (argv[i] == "-v"){
+            else if (strcmp(argv[i],"-v") == 0){
                 strcpy(LOGFILE,argv[i+1]);
                 log = 1;
             }
