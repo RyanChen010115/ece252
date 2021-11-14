@@ -577,7 +577,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
         uniquePNGNum++;
-        if (uniquePNGNum >= neededPNG){
+        if (uniquePNGNum == neededPNG){
             pthread_cond_signal(&maxPNG);
             //printf("signal send, %d pngs\n",uniquePNGNum);
         }
@@ -632,7 +632,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 void * crawler(void* variable){
     while (uniquePNGNum < neededPNG){
-        printf("NUM: %d\n", uniquePNGNum);
+
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
@@ -644,7 +644,7 @@ void * crawler(void* variable){
         //need mutex
         if(toVisitURLList.head == NULL){
             pthread_mutex_unlock(&toVisitMutex);
-            if (uniquePNGNum == 0){
+            if (neededPNG > uniquePNGNum){
                 continue;
             }
             else{
@@ -702,7 +702,8 @@ int main( int argc, char** argv )
 {
     char url[256];
     int log = 0;
-    
+    numThreads = 1;
+    neededPNG = 50;
     strcpy(url,SEED_URL);
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
@@ -724,8 +725,7 @@ int main( int argc, char** argv )
             strcpy(url, argv[argc-1]);
         }
     }
-    numThreads = 20;
-    neededPNG = 40;
+
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
     strcpy(temp->val, url);
@@ -762,7 +762,6 @@ int main( int argc, char** argv )
         pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
-            printf("Thread %ld exited\n", pid[i]);
         }
     }
     pthread_mutex_unlock(&pngMutex);
