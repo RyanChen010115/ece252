@@ -725,6 +725,7 @@ int main( int argc, char** argv )
     printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     xmlCleanupParser();
+    curl_global_cleanup();
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
