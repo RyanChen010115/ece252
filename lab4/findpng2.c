@@ -260,18 +260,18 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 
                 
                 if(isInList(&toVisitURLList, data) == 0 && isInList(&visitedURLList, data) == 0){   
-                    //pthread_mutex_lock(&toVisitMutex);
+                    pthread_mutex_lock(&toVisitMutex);
                     node_t* temp = malloc(sizeof(node_t));
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
-                    printf("added to list\n");
-                    //pthread_mutex_unlock(&toVisitMutex);
+                    pthread_mutex_unlock(&toVisitMutex);
                 } 
 
             }
             xmlFree(href);
         }
+        printf("leaves for loop\n");
         xmlXPathFreeObject (result);
     }
     xmlFreeDoc(doc);
@@ -642,6 +642,7 @@ void * crawler(void* variable){
         pthread_mutex_lock(&toVisitMutex);
         //need mutex
         if(toVisitURLList.head == NULL){
+            pthread_mutex_unlock(&toVisitMutex);
             break;
         }
         char initURL[256];
