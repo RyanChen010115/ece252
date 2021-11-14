@@ -612,7 +612,6 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
 
     if ( response_code >= 400 ) { 
-    	fprintf(stderr, "Error.\n");
         return 1;
     }
 
@@ -629,19 +628,14 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
         return process_html(curl_handle, p_recv_buf);
     } else if ( strstr(ct, CT_PNG) ) {
         return process_png(curl_handle, p_recv_buf);
-    } else {
-        sprintf(fname, "./output_%d", pid);
     }
 
-    return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
+    return 0;
 }
 
 void * crawler(void* variable){
     
     while (uniquePNGNum < neededPNG){
-        if(uniquePNGNum == 0){
-           printf("\n"); 
-        }
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
@@ -679,7 +673,6 @@ void * crawler(void* variable){
         CURLcode res;
         
         RECV_BUF recv_buf;
-        //printf("URL: %s \n", initURL);
         curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
@@ -694,9 +687,6 @@ void * crawler(void* variable){
         if( res != CURLE_OK) {
             cleanup(curl_handle, &recv_buf);
         } else {
-            //printf("%lu bytes received in memory %p, seq=%d.\n", \
-                recv_buf.size, recv_buf.buf, recv_buf.seq);
-                        /* process the download data */
             process_data(curl_handle, &recv_buf);
 
             /* cleaning up */
