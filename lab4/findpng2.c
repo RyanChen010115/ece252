@@ -42,6 +42,8 @@
 #include <libxml/uri.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <time.h>
+#include <sys/time.h>
 
 
 #define SEED_URL "http://ece252-1.uwaterloo.ca/lab4"
@@ -310,23 +312,13 @@ size_t header_cb_curl(char *p_recv, size_t size, size_t nmemb, void *userdata)
 }
 
 
-/**
- * @brief write callback function to save a copy of received data in RAM.
- *        The received libcurl data are pointed by p_recv, 
- *        which is provided by libcurl and is not user allocated memory.
- *        The user allocated memory is at p_userdata. One needs to
- *        cast it to the proper struct to make good use of it.
- *        This function maybe invoked more than once by one invokation of
- *        curl_easy_perform().
- */
-
 size_t write_cb_curl3(char *p_recv, size_t size, size_t nmemb, void *p_userdata)
 {
     size_t realsize = size * nmemb;
     RECV_BUF *p = (RECV_BUF *)p_userdata;
  
-    if (p->size + realsize + 1 > p->max_size) {/* hope this rarely happens */ 
-        /* received data is not 0 terminated, add one byte for terminating 0 */
+    if (p->size + realsize + 1 > p->max_size) {
+
         size_t new_size = p->max_size + max(BUF_INC, realsize + 1);   
         char *q = realloc(p->buf, new_size);
         if (q == NULL) {
@@ -337,7 +329,7 @@ size_t write_cb_curl3(char *p_recv, size_t size, size_t nmemb, void *p_userdata)
         p->max_size = new_size;
     }
 
-    memcpy(p->buf + p->size, p_recv, realsize); /*copy data from libcurl*/
+    memcpy(p->buf + p->size, p_recv, realsize);
     p->size += realsize;
     p->buf[p->size] = 0;
 
@@ -361,7 +353,7 @@ int recv_buf_init(RECV_BUF *ptr, size_t max_size)
     ptr->buf = p;
     ptr->size = 0;
     ptr->max_size = max_size;
-    ptr->seq = -1;              /* valid seq should be positive */
+    ptr->seq = -1;           
     return 0;
 }
 
@@ -383,12 +375,6 @@ void cleanup(CURL *curl, RECV_BUF *ptr)
         curl_global_cleanup();
         recv_buf_cleanup(ptr);
 }
-/**
- * @brief output data in memory to a file
- * @param path const char *, output file path
- * @param in  void *, input data to be written to the file
- * @param len size_t, length of the input data in bytes
- */
 
 int write_file(const char *path, const void *in, size_t len)
 {
@@ -441,14 +427,6 @@ int append_file(const char *path, const void *in, size_t len)
     return fclose(fp);
 }
 
-/**
- * @brief create a curl easy handle and set the options.
- * @param RECV_BUF *ptr points to user data needed by the curl write call back function
- * @param const char *url is the target url to fetch resoruce
- * @return a valid CURL * handle upon sucess; NULL otherwise
- * Note: the caller is responsbile for cleaning the returned curl handle
- */
-
 CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
 {
     CURL *curl_handle = NULL;
@@ -493,14 +471,6 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
     /* supports all built-in encodings */ 
     curl_easy_setopt(curl_handle, CURLOPT_ACCEPT_ENCODING, "");
 
-    /* Max time in seconds that the connection phase to the server to take */
-    //curl_easy_setopt(curl_handle, CURLOPT_CONNECTTIMEOUT, 5L);
-    /* Max time in seconds that libcurl transfer operation is allowed to take */
-    //curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 10L);
-    /* Time out for Expect: 100-continue response in milliseconds */
-    //curl_easy_setopt(curl_handle, CURLOPT_EXPECT_100_TIMEOUT_MS, 0L);
-
-    /* Enable the cookie engine without reading any initial cookies */
     curl_easy_setopt(curl_handle, CURLOPT_COOKIEFILE, "");
     /* allow whatever auth the proxy speaks */
     curl_easy_setopt(curl_handle, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
@@ -517,11 +487,8 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     char *url = NULL; 
     pid_t pid =getpid();
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
-    // need mutex
     if(isInList(&visitedURLList, url) == 0){
         pthread_mutex_lock(&visitedMutex);
-        //printf("ADDED EXTRA!!!\n");
-        // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, url);
@@ -537,23 +504,16 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    //printf("PNG NUM: %d\n", uniquePNGNum);
     U8 header[8];
     memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
     if(is_png(header) == 0){
         return 0;
     }
-    char *eurl = NULL;          /* effective URL */
+    char *eurl = NULL;        
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &eurl);
-    if ( eurl != NULL) {
-        printf("The PNG url is: %s\n", eurl);
-    }
     
-        // need mutex
     pthread_mutex_lock(&visitedMutex);
     if(isInList(&visitedURLList, eurl) == 0){
-        //printf("ADDED EXTRA!!!\n");
-        // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
         strcpy(temp->val, eurl);
@@ -576,20 +536,12 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         uniquePNGNum++;
         if (uniquePNGNum == neededPNG){
             pthread_cond_signal(&maxPNG);
-            //printf("signal send, %d pngs\n",uniquePNGNum);
         }
         pthread_mutex_unlock(&conMutex);
         pthread_mutex_unlock(&pngMutex);
     }
-    //printf("END OF PNG PROC");
     return 0;
 }
-/**
- * @brief process teh download data by curl
- * @param CURL *curl_handle is the curl handler
- * @param RECV_BUF p_recv_buf contains the received data. 
- * @return 0 on success; non-zero otherwise
- */
 
 int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
@@ -688,6 +640,16 @@ void * crawler(void* variable){
 
 int main( int argc, char** argv ) 
 {
+
+    double times[2];
+    struct timeval tv;
+
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
+
     char url[256];
     int log = 0;
     numThreads = 1;
@@ -726,13 +688,6 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    // if (log == 1){
-    //     FILE *logfile = NULL;
-    //     logfile = fopen(LOGFILE,"a");
-    //     fclose(logfile);
-    //     //printf("using %s as logfile\n", LOGFILE);
-    // }
-
     sem_init(&foundSem,1,1);
     pthread_mutex_init(&visitedMutex,NULL);
     pthread_mutex_init(&pngMutex,NULL);
@@ -761,6 +716,14 @@ int main( int argc, char** argv )
         appendList(&visitedURLList, LOGFILE);
     }
     appendList(&visitedPNGList, PNGFILE);
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    printf("paster2 execution time: %.6lf seconds\n", times[1] - times[0]);
+
+    
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
