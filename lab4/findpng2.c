@@ -252,7 +252,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 xmlFree(old);
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
-                printf("href: %s\n", href);
+                //printf("href: %s\n", href);
                 char data[256];
                 
                 sprintf(data, "%s", href); // must be in mutex!
@@ -271,7 +271,6 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
             }
             xmlFree(href);
         }
-        printf("leaves for loop\n");
         xmlXPathFreeObject (result);
     }
     xmlFreeDoc(doc);
@@ -528,7 +527,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     // need mutex
     if(isInList(&visitedURLList, url) == 0){
         pthread_mutex_lock(&visitedMutex);
-        printf("ADDED EXTRA!!!\n");
+        //printf("ADDED EXTRA!!!\n");
         // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
@@ -545,7 +544,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    printf("PNG NUM: %d\n", uniquePNGNum);
+    //printf("PNG NUM: %d\n", uniquePNGNum);
     U8 header[8];
     memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
     if(is_png(header) == 0){
@@ -560,7 +559,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         // need mutex
     pthread_mutex_lock(&visitedMutex);
     if(isInList(&visitedURLList, eurl) == 0){
-        printf("ADDED EXTRA!!!\n");
+        //printf("ADDED EXTRA!!!\n");
         // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
@@ -579,11 +578,11 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         uniquePNGNum++;
         if (uniquePNGNum == neededPNG){
             pthread_cond_signal(&maxPNG);
-            printf("signal send, %d pngs\n",uniquePNGNum);
+            //printf("signal send, %d pngs\n",uniquePNGNum);
         }
         pthread_mutex_unlock(&pngMutex);
     }
-    printf("END OF PNG PROC");
+    //printf("END OF PNG PROC");
     return 0;
 }
 /**
@@ -602,7 +601,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
     res = curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
     if ( res == CURLE_OK ) {
-	    printf("Response code: %ld\n", response_code);
+	    //printf("Response code: %ld\n", response_code);
     }
 
     if ( response_code >= 400 ) { 
@@ -613,7 +612,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     char *ct = NULL;
     res = curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_TYPE, &ct);
     if ( res == CURLE_OK && ct != NULL ) {
-    	printf("Content-Type: %s, len=%ld\n", ct, strlen(ct));
+    	//printf("Content-Type: %s, len=%ld\n", ct, strlen(ct));
     } else {
         fprintf(stderr, "Failed obtain Content-Type\n");
         return 2;
@@ -670,7 +669,7 @@ void * crawler(void* variable){
         CURLcode res;
         
         RECV_BUF recv_buf;
-        printf("URL: %s \n", initURL);
+        //printf("URL: %s \n", initURL);
         curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
@@ -686,7 +685,7 @@ void * crawler(void* variable){
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             cleanup(curl_handle, &recv_buf);
         } else {
-            printf("%lu bytes received in memory %p, seq=%d.\n", \
+            //printf("%lu bytes received in memory %p, seq=%d.\n", \
                 recv_buf.size, recv_buf.buf, recv_buf.seq);
                         /* process the download data */
             process_data(curl_handle, &recv_buf);
@@ -724,9 +723,6 @@ int main( int argc, char** argv )
     else{
         strcpy(url,SEED_URL);
     }
-    printf("test: %s\n",argv[0]);
-    printf("using %d threads\n",numThreads);
-    printf("gathering %d pngs\n",neededPNG);
 
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
@@ -744,7 +740,7 @@ int main( int argc, char** argv )
         FILE *logfile = NULL;
         logfile = fopen(LOGFILE,"a");
         fclose(logfile);
-        printf("using %s as logfile\n", LOGFILE);
+        //printf("using %s as logfile\n", LOGFILE);
     }
 
     sem_init(&foundSem,1,1);
@@ -757,7 +753,6 @@ int main( int argc, char** argv )
 
     for (int i = 0; i < numThreads; i++){
         pthread_create(&pid[i],NULL,crawler,NULL);
-        printf("created thread %d\n",i);
     }
     
     pthread_mutex_lock(&pngMutex);
@@ -765,14 +760,15 @@ int main( int argc, char** argv )
         pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
-            printf("ending thread %d\n",i);
         }
     }
     pthread_mutex_unlock(&pngMutex);
     
 
-    printList(&toVisitURLList);
-    appendList(&visitedURLList, LOGFILE);
+    //printList(&toVisitURLList);
+    if (log == 1){
+        appendList(&visitedURLList, LOGFILE);
+    }
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
