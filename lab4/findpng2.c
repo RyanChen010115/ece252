@@ -81,7 +81,7 @@ int neededPNG = 0;
 char LOGFILE[256];
 
 sem_t foundSem;
-pthread_mutex_t vistedMutex;
+pthread_mutex_t visitedMutex;
 pthread_mutex_t pngMutex;
 pthread_mutex_t toVisitMutex;
 pthread_cond_t maxPNG;
