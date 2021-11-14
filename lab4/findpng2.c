@@ -583,7 +583,7 @@ void * crawler(void* variable){
             pthread_exit(0);
         }
         sem_post(&foundSem);
-        printf("2\n");
+        //printf("2\n");
         pthread_mutex_lock(&toVisitMutex);
         //need mutex
         if(toVisitURLList.head == NULL){
