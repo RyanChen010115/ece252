@@ -721,7 +721,7 @@ int main( int argc, char** argv )
             strcpy(url, argv[argc]);
         }
     }
-    printf("test: %s"argv[0]);
+    printf("test: %s\n",argv[0]);
     printf("using %d threads\n",numThreads);
     printf("gathering %d pngs\n",neededPNG);
 
