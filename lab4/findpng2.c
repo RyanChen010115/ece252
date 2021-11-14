@@ -613,7 +613,6 @@ void * crawler(void* variable){
         CURLcode res;
         
         RECV_BUF recv_buf;
-        curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle = easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
@@ -637,6 +636,8 @@ void * crawler(void* variable){
 
 int main( int argc, char** argv ) 
 {
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
 
     double times[2];
     struct timeval tv;
