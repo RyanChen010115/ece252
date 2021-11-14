@@ -578,7 +578,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         addToList(&visitedPNGList, temp);
         uniquePNGNum++;
         if (uniquePNGNum == neededPNG){
-            pthread_cond_signal(&maxPNG);
+            //pthread_cond_signal(&maxPNG);
             //printf("signal send, %d pngs\n",uniquePNGNum);
         }
         pthread_mutex_unlock(&pngMutex);
