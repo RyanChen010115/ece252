@@ -726,6 +726,9 @@ int main( int argc, char** argv )
         }
     }
 
+    numThreads = 1;
+    neededPNG = 40;
+
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
     strcpy(temp->val, url);
