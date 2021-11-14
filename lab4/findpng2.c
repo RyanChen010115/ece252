@@ -255,7 +255,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 printf("href: %s\n", href);
                 char data[256];
                 
-                sprintf(data, "%s", href); // must be in mutex!
+                strcpy(data,href); // must be in mutex!
 
                 
                 
