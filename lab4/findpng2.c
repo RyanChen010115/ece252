@@ -718,8 +718,11 @@ int main( int argc, char** argv )
             }
         }
         if (argc%2 == 0){
-            strcpy(url, argv[argc]);
+            strcpy(url, argv[argc-1]);
         }
+    }
+    else{
+        strcpy(url,SEED_URL);
     }
     printf("test: %s\n",argv[0]);
     printf("using %d threads\n",numThreads);
