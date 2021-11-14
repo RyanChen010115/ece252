@@ -744,7 +744,7 @@ int main( int argc, char** argv )
     pthread_t pid[numThreads];
 
     for (int i = 0; i < numThreads; i++){
-        pthread_create(&pid[i],NULL,crawler,NULL);
+        pthread_create(&pid[i],NULL,&crawler,NULL);
     }
     
     pthread_mutex_lock(&conMutex);
