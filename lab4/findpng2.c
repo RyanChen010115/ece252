@@ -712,6 +712,9 @@ int main( int argc, char** argv )
             }
             else if (strcmp(argv[i],"-m") == 0){
                 neededPNG = atoi(argv[i+1]);
+                if (neededPNG > MAXPNG){
+                    neededPNG = MAXPNG;
+                }
             }
             else if (strcmp(argv[i],"-v") == 0){
                 strcpy(LOGFILE,argv[i+1]);
