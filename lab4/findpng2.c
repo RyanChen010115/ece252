@@ -577,7 +577,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
         uniquePNGNum++;
-        if (uniquePNGNum == neededPNG){
+        if (uniquePNGNum >= neededPNG){
             pthread_cond_signal(&maxPNG);
             //printf("signal send, %d pngs\n",uniquePNGNum);
         }
@@ -631,7 +631,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 }
 
 void * crawler(void* variable){
-    while (uniquePNGNum < neededPNG){
+    while (1){
 
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
