@@ -576,14 +576,12 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 void * crawler(void* variable){
     
     while (uniquePNGNum < neededPNG){
-        //printf("1\n");
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
             pthread_exit(0);
         }
         sem_post(&foundSem);
-        //printf("2\n");
         pthread_mutex_lock(&toVisitMutex);
         //need mutex
         if(toVisitURLList.head == NULL){
@@ -601,7 +599,6 @@ void * crawler(void* variable){
         // get next url
         removeFromList(&toVisitURLList);
         pthread_mutex_unlock(&toVisitMutex);
-        printf("3\n");
         // Add to visited List, need mutex
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
