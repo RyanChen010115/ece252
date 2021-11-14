@@ -697,6 +697,10 @@ int main( int argc, char** argv )
     int log = 0;
     if (argc == 1) {
         strcpy(url, SEED_URL); 
+        numThreads = 10;
+        neededPNG = 30;
+        strcpy("log.txt");
+        log = 1;
     } else {
         for (int i = 1; i < argc; i+=2){
             if (strcmp(argv[i],"-t") == 0){
@@ -712,6 +716,8 @@ int main( int argc, char** argv )
         }
         strcpy(url, argv[argc]);
     }
+    printf("using %d threads\n",numThreads);
+    printf("gathering %d pngs\n",neededPNG);
 
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
@@ -729,6 +735,7 @@ int main( int argc, char** argv )
         FILE *logfile = NULL;
         logfile = fopen(LOGFILE,"a");
         fclose(logfile);
+        printf("using %s as logfile\n", LOGFILE);
     }
 
     sem_init(&foundSem,1,1);
@@ -741,6 +748,7 @@ int main( int argc, char** argv )
 
     for (int i = 0; i < numThreads; i++){
         pthread_create(&pid[i],NULL,crawler,NULL);
+        printf("created thread %d\n",i);
     }
     
     pthread_mutex_lock(&pngMutex);
@@ -748,6 +756,7 @@ int main( int argc, char** argv )
         pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
+            printf("ending thread %d\n",i);
         }
     }
     pthread_mutex_unlock(&pngMutex);
