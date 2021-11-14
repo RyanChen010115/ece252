@@ -757,14 +757,14 @@ int main( int argc, char** argv )
         pthread_create(&pid[i],NULL,crawler,NULL);
     }
     
-    pthread_mutex_lock(&pngMutex);
+    //pthread_mutex_lock(&pngMutex);
     if (uniquePNGNum < neededPNG){
-        pthread_cond_wait(&maxPNG,&pngMutex);
+        //pthread_cond_wait(&maxPNG,&pngMutex);
         for (int i = 0; i < numThreads; i++){
             pthread_join(pid[i],NULL);
         }
     }
-    pthread_mutex_unlock(&pngMutex);
+    //pthread_mutex_unlock(&pngMutex);
     
 
     //printList(&toVisitURLList);
