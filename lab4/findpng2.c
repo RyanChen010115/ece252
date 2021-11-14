@@ -688,6 +688,7 @@ void * crawler(void* variable){
 
 int main( int argc, char** argv ) 
 {
+    printf("Program Stating\n");
     char url[256];
     int log = 0;
     numThreads = 1;
