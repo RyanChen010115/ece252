@@ -726,12 +726,12 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    if (log == 1){
-        FILE *logfile = NULL;
-        logfile = fopen(LOGFILE,"a");
-        fclose(logfile);
-        //printf("using %s as logfile\n", LOGFILE);
-    }
+    // if (log == 1){
+    //     FILE *logfile = NULL;
+    //     logfile = fopen(LOGFILE,"a");
+    //     fclose(logfile);
+    //     //printf("using %s as logfile\n", LOGFILE);
+    // }
 
     sem_init(&foundSem,1,1);
     pthread_mutex_init(&visitedMutex,NULL);
