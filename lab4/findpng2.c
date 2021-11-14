@@ -635,6 +635,7 @@ void * crawler(void* variable){
 
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
+            sem_post(&foundSem);
             pthread_exit(0);
         }
         sem_post(&foundSem);
@@ -695,6 +696,7 @@ void * crawler(void* variable){
         }
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
+            sem_post(&foundSem);
             pthread_exit(0);
         }
         sem_post(&foundSem);
