@@ -255,18 +255,18 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 printf("href: %s\n", href);
                 char data[256];
                 
-                strcpy(data,(char*)href); // must be in mutex!
+                sprintf(data, "%s", href); // must be in mutex!
 
                 
                 
                 if(isInList(&toVisitURLList, data) == 0 && isInList(&visitedURLList, data) == 0){   
-                    pthread_mutex_lock(&toVisitMutex);
+                    //pthread_mutex_lock(&toVisitMutex);
                     node_t* temp = malloc(sizeof(node_t));
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
                     printf("added to list\n");
-                    pthread_mutex_unlock(&toVisitMutex);
+                    //pthread_mutex_unlock(&toVisitMutex);
                 } 
 
             }
