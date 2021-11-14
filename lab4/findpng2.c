@@ -222,7 +222,6 @@ xmlXPathObjectPtr getnodeset (xmlDocPtr doc, xmlChar *xpath)
     }
     if(xmlXPathNodeSetIsEmpty(result->nodesetval)){
         xmlXPathFreeObject(result);
-        printf("No result\n");
         return NULL;
     }
     return result;
@@ -639,6 +638,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 void * crawler(void* variable){
     while (uniquePNGNum < neededPNG){
+        printf("needed: %d\n", neededPNG);
         sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
@@ -689,7 +689,6 @@ void * crawler(void* variable){
         res = curl_easy_perform(curl_handle);
 
         if( res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
             cleanup(curl_handle, &recv_buf);
         } else {
             //printf("%lu bytes received in memory %p, seq=%d.\n", \
