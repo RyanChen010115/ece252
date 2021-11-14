@@ -265,6 +265,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                     temp->next = NULL;
                     strcpy(temp->val, data);
                     addToList(&toVisitURLList, temp);
+                    printf("added to list\n");
                     pthread_mutex_unlock(&toVisitMutex);
                 } 
 
