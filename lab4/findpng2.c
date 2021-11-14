@@ -717,8 +717,9 @@ int main( int argc, char** argv )
                 log = 1;
             }
         }
-        if (argc%2 == )
-        strcpy(url, argv[argc]);
+        if (argc%2 == 0){
+            strcpy(url, argv[argc]);
+        }
     }
     printf("test: %s"argv[0]);
     printf("using %d threads\n",numThreads);
