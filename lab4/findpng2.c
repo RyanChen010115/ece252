@@ -624,12 +624,12 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 void * crawler(void* variable){
     
     while (uniquePNGNum < neededPNG){
-        sem_wait(&foundSem);
+        //sem_wait(&foundSem);
         if (neededPNG <= uniquePNGNum){
             sem_post(&foundSem);
             pthread_exit(0);
         }
-        sem_post(&foundSem);
+        //sem_post(&foundSem);
 
         //pthread_mutex_lock(&toVisitMutex);
         //need mutex
