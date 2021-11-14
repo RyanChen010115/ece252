@@ -547,8 +547,6 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
     CURLcode res;
-    char fname[256];
-    pid_t pid =getpid();
     long response_code;
 
     res = curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
