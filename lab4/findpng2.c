@@ -500,7 +500,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     find_http(p_recv_buf->buf, p_recv_buf->size, follow_relative_link, url); 
     sprintf(fname, "./output_%d.html", pid);
     
-    return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
+    return 0;
 }
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
@@ -717,13 +717,13 @@ int main( int argc, char** argv )
         appendList(&visitedURLList, LOGFILE);
     }
     appendList(&visitedPNGList, PNGFILE);
-    
+
     if (gettimeofday(&tv, NULL) != 0) {
         perror("gettimeofday");
         abort();
     }
     times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-    printf("paster2 execution time: %.6lf seconds\n", times[1] - times[0]);
+    printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     
     freeList(&visitedURLList);
