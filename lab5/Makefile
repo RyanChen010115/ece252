@@ -13,7 +13,7 @@ LDLIBS = $(LDLIBS_XML2) $(LDLIBS_CURL)
 
 SRCS   = findpng3.c
 OBJS3  = findpng3.o
-TARGETS= findpng3.out
+TARGETS= findpng3
 
 all: ${TARGETS}
 
