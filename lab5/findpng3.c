@@ -645,7 +645,11 @@ int main( int argc, char** argv )
     fp = fopen(pngfile, "a");
     fclose(fp);
 
-    while(uniquePNGNum < 55){
+    // curl multi setup
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    CURLM *cm=NULL
+
+    while(uniquePNGNum < 5){
 
         //need mutex
         if(toVisitURLList.head == NULL){
@@ -668,7 +672,6 @@ int main( int argc, char** argv )
         
         RECV_BUF recv_buf;
         printf("URL: %s \n", initURL);
-        curl_global_init(CURL_GLOBAL_DEFAULT);
         curl_handle =  easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
