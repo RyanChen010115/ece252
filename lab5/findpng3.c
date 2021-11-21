@@ -669,7 +669,7 @@ int main( int argc, char** argv )
         RECV_BUF recv_buf;
         printf("URL: %s \n", initURL);
         curl_global_init(CURL_GLOBAL_DEFAULT);
-        curl_handle =  (&recv_buf, initURL);
+        curl_handle =  easy_handle_init(&recv_buf, initURL);
 
         if ( curl_handle == NULL ) {
             fprintf(stderr, "Curl initialization failed. Exiting...\n");
