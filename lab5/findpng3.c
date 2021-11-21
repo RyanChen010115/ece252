@@ -647,7 +647,7 @@ int main( int argc, char** argv )
 
     // curl multi setup
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    CURLM *cm=NULL
+    CURLM *cm=NULL;
 
     while(uniquePNGNum < 5){
 
