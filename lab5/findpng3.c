@@ -493,7 +493,7 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
     /* user defined data structure passed to the call back function */
     curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)ptr);
 
-    //curl_easy_setopt(curl_handle, CURLOPT_PRIVATE, (void *)ptr);
+    curl_easy_setopt(curl_handle, CURLOPT_PRIVATE, ptr);
 
     /* some servers requires a user-agent field */
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "ece252 lab4 crawler");
