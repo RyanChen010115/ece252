@@ -84,6 +84,8 @@ linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedPNGList = {.size = 0, .head = NULL, .tail = NULL};
 
+RECV_BUF* bufs = NULL;
+
 void addToList(linkedList_t* list, node_t* node){
     if(list->size == 0){
         list->head = node;
@@ -374,19 +376,18 @@ int recv_buf_init(RECV_BUF *ptr, size_t max_size)
 int recv_buf_cleanup(RECV_BUF *ptr)
 {
     if (ptr == NULL) {
-	return 1;
+	    return 1;
     }
     
     free(ptr->buf);
-    ptr->size = 0;
-    ptr->max_size = 0;
+    free(ptr);
     return 0;
 }
 
 void cleanup(CURL *curl, RECV_BUF *ptr)
 {
         curl_easy_cleanup(curl);
-        curl_global_cleanup();
+        //curl_global_cleanup();
         recv_buf_cleanup(ptr);
 }
 /**
@@ -493,6 +494,8 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
     curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, header_cb_curl); 
     /* user defined data structure passed to the call back function */
     curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)ptr);
+
+    curl_easy_setopt(curl_handle, CURLOPT_PRIVATE, (void *)ptr);
 
     /* some servers requires a user-agent field */
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "ece252 lab4 crawler");
@@ -626,6 +629,10 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
+    int cm_max = 10;
+    int max_png = 5;
+    int bufIndex = 0;
+
     char url[256];
     if (argc == 1) {
         strcpy(url, SEED_URL); 
@@ -646,58 +653,118 @@ int main( int argc, char** argv )
     fclose(fp);
 
     // curl multi setup
+    int still_running = 0;
+    int msg_left = 0;
+    int in_cm = 0;
     curl_global_init(CURL_GLOBAL_DEFAULT);
     CURLM *cm=NULL;
+    cm = curl_multi_init();
+    CURLMsg *msg = NULL;
 
-    while(uniquePNGNum < 5){
+    // init recv buf array
+    //bufs = malloc(sizeof(RECV_BUF) * cm_max);
+
+    // CURL *init_curl_handle = easy_handle_init(&buf[bufIndex], url);
+    // bufIndex = (bufIndex + 1) % cm_max;
+    // curl_multi_add_handle(cm, init_curl_handle);
+
+    // populate curl multi handler
+    // wait until
+
+    while(uniquePNGNum < max_png){
 
         //need mutex
         if(toVisitURLList.head == NULL){
             break;
         }
-        char initURL[256];
-        strcpy(initURL, toVisitURLList.head->val);
-        
-        // get next url
-        removeFromList(&toVisitURLList);
 
-        // Add to visited List, need mutex
-        node_t* temp = malloc(sizeof(node_t));
-        temp->next = NULL;
-        strcpy(temp->val, initURL);
-        addToList(&visitedURLList, temp);
+        while(in_cm < cm_max && toVisitURLList.head != NULL){
+            char initURL[256];
+            strcpy(initURL, toVisitURLList.head->val);
+            
+            // get next url
+            removeFromList(&toVisitURLList);
 
-        CURL *curl_handle;
-        CURLcode res;
-        
-        RECV_BUF recv_buf;
-        printf("URL: %s \n", initURL);
-        curl_handle =  easy_handle_init(&recv_buf, initURL);
+            // Add to visited List, need mutex
+            node_t* temp = malloc(sizeof(node_t));
+            temp->next = NULL;
+            strcpy(temp->val, initURL);
+            addToList(&visitedURLList, temp);
+            printf("URL: %s \n", initURL);
 
-        if ( curl_handle == NULL ) {
-            fprintf(stderr, "Curl initialization failed. Exiting...\n");
-            curl_global_cleanup();
-            abort();
+            RECV_BUF recv_buf = malloc(sizeof(RECV_BUF));
+            CURL *curl_handle = easy_handle_init(&recv_buf, initURL);
+
+            if ( curl_handle == NULL ) {
+                fprintf(stderr, "Curl initialization failed. Exiting...\n");
+                curl_global_cleanup();
+                abort();
+            }
+
+            curl_multi_add_handle(cm, curl_handle);
+
+            in_cm++;
         }
-        /* get it! */
-        res = curl_easy_perform(curl_handle);
 
-        if( res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-            cleanup(curl_handle, &recv_buf);
-        } else {
-            printf("%lu bytes received in memory %p, seq=%d.\n", \
-                recv_buf.size, recv_buf.buf, recv_buf.seq);
-                        /* process the download data */
-            process_data(curl_handle, &recv_buf);
+        curl_multi_preform(cm, &still_running);
 
-            /* cleaning up */
-            cleanup(curl_handle, &recv_buf);    
+        do {
+            int numfds=0;
+            int res = curl_multi_wait(cm, NULL, 0, MAX_WAIT_MSECS, &numfds);
+            if(res != CURLM_OK) {
+                fprintf(stderr, "error: curl_multi_wait() returned %d\n", res);
+                return EXIT_FAILURE;
+            }
+            curl_multi_perform(cm, &still_running);
+        } while (in_cm == still_running);
+        
+        while((msg = curl_multi_info_read(cm, &msgs_left))){
+            if(msg->msg == CURLMSG_DONE){
+                CURL *eh = msg->easy_handle;
+
+                int http_status_code = 0;
+                RECV_BUF* recv_buf = NULL;
+
+                curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
+                curl_easy_getinfo(eh, CURLINFO_PRIVATE, &buf);
+
+                CURLcode res = msg->data.result;
+                if(res == CURLE_OK){
+                    printf("%lu bytes received in memory %p, seq=%d.\n", \
+                        recv_buf.size, recv_buf.buf, recv_buf.seq);
+                    process_data(eh, &recv_buf);
+                    cleanup(eh, &recv_buf);  
+                }else{
+                    fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                    curl_multi_remove_handle(cm, eh);
+                    cleanup(eh, &recv_buf);
+                }
+                in_cm--;
+                if(uniquePNGNum >= max_png){
+                    break;
+                }
+            }
         }
+
+        
+
+        // if( res != CURLE_OK) {
+        //     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        //     cleanup(curl_handle, &recv_buf);
+        // } else {
+        //     printf("%lu bytes received in memory %p, seq=%d.\n", \
+        //         recv_buf.size, recv_buf.buf, recv_buf.seq);
+        //                 /* process the download data */
+        //     process_data(curl_handle, &recv_buf);
+
+        //     /* cleaning up */
+        //     cleanup(curl_handle, &recv_buf);    
+        // }
 
         
     }
 
+    curl_multi_cleanup(cm);
     //printList(&toVisitURLList);
     appendList(&visitedURLList, LOGFILE);
     appendList(&visitedPNGList, PNGFILE);
