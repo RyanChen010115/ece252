@@ -493,7 +493,7 @@ CURL *easy_handle_init(RECV_BUF *ptr, const char *url)
     /* user defined data structure passed to the call back function */
     curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)ptr);
 
-    curl_easy_setopt(curl_handle, CURLOPT_PRIVATE, (void *)ptr);
+    //curl_easy_setopt(curl_handle, CURLOPT_PRIVATE, (void *)ptr);
 
     /* some servers requires a user-agent field */
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "ece252 lab4 crawler");
@@ -725,13 +725,13 @@ int main( int argc, char** argv )
                 RECV_BUF *recv_buf = NULL;
 
                 curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
-                curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
+                //curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
 
                 CURLcode res = msg->data.result;
                 if(res == CURLE_OK){
-                    printf("%lu bytes received in memory %p, seq=%d.\n", \
-                        recv_buf->size, recv_buf->buf, recv_buf->seq);
-                    process_data(eh, recv_buf);
+                    // printf("%lu bytes received in memory %p, seq=%d.\n", \
+                    //     recv_buf->size, recv_buf->buf, recv_buf->seq);
+                    //process_data(eh, recv_buf);
                     cleanup(eh, recv_buf);  
                 }else{
                     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
