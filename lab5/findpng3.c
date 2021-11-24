@@ -84,8 +84,6 @@ linkedList_t toVisitURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedURLList = {.size = 0, .head = NULL, .tail = NULL};
 linkedList_t visitedPNGList = {.size = 0, .head = NULL, .tail = NULL};
 
-RECV_BUF* bufs = NULL;
-
 void addToList(linkedList_t* list, node_t* node){
     if(list->size == 0){
         list->head = node;
