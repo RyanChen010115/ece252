@@ -706,7 +706,7 @@ int main( int argc, char** argv )
         curl_multi_perform(cm, &still_running);
 
         do {
-            printf("In wait");
+            printf("In wait: %d\n", in_cm);
             int numfds=0;
             int res = curl_multi_wait(cm, NULL, 0, MAX_WAIT_MSECS, &numfds);
             if(res != CURLM_OK) {
@@ -715,7 +715,7 @@ int main( int argc, char** argv )
             }
             curl_multi_perform(cm, &still_running);
         } while (in_cm == still_running);
-        
+        printf("Out of wait\n");
         while((msg = curl_multi_info_read(cm, &msg_left))){
             if(msg->msg == CURLMSG_DONE){
                 printf("read message");
