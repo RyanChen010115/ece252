@@ -631,7 +631,6 @@ int main( int argc, char** argv )
 {
     int cm_max = 10;
     int max_png = 5;
-    int bufIndex = 0;
 
     char url[256];
     if (argc == 1) {
@@ -692,8 +691,8 @@ int main( int argc, char** argv )
             addToList(&visitedURLList, temp);
             printf("URL: %s \n", initURL);
 
-            RECV_BUF recv_buf = malloc(sizeof(RECV_BUF));
-            CURL *curl_handle = easy_handle_init(&recv_buf, initURL);
+            RECV_BUF* recv_buf = malloc(sizeof(RECV_BUF));
+            CURL *curl_handle = easy_handle_init(recv_buf, initURL);
 
             if ( curl_handle == NULL ) {
                 fprintf(stderr, "Curl initialization failed. Exiting...\n");
@@ -718,7 +717,7 @@ int main( int argc, char** argv )
             curl_multi_perform(cm, &still_running);
         } while (in_cm == still_running);
         
-        while((msg = curl_multi_info_read(cm, &msgs_left))){
+        while((msg = curl_multi_info_read(cm, &msg_left))){
             if(msg->msg == CURLMSG_DONE){
                 CURL *eh = msg->easy_handle;
 
@@ -726,18 +725,18 @@ int main( int argc, char** argv )
                 RECV_BUF* recv_buf = NULL;
 
                 curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
-                curl_easy_getinfo(eh, CURLINFO_PRIVATE, &buf);
+                curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
 
                 CURLcode res = msg->data.result;
                 if(res == CURLE_OK){
                     printf("%lu bytes received in memory %p, seq=%d.\n", \
-                        recv_buf.size, recv_buf.buf, recv_buf.seq);
-                    process_data(eh, &recv_buf);
-                    cleanup(eh, &recv_buf);  
+                        recv_buf->size, recv_buf->buf, recv_buf->seq);
+                    process_data(eh, recv_buf);
+                    cleanup(eh, recv_buf);  
                 }else{
                     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
                     curl_multi_remove_handle(cm, eh);
-                    cleanup(eh, &recv_buf);
+                    cleanup(eh, recv_buf);
                 }
                 in_cm--;
                 if(uniquePNGNum >= max_png){
