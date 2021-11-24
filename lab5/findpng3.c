@@ -671,7 +671,7 @@ int main( int argc, char** argv )
     while(uniquePNGNum < max_png){
 
         //need mutex
-        if(toVisitURLList.head == NULL){
+        if(toVisitURLList.head == NULL && still_running == 0){
             printf("NULL head\n");
             break;
         }
