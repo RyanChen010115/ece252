@@ -703,7 +703,7 @@ int main( int argc, char** argv )
             in_cm++;
         }
 
-        curl_multi_preform(cm, &still_running);
+        curl_multi_perform(cm, &still_running);
 
         do {
             int numfds=0;
