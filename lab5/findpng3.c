@@ -706,6 +706,7 @@ int main( int argc, char** argv )
         curl_multi_perform(cm, &still_running);
 
         do {
+            printf("In wait");
             int numfds=0;
             int res = curl_multi_wait(cm, NULL, 0, MAX_WAIT_MSECS, &numfds);
             if(res != CURLM_OK) {
@@ -717,6 +718,7 @@ int main( int argc, char** argv )
         
         while((msg = curl_multi_info_read(cm, &msg_left))){
             if(msg->msg == CURLMSG_DONE){
+                printf("read message");
                 CURL *eh = msg->easy_handle;
 
                 int http_status_code = 0;
