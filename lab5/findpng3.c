@@ -672,6 +672,7 @@ int main( int argc, char** argv )
 
         //need mutex
         if(toVisitURLList.head == NULL){
+            printf("NULL head\n");
             break;
         }
 
