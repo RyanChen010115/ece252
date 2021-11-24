@@ -627,7 +627,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-    int cm_max = 10;
+    int cm_max = 1;
     int max_png = 5;
 
     char url[256];
