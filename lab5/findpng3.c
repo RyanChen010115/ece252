@@ -726,7 +726,7 @@ int main( int argc, char** argv )
                 RECV_BUF *recv_buf = NULL;
 
                 curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
-                //curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
+                curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
 
                 CURLcode res = msg->data.result;
                 if(res == CURLE_OK){
