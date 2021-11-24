@@ -727,13 +727,13 @@ int main( int argc, char** argv )
 
                 curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
                 curl_easy_getinfo(eh, CURLINFO_PRIVATE, &recv_buf);
-                printf("%d\n", recv_buf->seq);
+
 
                 CURLcode res = msg->data.result;
                 if(res == CURLE_OK){
-                    // printf("%lu bytes received in memory %p, seq=%d.\n", \
-                    //     recv_buf->size, recv_buf->buf, recv_buf->seq);
-                    //process_data(eh, recv_buf);
+                    printf("%lu bytes received in memory %p, seq=%d.\n", \
+                        recv_buf->size, recv_buf->buf, recv_buf->seq);
+                    process_data(eh, recv_buf);
                     cleanup(eh, recv_buf);  
                 }else{
                     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
