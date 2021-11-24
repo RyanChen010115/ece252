@@ -722,7 +722,7 @@ int main( int argc, char** argv )
                 CURL *eh = msg->easy_handle;
 
                 int http_status_code = 0;
-                RECV_BUF* recv_buf = NULL;
+                RECV_BUF *recv_buf = NULL;
 
                 curl_easy_getinfo(eh, CURLINFO_RESPONSE_CODE, &http_status_code);
                 curl_easy_getinfo(eh, CURLINFO_PRIVATE, recv_buf);
