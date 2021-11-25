@@ -618,6 +618,9 @@ int main( int argc, char** argv )
     int cm_max = 1;
     int max_png = 5;
 
+    int temp_cm_max = 0;
+    int temp_max_png = 0;
+
     char url[256];
     strcpy(url, SEED_URL); 
 
@@ -626,14 +629,14 @@ int main( int argc, char** argv )
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 const char *t = argv[i+1];
-                int k = atoi(t);
+                temp_cm_max = atoi(t);
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
                 char *m = argv[i+1];
-                max_png = atoi(argv[i+1]);
-                if (max_png > MAX_PNG){
-                    max_png = MAX_PNG;
+                temp_max_png = atoi(argv[i+1]);
+                if (temp_max_png > MAX_PNG){
+                    temp_max_png = MAX_PNG;
                 }
             }
             // else if (strcmp(argv[i],"-v") == 0){
