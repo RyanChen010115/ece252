@@ -55,7 +55,6 @@
 #define CT_HTML "text/html"
 #define CT_PNG_LEN  9
 #define CT_HTML_LEN 9
-#define MAXPNG 50
 
 #define max(a, b) \
    ({ __typeof__ (a) _a = (a); \
@@ -628,45 +627,15 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-    // double times[2];
-    // struct timeval tv;
-
-    // if (gettimeofday(&tv, NULL) != 0) {
-    //     perror("gettimeofday");
-    //     abort();
-    // }
-    // times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
-
-
     int cm_max = 1;
-    int max_png = 50;
-    int log = 0;
+    int max_png = 5;
 
     char url[256];
-    strcpy(url, SEED_URL); 
-
-    // if (argc != 1) {
-    //     for (int i = 1; i < argc-1; i+=2){
-    //         if (strcmp(argv[i],"-t") == 0){
-    //             cm_max = atoi(argv[i+1]);
-    //         }
-    //         else if (strcmp(argv[i],"-m") == 0){
-    //             max_png = atoi(argv[i+1]);
-    //             if (max_png > MAXPNG){
-    //                 max_png = MAXPNG;
-    //             }
-    //         }
-    //         else if (strcmp(argv[i],"-v") == 0){
-    //             strcpy(LOGFILE,argv[i+1]);
-    //             log = 1;
-    //         }
-    //     }
-    //     if (argc%2 == 0){
-    //         strcpy(url, argv[argc-1]);
-    //     }
-    // }
-    printf("connections: %d\n",cm_max);
-    printf("pngs: %d\n", max_png);
+    if (argc == 1) {
+        strcpy(url, SEED_URL); 
+    } else {
+        strcpy(url, argv[1]);
+    }
 
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
@@ -798,16 +767,11 @@ int main( int argc, char** argv )
 
     curl_multi_cleanup(cm);
     //printList(&toVisitURLList);
-    if (log == 1){
-        appendList(&visitedURLList, LOGFILE);
-    }
+    appendList(&visitedURLList, LOGFILE);
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
-
-    // times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-    // printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     return 0;
 }
