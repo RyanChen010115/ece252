@@ -630,11 +630,11 @@ int main( int argc, char** argv )
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
-                // char *m = argv[i+1];
-                // max_png = atoi(argv[i+1]);
-                // if (max_png > MAX_PNG){
-                //     max_png = MAX_PNG;
-                // }
+                char *m = argv[i+1];
+                max_png = atoi(argv[i+1]);
+                if (max_png > MAX_PNG){
+                    max_png = MAX_PNG;
+                }
             }
             // else if (strcmp(argv[i],"-v") == 0){
             //     strcpy(LOGFILE,argv[i+1]);
@@ -751,6 +751,7 @@ int main( int argc, char** argv )
                 }
                 in_cm--;
                 if(uniquePNGNum >= max_png){
+                    printf("Max PNG: %d\n", max_png);
                     break;
                 }
             }
