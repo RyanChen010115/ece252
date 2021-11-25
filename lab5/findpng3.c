@@ -666,6 +666,8 @@ int main( int argc, char** argv )
             strcpy(url, argv[argc-1]);
         }
     }
+    printf("connections: %d\n",cm_max);
+    printf("pngs: %d\n", max_png);
 
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
