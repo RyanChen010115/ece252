@@ -615,11 +615,11 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
-    int cm_max = 1;
-    int max_png = 5;
+    int cm_max = 0;
+    int max_png = 0;
 
-    int temp_cm_max = 0;
-    int temp_max_png = 0;
+    int temp_cm_max = 1;
+    int temp_max_png = 5;
 
     char url[256];
     strcpy(url, SEED_URL); 
