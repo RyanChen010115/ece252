@@ -645,26 +645,26 @@ int main( int argc, char** argv )
     char url[256];
     strcpy(url, SEED_URL); 
 
-    if (argc != 1) {
-        for (int i = 1; i < argc-1; i+=2){
-            if (strcmp(argv[i],"-t") == 0){
-                cm_max = atoi(argv[i+1]);
-            }
-            else if (strcmp(argv[i],"-m") == 0){
-                max_png = atoi(argv[i+1]);
-                if (max_png > MAXPNG){
-                    max_png = MAXPNG;
-                }
-            }
-            else if (strcmp(argv[i],"-v") == 0){
-                strcpy(LOGFILE,argv[i+1]);
-                log = 1;
-            }
-        }
-        if (argc%2 == 0){
-            strcpy(url, argv[argc-1]);
-        }
-    }
+    // if (argc != 1) {
+    //     for (int i = 1; i < argc-1; i+=2){
+    //         if (strcmp(argv[i],"-t") == 0){
+    //             cm_max = atoi(argv[i+1]);
+    //         }
+    //         else if (strcmp(argv[i],"-m") == 0){
+    //             max_png = atoi(argv[i+1]);
+    //             if (max_png > MAXPNG){
+    //                 max_png = MAXPNG;
+    //             }
+    //         }
+    //         else if (strcmp(argv[i],"-v") == 0){
+    //             strcpy(LOGFILE,argv[i+1]);
+    //             log = 1;
+    //         }
+    //     }
+    //     if (argc%2 == 0){
+    //         strcpy(url, argv[argc-1]);
+    //     }
+    // }
     printf("connections: %d\n",cm_max);
     printf("pngs: %d\n", max_png);
 
