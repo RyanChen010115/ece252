@@ -625,11 +625,12 @@ int main( int argc, char** argv )
         printf("HERE\n");
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
-                char *t = argv[i+1];
+                const char *t = argv[i+1];
+                cm_max = atoi(t)
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
-                char *m = argv[i+1];
+                const char *m = argv[i+1];
                 // max_png = atoi(argv[i+1]);
                 // if (max_png > MAX_PNG){
                 //     max_png = MAX_PNG;
