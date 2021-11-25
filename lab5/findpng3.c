@@ -646,6 +646,8 @@ int main( int argc, char** argv )
         }
     }
 
+    printf("Set Values: %d, %d \n", cm_max, max_png);
+
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
     strcpy(temp->val, url);
