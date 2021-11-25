@@ -646,10 +646,10 @@ int main( int argc, char** argv )
                     max_png = MAX_PNG;
                 }
             }
-            else if (strcmp(argv[i],"-v") == 0){
-                strcpy(LOGFILE,argv[i+1]);
-                log = 1;
-            }
+            // else if (strcmp(argv[i],"-v") == 0){
+            //     strcpy(LOGFILE,argv[i+1]);
+            //     log = 1;
+            // }
         }
         if (argc%2 == 0){
             strcpy(url, argv[argc-1]);
