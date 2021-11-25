@@ -645,8 +645,6 @@ int main( int argc, char** argv )
     char url[256];
     if (argc == 1) {
         strcpy(url, SEED_URL); 
-    } else {
-        strcpy(url, argv[1]);
     }
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
