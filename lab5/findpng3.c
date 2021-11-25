@@ -626,7 +626,7 @@ int main( int argc, char** argv )
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 const char *t = argv[i+1];
-                cm_max = (int)t;
+                cm_max = 2;
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
