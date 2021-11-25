@@ -50,6 +50,7 @@
 #define BUF_SIZE 1048576  /* 1024*1024 = 1M */
 #define BUF_INC  524288   /* 1024*512  = 0.5M */
 #define MAX_WAIT_MSECS 30*1000 /* Wait max. 30 seconds */
+#define MAX_PNG 50
 
 #define CT_PNG  "image/png"
 #define CT_HTML "text/html"
@@ -631,10 +632,27 @@ int main( int argc, char** argv )
     int max_png = 5;
 
     char url[256];
-    if (argc == 1) {
-        strcpy(url, SEED_URL); 
-    } else {
-        strcpy(url, argv[1]);
+    strcpy(url, SEED_URL); 
+
+    if (argc != 1) {
+        for (int i = 1; i < argc-1; i+=2){
+            if (strcmp(argv[i],"-t") == 0){
+                cm_max = atoi(argv[i+1]);
+            }
+            else if (strcmp(argv[i],"-m") == 0){
+                max_png = atoi(argv[i+1]);
+                if (max_png > MAX_PNG){
+                    max_png = MAX_PNG;
+                }
+            }
+            // else if (strcmp(argv[i],"-v") == 0){
+            //     strcpy(LOGFILE,argv[i+1]);
+            //     log = 1;
+            // }
+        }
+        if (argc%2 == 0){
+            strcpy(url, argv[argc-1]);
+        }
     }
 
     node_t* temp = malloc(sizeof(node_t));
