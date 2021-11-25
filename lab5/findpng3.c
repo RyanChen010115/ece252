@@ -633,7 +633,6 @@ int main( int argc, char** argv )
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
-                char *m = argv[i+1];
                 temp_max_png = atoi(argv[i+1]);
                 if (temp_max_png > MAX_PNG){
                     temp_max_png = MAX_PNG;
@@ -648,7 +647,8 @@ int main( int argc, char** argv )
             strcpy(url, argv[argc-1]);
         }
     }
-
+    cm_max = temp_cm_max;
+    max_png = temp_max_png;
     printf("Set Values: %d, %d \n", cm_max, max_png);
 
     node_t* temp = malloc(sizeof(node_t));
