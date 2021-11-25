@@ -643,9 +643,8 @@ int main( int argc, char** argv )
     int log = 0;
 
     char url[256];
-    if (argc == 1) {
-        strcpy(url, SEED_URL); 
-    }
+    strcpy(url, SEED_URL); 
+
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
