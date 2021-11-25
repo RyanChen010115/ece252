@@ -626,15 +626,15 @@ int main( int argc, char** argv )
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 const char *t = argv[i+1];
-                cm_max = 2;
+                int k = atoi(t);
                 //cm_max = atoi(argv[i+1]);
             }
             else if (strcmp(argv[i],"-m") == 0){
-                const char *m = argv[i+1];
-                // max_png = atoi(argv[i+1]);
-                // if (max_png > MAX_PNG){
-                //     max_png = MAX_PNG;
-                // }
+                char *m = argv[i+1];
+                max_png = atoi(argv[i+1]);
+                if (max_png > MAX_PNG){
+                    max_png = MAX_PNG;
+                }
             }
             // else if (strcmp(argv[i],"-v") == 0){
             //     strcpy(LOGFILE,argv[i+1]);
