@@ -194,7 +194,7 @@ htmlDocPtr mem_getdoc(char *buf, int size, const char *url)
     htmlDocPtr doc = htmlReadMemory(buf, size, url, NULL, opts);
     
     if ( doc == NULL ) {
-        fprintf(stderr, "Document not parsed successfully.\n");
+        //fprintf(stderr, "Document not parsed successfully.\n");
         return NULL;
     }
     return doc;
@@ -208,18 +208,18 @@ xmlXPathObjectPtr getnodeset (xmlDocPtr doc, xmlChar *xpath)
 
     context = xmlXPathNewContext(doc);
     if (context == NULL) {
-        printf("Error in xmlXPathNewContext\n");
+        //printf("Error in xmlXPathNewContext\n");
         return NULL;
     }
     result = xmlXPathEvalExpression(xpath, context);
     xmlXPathFreeContext(context);
     if (result == NULL) {
-        printf("Error in xmlXPathEvalExpression\n");
+        //printf("Error in xmlXPathEvalExpression\n");
         return NULL;
     }
     if(xmlXPathNodeSetIsEmpty(result->nodesetval)){
         xmlXPathFreeObject(result);
-        printf("No result\n");
+        //printf("No result\n");
         return NULL;
     }
     return result;
@@ -251,7 +251,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 xmlFree(old);
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
-                printf("href: %s\n", href);
+                //("href: %s\n", href);
                 char data[256];
                 
                 sprintf(data, "%s", href);
@@ -622,7 +622,7 @@ int main( int argc, char** argv )
     int log = 0;
 
     int temp_cm_max = 1;
-    int temp_max_png = 5;
+    int temp_max_png = 50;
     int temp_log = 0;
 
     char url[256];
@@ -730,7 +730,7 @@ int main( int argc, char** argv )
                     process_data(eh, recv_buf);
                     cleanup(eh, recv_buf);  
                 }else{
-                    fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                    //fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
                     curl_multi_remove_handle(cm, eh);
                     cleanup(eh, recv_buf);
                 }
