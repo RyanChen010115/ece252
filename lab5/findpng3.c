@@ -629,9 +629,11 @@ int main( int argc, char** argv )
 
     int cm_max = 0;
     int max_png = 0;
+    int log = 0;
 
     int temp_cm_max = 1;
     int temp_max_png = 5;
+    int temp_log = 0;
 
     char url[256];
     strcpy(url, SEED_URL); 
@@ -650,10 +652,10 @@ int main( int argc, char** argv )
                     temp_max_png = MAX_PNG;
                 }
             }
-            // else if (strcmp(argv[i],"-v") == 0){
-            //     strcpy(LOGFILE,argv[i+1]);
-            //     log = 1;
-            // }
+            else if (strcmp(argv[i],"-v") == 0){
+                strcpy(LOGFILE,argv[i+1]);
+                temp_log = 1;
+            }
         }
         if (argc%2 == 0){
             strcpy(url, argv[argc-1]);
@@ -661,6 +663,7 @@ int main( int argc, char** argv )
     }
     cm_max = temp_cm_max;
     max_png = temp_max_png;
+    log = temp_log;
     printf("Set Values: %d, %d \n", cm_max, max_png);
 
     node_t* temp = malloc(sizeof(node_t));
@@ -794,7 +797,9 @@ int main( int argc, char** argv )
 
     curl_multi_cleanup(cm);
     //printList(&toVisitURLList);
-    appendList(&visitedURLList, LOGFILE);
+    if (log == 1){
+        appendList(&visitedURLList, LOGFILE);
+    }
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
