@@ -41,6 +41,8 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/uri.h>
+#include <time.h>
+#include <sys/time.h>
 
 
 #define SEED_URL "http://ece252-1.uwaterloo.ca/lab4"
