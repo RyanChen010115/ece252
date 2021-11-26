@@ -615,6 +615,16 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int main( int argc, char** argv ) 
 {
+
+    double times[2];
+    struct timeval tv;
+
+    if (gettimeofday(&tv, NULL) != 0) {
+        perror("gettimeofday");
+        abort();
+    }
+    times[0] = (tv.tv_sec) + tv.tv_usec/1000000.;
+
     int cm_max = 0;
     int max_png = 0;
 
@@ -787,6 +797,9 @@ int main( int argc, char** argv )
     freeList(&visitedURLList);
     freeList(&toVisitURLList);
     freeList(&visitedPNGList);
+
+    times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
+    printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     return 0;
 }
