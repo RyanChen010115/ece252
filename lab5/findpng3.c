@@ -125,7 +125,7 @@ int isInList(linkedList_t* list, char* find){
 void printList(linkedList_t* list){
     node_t* cur = list->head;
     while(cur != NULL){
-        printf("Node is: %s \n", cur->val);
+        //printf("Node is: %s \n", cur->val);
         cur = cur->next;
     }
 }
@@ -209,18 +209,18 @@ xmlXPathObjectPtr getnodeset (xmlDocPtr doc, xmlChar *xpath)
 
     context = xmlXPathNewContext(doc);
     if (context == NULL) {
-        printf("Error in xmlXPathNewContext\n");
+        //printf("Error in xmlXPathNewContext\n");
         return NULL;
     }
     result = xmlXPathEvalExpression(xpath, context);
     xmlXPathFreeContext(context);
     if (result == NULL) {
-        printf("Error in xmlXPathEvalExpression\n");
+        //printf("Error in xmlXPathEvalExpression\n");
         return NULL;
     }
     if(xmlXPathNodeSetIsEmpty(result->nodesetval)){
         xmlXPathFreeObject(result);
-        printf("No result\n");
+        //printf("No result\n");
         return NULL;
     }
     return result;
@@ -252,7 +252,7 @@ int find_http(char *buf, int size, int follow_relative_links, const char *base_u
                 xmlFree(old);
             }
             if ( href != NULL && !strncmp((const char *)href, "http", 4) ) {
-                printf("href: %s\n", href);
+                //printf("href: %s\n", href);
                 char data[256];
                 
                 sprintf(data, "%s", href); // must be in mutex!
@@ -523,7 +523,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &url);
     // need mutex
     if(isInList(&visitedURLList, url) == 0){
-        printf("ADDED EXTRA!!!\n");
+        //printf("ADDED EXTRA!!!\n");
         // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
@@ -539,7 +539,7 @@ int process_html(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
 int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
 {
-    printf("PNG NUM: %d\n", uniquePNGNum);
+    //printf("PNG NUM: %d\n", uniquePNGNum);
     U8 header[8];
     memcpy(header, p_recv_buf->buf, sizeof(U8)*8);
     if(is_png(header) == 0){
@@ -548,11 +548,11 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
     char *eurl = NULL;          /* effective URL */
     curl_easy_getinfo(curl_handle, CURLINFO_EFFECTIVE_URL, &eurl);
     if ( eurl != NULL) {
-        printf("The PNG url is: %s\n", eurl);
+        //printf("The PNG url is: %s\n", eurl);
     }
         // need mutex
     if(isInList(&visitedURLList, eurl) == 0){
-        printf("ADDED EXTRA!!!\n");
+        //printf("ADDED EXTRA!!!\n");
         // Add to visited List
         node_t* temp = malloc(sizeof(node_t));
         temp->next = NULL;
@@ -566,7 +566,7 @@ int process_png(CURL *curl_handle, RECV_BUF *p_recv_buf)
         strcpy(temp->val, eurl);
         addToList(&visitedPNGList, temp);
     }
-    printf("END OF PNG PROC");
+    //printf("END OF PNG PROC");
     uniquePNGNum++; // need mutex
     
     return 0;
@@ -587,7 +587,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
 
     res = curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
     if ( res == CURLE_OK ) {
-	    printf("Response code: %ld\n", response_code);
+	    //printf("Response code: %ld\n", response_code);
     }
 
     if ( response_code >= 400 ) { 
@@ -598,7 +598,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     char *ct = NULL;
     res = curl_easy_getinfo(curl_handle, CURLINFO_CONTENT_TYPE, &ct);
     if ( res == CURLE_OK && ct != NULL ) {
-    	printf("Content-Type: %s, len=%ld\n", ct, strlen(ct));
+    	//printf("Content-Type: %s, len=%ld\n", ct, strlen(ct));
     } else {
         fprintf(stderr, "Failed obtain Content-Type\n");
         return 2;
@@ -639,7 +639,7 @@ int main( int argc, char** argv )
     strcpy(url, SEED_URL); 
 
     if (argc != 1) {
-        printf("HERE\n");
+        //printf("HERE\n");
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
                 const char *t = argv[i+1];
@@ -701,7 +701,7 @@ int main( int argc, char** argv )
 
         //need mutex
         if(toVisitURLList.head == NULL && still_running == 0){
-            printf("NULL head\n");
+            //printf("NULL head\n");
             break;
         }
 
@@ -717,7 +717,7 @@ int main( int argc, char** argv )
             temp->next = NULL;
             strcpy(temp->val, initURL);
             addToList(&visitedURLList, temp);
-            printf("URL: %s \n", initURL);
+            //printf("URL: %s \n", initURL);
 
             RECV_BUF* recv_buf = malloc(sizeof(RECV_BUF));
             CURL *curl_handle = easy_handle_init(recv_buf, initURL);
@@ -736,7 +736,7 @@ int main( int argc, char** argv )
         curl_multi_perform(cm, &still_running);
 
         do {
-            printf("In wait: %d\n", in_cm);
+            //printf("In wait: %d\n", in_cm);
             int numfds=0;
             int res = curl_multi_wait(cm, NULL, 0, MAX_WAIT_MSECS, &numfds);
             if(res != CURLM_OK) {
@@ -745,10 +745,10 @@ int main( int argc, char** argv )
             }
             curl_multi_perform(cm, &still_running);
         } while (in_cm == still_running);
-        printf("Out of wait\n");
+        //printf("Out of wait\n");
         while((msg = curl_multi_info_read(cm, &msg_left))){
             if(msg->msg == CURLMSG_DONE){
-                printf("read message");
+                //printf("read message");
                 CURL *eh = msg->easy_handle;
 
                 int http_status_code = 0;
@@ -760,7 +760,7 @@ int main( int argc, char** argv )
 
                 CURLcode res = msg->data.result;
                 if(res == CURLE_OK){
-                    printf("%lu bytes received in memory %p, seq=%d.\n", \
+                    //printf("%lu bytes received in memory %p, seq=%d.\n", \
                         recv_buf->size, recv_buf->buf, recv_buf->seq);
                     process_data(eh, recv_buf);
                     cleanup(eh, recv_buf);  
@@ -771,7 +771,7 @@ int main( int argc, char** argv )
                 }
                 in_cm--;
                 if(uniquePNGNum >= max_png){
-                    printf("Max PNG: %d\n", max_png);
+                    //printf("Max PNG: %d\n", max_png);
                     break;
                 }
             }
