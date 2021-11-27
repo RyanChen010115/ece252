@@ -147,13 +147,6 @@ int is_png(U8 *buf){
     return 0;
 }
 
-static size_t cb(char *d, size_t n, size_t l, void *p)
-{
-  /* take care of the data here, ignored in this example */
-  (void)d;
-  (void)p;
-  return n*l;
-}
 
 typedef struct recv_buf2 {
     char *buf;       /* memory to hold a copy of received data */
@@ -602,7 +595,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
         sprintf(fname, "./output_%d", pid);
     }
 
-    return write_file(fname, p_recv_buf->buf, p_recv_buf->size);
+    return 1;
 }
 
 int main( int argc, char** argv ) 
@@ -652,7 +645,7 @@ int main( int argc, char** argv )
     cm_max = temp_cm_max;
     max_png = temp_max_png;
     log = temp_log;
-    printf("Set Values: %d, %d \n", cm_max, max_png);
+    //printf("Set Values: %d, %d \n", cm_max, max_png);
 
     node_t* temp = malloc(sizeof(node_t));
     temp->next = NULL;
