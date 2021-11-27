@@ -757,7 +757,7 @@ int main( int argc, char** argv )
     }
 
     times[1] = (tv.tv_sec) + tv.tv_usec/1000000.;
-    printf("findpng2 execution time: %.6lf seconds\n", times[1] - times[0]);
+    printf("findpng3 execution time: %.6lf seconds\n", times[1] - times[0]);
 
     return 0;
 }
