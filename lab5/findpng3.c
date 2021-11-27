@@ -621,6 +621,8 @@ int main( int argc, char** argv )
     char url[256];
     strcpy(url, SEED_URL); 
 
+    char logFile[256];
+
     if (argc != 1) {
         for (int i = 1; i < argc-1; i+=2){
             if (strcmp(argv[i],"-t") == 0){
@@ -634,7 +636,7 @@ int main( int argc, char** argv )
                 // }
             }
             else if (strcmp(argv[i],"-v") == 0){
-                strcpy(LOGFILE,argv[i+1]);
+                strcpy(logFile,argv[i+1]);
                 temp_log = 1;
             }
         }
@@ -737,7 +739,7 @@ int main( int argc, char** argv )
 
     curl_multi_cleanup(cm);
     if (log == 1){
-        appendList(&visitedURLList, LOGFILE);
+        appendList(&visitedURLList, logFile);
     }
     appendList(&visitedPNGList, PNGFILE);
     freeList(&visitedURLList);
