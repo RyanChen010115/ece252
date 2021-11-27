@@ -582,7 +582,7 @@ int process_data(CURL *curl_handle, RECV_BUF *p_recv_buf)
     }
 
     if ( response_code >= 400 ) { 
-    	fprintf(stderr, "Error.\n");
+    	//fprintf(stderr, "Error.\n");
         return 1;
     }
 
