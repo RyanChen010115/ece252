@@ -621,6 +621,7 @@ int main( int argc, char** argv )
     char url[256];
     strcpy(url, SEED_URL); 
 
+    char temp_logFile[256];
     char logFile[256];
 
     if (argc != 1) {
@@ -636,7 +637,7 @@ int main( int argc, char** argv )
                 // }
             }
             else if (strcmp(argv[i],"-v") == 0){
-                strcpy(logFile,argv[i+1]);
+                strcpy(temp_logFile,argv[i+1]);
                 temp_log = 1;
             }
         }
@@ -647,6 +648,7 @@ int main( int argc, char** argv )
     cm_max = temp_cm_max;
     max_png = temp_max_png;
     log = temp_log;
+    strcpy(logFile, temp_logFile);
     //printf("Set Values: %d, %d \n", cm_max, max_png);
 
     node_t* temp = malloc(sizeof(node_t));
