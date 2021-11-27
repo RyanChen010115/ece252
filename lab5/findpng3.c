@@ -636,9 +636,9 @@ int main( int argc, char** argv )
             }
             else if (strcmp(argv[i],"-m") == 0){
                 temp_max_png = atoi(argv[i+1]);
-                if (temp_max_png > MAX_PNG){
-                    temp_max_png = MAX_PNG;
-                }
+                // if (temp_max_png > MAX_PNG){
+                //     temp_max_png = MAX_PNG;
+                // }
             }
             else if (strcmp(argv[i],"-v") == 0){
                 strcpy(LOGFILE,argv[i+1]);
