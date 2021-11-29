@@ -746,6 +746,7 @@ int main( int argc, char** argv )
             fprintf(stderr, "error: curl_multi_wait() returned %d\n", res);
             return EXIT_FAILURE;
         }
+        printf("SR: %d\n", still_running);
         curl_multi_perform(cm, &still_running);
     } while (still_running != 0);
     while((msg = curl_multi_info_read(cm, &msg_left))){
