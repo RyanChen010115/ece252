@@ -749,8 +749,9 @@ int main( int argc, char** argv )
         curl_multi_perform(cm, &still_running);
     } while (still_running != 0);
     while((msg = curl_multi_info_read(cm, &msg_left))){
+        printf("here\n");
         if(msg->msg == CURLMSG_DONE){
-            printf("here\n");
+            
             CURL *eh = msg->easy_handle;
 
             RECV_BUF *recv_buf = NULL;
