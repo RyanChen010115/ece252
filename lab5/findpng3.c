@@ -747,7 +747,7 @@ int main( int argc, char** argv )
             return EXIT_FAILURE;
         }
         curl_multi_perform(cm, &still_running);
-    } while (still_running);
+    } while (still_running != 0);
     while((msg = curl_multi_info_read(cm, &msg_left))){
         if(msg->msg == CURLMSG_DONE){
             CURL *eh = msg->easy_handle;
