@@ -739,6 +739,28 @@ int main( int argc, char** argv )
         }
     }
 
+    do {
+        int numfds=0;
+        int res = curl_multi_wait(cm, NULL, 0, MAX_WAIT_MSECS, &numfds);
+        if(res != CURLM_OK) {
+            fprintf(stderr, "error: curl_multi_wait() returned %d\n", res);
+            return EXIT_FAILURE;
+        }
+        curl_multi_perform(cm, &still_running);
+    } while (still_running);
+    while((msg = curl_multi_info_read(cm, &msg_left))){
+        if(msg->msg == CURLMSG_DONE){
+            CURL *eh = msg->easy_handle;
+
+            RECV_BUF *recv_buf = NULL;
+
+            curl_easy_getinfo(eh, CURLINFO_PRIVATE, &recv_buf);
+
+            curl_multi_remove_handle(cm, eh);
+            cleanup(eh, recv_buf);
+        }
+    }
+
     curl_multi_cleanup(cm);
     if (log == 1){
         appendList(&visitedURLList, logFile);
